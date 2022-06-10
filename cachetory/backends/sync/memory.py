@@ -3,10 +3,12 @@ from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 from typing import Dict, Generic, Optional
 
-from cachetory.interfaces.backends.sync import TV, SyncBackendRead, SyncBackendWrite
+from cachetory.interfaces.backends.shared import TV
+from cachetory.interfaces.backends.sync import SyncBackendRead, SyncBackendWrite
+from cachetory.private.datetime import make_deadline
 
 
-class SyncMemoryBackend(SyncBackendRead[TV], SyncBackendWrite[TV]):
+class SyncMemoryBackend(Generic[TV], SyncBackendRead[TV], SyncBackendWrite[TV]):
     __slots__ = ("_entries",)
 
     def __init__(self):
@@ -24,8 +26,11 @@ class SyncMemoryBackend(SyncBackendRead[TV], SyncBackendWrite[TV]):
             entry.deadline = deadline
 
     def set(self, key: str, value: TV, time_to_live: Optional[timedelta] = None) -> None:
-        deadline = datetime.now(timezone.utc) + time_to_live if time_to_live is not None else None
-        self._entries[key] = _Entry[TV](value, deadline)
+        self._entries[key] = _Entry[TV](value, make_deadline(time_to_live))
+
+    def set_default(self, key: str, value: TV, time_to_live: Optional[timedelta] = None) -> None:
+        entry = _Entry[TV](value, make_deadline(time_to_live))
+        self._entries.setdefault(key, entry)
 
     def delete(self, key: str) -> bool:
         return self._entries.pop(key, _SENTINEL) is not _SENTINEL

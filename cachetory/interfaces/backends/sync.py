@@ -7,21 +7,13 @@ but implementors SHOULD override them for the sake of performance.
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
-from typing import Dict, Iterable, Optional, Tuple, TypeVar, Union
+from datetime import datetime, timedelta
+from typing import Dict, Iterable, Optional, Tuple, Union
 
 from typing_extensions import Protocol
 
-# Value type as returned by cache read operations.
-TV = TypeVar("TV")
-
-# The contravariance ensures that given A > B: SyncBackendWrite[A] < SyncBackendWrite[B],
-# meaning that user can safely pass SyncBackendWrite[A] in place of SyncBackendWrite[B].
-# And this is needed because SyncBackendWrite[B] accepts B as a parameter,
-# and so should SyncBackendWrite[A].
-TV_contra = TypeVar("TV_contra", contravariant=True)
-
-T_default = TypeVar("T_default")
+from cachetory.interfaces.backends.shared import TV, T_default, TV_contra
+from cachetory.private.datetime import make_deadline
 
 
 class SyncBackendRead(Protocol[TV]):
@@ -80,8 +72,7 @@ class SyncBackendWrite(Protocol[TV_contra]):
         """
         Set the expiration time on the key.
         """
-        deadline = datetime.now(timezone.utc) + time_to_live if time_to_live is not None else None
-        self.expire_at(key, deadline)
+        self.expire_at(key, make_deadline(time_to_live))
 
     def expire_at(self, key: str, deadline: Optional[datetime]) -> None:
         """
@@ -98,6 +89,12 @@ class SyncBackendWrite(Protocol[TV_contra]):
     def set(self, key: str, value: TV_contra, time_to_live: Optional[timedelta] = None) -> None:
         """
         Put the value into the cache, overwriting an existing one.
+        """
+        raise NotImplementedError
+
+    def set_default(self, key: str, value: TV_contra, time_to_live: Optional[timedelta] = None) -> None:
+        """
+        Put the value into the cache, only if it isn't already existing.
         """
         raise NotImplementedError
 

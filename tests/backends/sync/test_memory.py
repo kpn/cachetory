@@ -1,12 +1,12 @@
 from datetime import datetime, timedelta, timezone
 
-import pytest
+from pytest import fixture, raises
 from freezegun import freeze_time
 
 from cachetory.backends.sync.memory import SyncMemoryBackend
 
 
-@pytest.fixture
+@fixture
 def backend() -> SyncMemoryBackend[int]:
     return SyncMemoryBackend[int]()
 
@@ -17,8 +17,15 @@ def test_get_item_existing(backend: SyncMemoryBackend[int]):
 
 
 def test_get_item_missing(backend: SyncMemoryBackend[int]):
-    with pytest.raises(KeyError):
+    with raises(KeyError):
         _ = backend["foo"]
+
+
+def test_set_default(backend: SyncMemoryBackend[int]):
+    backend.set_default("foo", 42)
+    backend.set_default("foo", 43)
+    assert backend["foo"] == 42
+    assert backend.size == 1
 
 
 def test_delete_existing(backend: SyncMemoryBackend[int]):
@@ -37,7 +44,7 @@ def test_del_item_existing(backend: SyncMemoryBackend[int]):
 
 
 def test_del_item_missing(backend: SyncMemoryBackend[int]):
-    with pytest.raises(KeyError):
+    with raises(KeyError):
         del backend["foo"]
 
 
