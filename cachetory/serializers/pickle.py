@@ -13,5 +13,6 @@ class PickleSerializer(Generic[T_value], Serializer[T_value, bytes]):
     def serialize(self, value: T_value) -> bytes:
         return pickle.dumps(value, self.protocol)
 
-    def deserialize(self, data: bytes) -> T_value:
+    @staticmethod
+    def deserialize(data: bytes) -> T_value:
         return pickle.loads(data)

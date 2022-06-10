@@ -1,9 +1,11 @@
+from typing import Generic
+
 import zstd  # type: ignore
 
 from cachetory.interfaces.serializers import Serializer, T_value
 
 
-class ZstdCompressor(Serializer[T_value, bytes]):
+class ZstdCompressor(Generic[T_value], Serializer[T_value, bytes]):
     """
     Wraps inner serializer with Zstandard compression.
     """
