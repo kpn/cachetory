@@ -20,6 +20,10 @@ setup(
     author_email="pavel.perestoronin@kpn.com",
     url="https://github.com/kpn/cachetory",
     packages=find_packages(exclude=["tests*"]),
+    python_requires=">=3.7",
+    install_requires=[
+        "typing-extensions>=4.2.0,<5.0.0",
+    ],
     tests_require=["tox"],
     include_package_data=True,
     zip_safe=False,
