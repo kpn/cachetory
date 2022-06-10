@@ -1,0 +1,28 @@
+[tool.black]
+line-length = 120
+target_version = ["py37", "py38", "py39", "py310"]
+
+[tool.isort]
+combine_as_imports = true
+default_section = "THIRDPARTY"
+known_first_party = ["cachetory", "tests"]
+from_first = false
+include_trailing_comma = true
+length_sort = false
+multi_line_output = 3
+order_by_type = true
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+use_parentheses = true
+line_length = 120
+force_grid_wrap = 0
+
+[tool.coverage.run]
+source = ["cachetory"]
+relative_files = true
+branch = true
+omit = ["tests/*"]
+
+[tool.setuptools_scm]
+
+[build-system]
+requires = ["setuptools>=42", "wheel", "setuptools_scm[toml]>=3.4"]

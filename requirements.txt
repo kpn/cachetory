@@ -1,0 +1,22 @@
+# Package in develop mode
+-e .
+
+# Distribution
+twine
+wheel
+
+# Code style
+mypy
+isort[pyproject]
+flake8
+black
+
+# Tests
+tox
+pytest
+pytest-cov
+pytest-asyncio; python_version >= '3.5'
+mock
+
+# Typing
+types-mock
