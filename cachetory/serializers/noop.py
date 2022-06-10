@@ -1,17 +1,18 @@
-from typing import Generic, TypeVar
+from typing import Generic
 
-from cachetory.interfaces.serializers import Deserializer, Serializer
+from cachetory.interfaces.serializers import Serializer
+from cachetory.serializers.shared import T_value
 
-T_value = TypeVar("T_value")
 
-
-class NoopSerializer(Generic[T_value], Serializer[T_value, T_value], Deserializer[T_value, T_value]):
+class NoopSerializer(Generic[T_value], Serializer[T_value, T_value]):
     """
     No-operation serializer: just forwards the value to and from backend.
     """
 
-    def serialize(self, value: T_value) -> T_value:
+    @staticmethod
+    def serialize(value: T_value) -> T_value:
         return value
 
-    def deserialize(self, data: T_value) -> T_value:
+    @staticmethod
+    def deserialize(data: T_value) -> T_value:
         return data

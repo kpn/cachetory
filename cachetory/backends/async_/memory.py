@@ -1,23 +1,21 @@
 from datetime import datetime, timedelta
-from typing import Any, Awaitable, Coroutine, Generic, Optional
+from typing import Any, Coroutine, Generic, Optional
 
 from cachetory.backends.sync.memory import SyncMemoryBackend
 from cachetory.interfaces.backends.async_ import AsyncBackendRead, AsyncBackendWrite
-from cachetory.interfaces.backends.shared import T_value
+from cachetory.interfaces.backends.shared import T_wire
 from cachetory.private.asyncio import postpone
 
 
-class AsyncMemoryBackend(Generic[T_value], AsyncBackendRead[T_value], AsyncBackendWrite[T_value]):
+class AsyncMemoryBackend(Generic[T_wire], AsyncBackendRead[T_wire], AsyncBackendWrite[T_wire]):
     __slots__ = ("_backend",)
 
     def __init__(self):
         # We'll simply delegate call to the wrapped backend.
         self._backend = SyncMemoryBackend()
 
-    def __getitem__(self, key: str) -> Awaitable[T_value]:
-        # We want to retrieve a value when the awaitable gets actually awaited,
-        # and that might happen somewhat later allowing the backend to change in the meantime.
-        return postpone(self._backend.__getitem__, key)
+    def get(self, key: str) -> Coroutine[Any, Any, T_wire]:
+        return postpone(self._backend.get, key)
 
     def expire_at(self, key: str, deadline: Optional[datetime]) -> Coroutine[Any, Any, None]:
         return postpone(self._backend.expire_at, key, deadline)
@@ -25,18 +23,18 @@ class AsyncMemoryBackend(Generic[T_value], AsyncBackendRead[T_value], AsyncBacke
     def set(
         self,
         key: str,
-        value: T_value,
+        value: T_wire,
+        *,
         time_to_live: Optional[timedelta] = None,
+        if_not_exists: bool = False,
     ) -> Coroutine[Any, Any, None]:
-        return postpone(self._backend.set, key, value, time_to_live)
-
-    def set_default(
-        self,
-        key: str,
-        value: T_value,
-        time_to_live: Optional[timedelta] = None,
-    ) -> Coroutine[Any, Any, None]:
-        return postpone(self._backend.set_default, key, value, time_to_live)
+        return postpone(
+            self._backend.set,
+            key,
+            value,
+            time_to_live=time_to_live,
+            if_not_exists=if_not_exists,
+        )
 
     def delete(self, key: str) -> Coroutine[Any, Any, bool]:
         return postpone(self._backend.delete, key)

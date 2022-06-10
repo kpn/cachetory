@@ -3,18 +3,18 @@ from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 from typing import Dict, Generic, Optional
 
-from cachetory.interfaces.backends.shared import T_value
+from cachetory.interfaces.backends.shared import T_wire
 from cachetory.interfaces.backends.sync import SyncBackendRead, SyncBackendWrite
 from cachetory.private.datetime import make_deadline
 
 
-class SyncMemoryBackend(Generic[T_value], SyncBackendRead[T_value], SyncBackendWrite[T_value]):
+class SyncMemoryBackend(Generic[T_wire], SyncBackendRead[T_wire], SyncBackendWrite[T_wire]):
     __slots__ = ("_entries",)
 
     def __init__(self):
-        self._entries: Dict[str, _Entry[T_value]] = {}
+        self._entries: Dict[str, _Entry[T_wire]] = {}
 
-    def __getitem__(self, key: str) -> T_value:
+    def get(self, key: str) -> T_wire:
         return self._get_entry(key).value
 
     def expire_at(self, key: str, deadline: Optional[datetime]) -> None:
@@ -25,20 +25,24 @@ class SyncMemoryBackend(Generic[T_value], SyncBackendRead[T_value], SyncBackendW
         else:
             entry.deadline = deadline
 
-    def set(self, key: str, value: T_value, time_to_live: Optional[timedelta] = None) -> None:
-        self._entries[key] = _Entry[T_value](value, make_deadline(time_to_live))
-
-    def set_default(self, key: str, value: T_value, time_to_live: Optional[timedelta] = None) -> None:
-        entry = _Entry[T_value](value, make_deadline(time_to_live))
-        self._entries.setdefault(key, entry)
+    def set(
+        self,
+        key: str,
+        value: T_wire,
+        *,
+        time_to_live: Optional[timedelta] = None,
+        if_not_exists: bool = False,
+    ) -> None:
+        entry = _Entry[T_wire](value, make_deadline(time_to_live))
+        if if_not_exists:
+            self._entries.setdefault(key, entry)
+        else:
+            self._entries[key] = _Entry[T_wire](value, make_deadline(time_to_live))
 
     def delete(self, key: str) -> bool:
         return self._entries.pop(key, _SENTINEL) is not _SENTINEL
 
-    def __delitem__(self, key: str) -> None:
-        del self._entries[key]
-
-    def _get_entry(self, key: str) -> _Entry[T_value]:
+    def _get_entry(self, key: str) -> _Entry[T_wire]:
         entry = self._entries[key]
         if entry.deadline is not None and entry.deadline <= datetime.now(timezone.utc):
             self._entries.pop(key, None)  # might get popped by another thread
@@ -50,17 +54,17 @@ class SyncMemoryBackend(Generic[T_value], SyncBackendRead[T_value], SyncBackendW
         return len(self._entries)
 
 
-class _Entry(Generic[T_value]):
+class _Entry(Generic[T_wire]):
     """
     `mypy` doesn't support generic named tuples, thus defining this little one.
     """
 
-    value: T_value
+    value: T_wire
     deadline: Optional[datetime]
 
     __slots__ = ("value", "deadline")
 
-    def __init__(self, value: T_value, deadline: Optional[datetime]):
+    def __init__(self, value: T_wire, deadline: Optional[datetime]):
         self.value = value
         self.deadline = deadline
 

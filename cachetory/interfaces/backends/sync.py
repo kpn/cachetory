@@ -8,62 +8,49 @@ but implementors SHOULD override them for the sake of performance.
 from __future__ import annotations
 
 from datetime import datetime, timedelta
-from typing import Dict, Iterable, Optional, Tuple, Union
+from typing import Iterable, Optional, Tuple
 
 from typing_extensions import Protocol
 
-from cachetory.interfaces.backends.shared import T_default, T_value, T_value_contra
+from cachetory.interfaces.backends.shared import T_wire, T_wire_contra, T_wire_cov
 from cachetory.private.datetime import make_deadline
 
 
-class SyncBackendRead(Protocol[T_value]):
+class SyncBackendRead(Protocol[T_wire_cov]):
     """
     Describes the read operations of a synchronous cache.
     """
 
-    def __getitem__(self, key: str) -> T_value:
+    def get(self, key: str) -> T_wire_cov:
         """
         Retrieve a value from the cache.
 
         Returns:
             Cached value, if it exists.
         Raises:
-            KeyError: the key doesn't exist in the cache.
+            KeyError: the key does not exist.
         """
         raise NotImplementedError
 
-    def get(self, key: str, default: T_default = None) -> Union[T_value, T_default]:  # type: ignore
-        """
-        Retrieve a value from the cache.
-
-        Returns:
-            Cached value or `None` if it doesn't exist.
-        """
-        try:
-            return self[key]
-        except KeyError:
-            return default
-
-    def get_many(self, *keys: str) -> Dict[str, T_value]:
+    def get_many(self, *keys: str) -> Iterable[Tuple[str, T_wire_cov]]:
         """
         Get all the values corresponding to the specified keys.
 
         Returns:
-            Existing values indexed by their corresponding keys.
-            Missing keys are omitted.
+            Existing key-value pairs.
         """
-        values = {}
+        entries = []
         for key in keys:
             try:
-                value = self[key]
+                value = self.get(key)
             except KeyError:
                 pass
             else:
-                values[key] = value
-        return values
+                entries.append((key, value))
+        return entries
 
 
-class SyncBackendWrite(Protocol[T_value_contra]):
+class SyncBackendWrite(Protocol[T_wire_contra]):
     """
     Describes the write operations of a synchronous cache.
     """
@@ -80,34 +67,30 @@ class SyncBackendWrite(Protocol[T_value_contra]):
         """
         raise NotImplementedError
 
-    def __setitem__(self, key: str, value: T_value_contra) -> None:
+    def set(
+        self,
+        key: str,
+        value: T_wire_contra,
+        *,
+        time_to_live: Optional[timedelta] = None,
+        if_not_exists: bool = False,
+    ) -> None:
         """
         Put the value into the cache, overwriting an existing one.
-        """
-        self.set(key, value, None)
-
-    def set(self, key: str, value: T_value_contra, time_to_live: Optional[timedelta] = None) -> None:
-        """
-        Put the value into the cache, overwriting an existing one.
-        """
-        raise NotImplementedError
-
-    def set_default(self, key: str, value: T_value_contra, time_to_live: Optional[timedelta] = None) -> None:
-        """
-        Put the value into the cache, only if it isn't already existing.
         """
         raise NotImplementedError
 
     def set_many(
         self,
-        items: Union[Iterable[Tuple[str, T_value_contra]]],
+        items: Iterable[Tuple[str, T_wire_contra]],
+        *,
         time_to_live: Optional[timedelta] = None,
     ) -> None:
         """
         Put all the specified values to the cache.
         """
         for (key, value) in items:
-            self.set(key, value, time_to_live)
+            self.set(key, value, time_to_live=time_to_live)
 
     def delete(self, key: str) -> bool:
         """
@@ -116,24 +99,10 @@ class SyncBackendWrite(Protocol[T_value_contra]):
         Returns:
             `True` if the key has existed, `False` otherwise.
         """
-        try:
-            del self[key]
-        except KeyError:
-            return False
-        else:
-            return True
-
-    def __delitem__(self, key: str) -> None:
-        """
-        Delete the key from the cache.
-
-        Raises:
-            KeyError: the key doesn't exist.
-        """
         raise NotImplementedError
 
 
-class SyncBackend(SyncBackendRead[T_value], SyncBackendWrite[T_value], Protocol[T_value]):
+class SyncBackend(SyncBackendRead[T_wire], SyncBackendWrite[T_wire], Protocol[T_wire]):
     """
     Generic synchronous cache backend.
     This is a shorthand to combine the read and write operations.

@@ -8,61 +8,48 @@ but implementors SHOULD override them for the sake of performance.
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
-from typing import Any, Awaitable, Dict, Iterable, Optional, Tuple, Union
+from typing import Iterable, Optional, Tuple
 
 from typing_extensions import Protocol
 
-from cachetory.interfaces.backends.shared import T_default, T_value, T_value_contra
+from cachetory.interfaces.backends.shared import T_wire, T_wire_contra, T_wire_cov
 
 
-class AsyncBackendRead(Protocol[T_value]):
+class AsyncBackendRead(Protocol[T_wire_cov]):
     """
     Describes the read operations of an asynchronous cache.
     """
 
-    def __getitem__(self, key: str) -> Awaitable[T_value]:
+    async def get(self, key: str) -> T_wire_cov:
         """
         Retrieve a value from the cache.
 
         Returns:
-            Awaitable of the cached value, if it exists.
+            Cached value, if it exists.
         Raises:
             KeyError: the key doesn't exist in the cache.
         """
         raise NotImplementedError
 
-    async def get(self, key: str, default: T_default = None) -> Union[T_value, T_default]:  # type: ignore
-        """
-        Retrieve a value from the cache.
-
-        Returns:
-            Cached value or `None` if it doesn't exist.
-        """
-        try:
-            return await self[key]
-        except KeyError:
-            return default
-
-    async def get_many(self, *keys: str) -> Dict[str, T_value]:
+    async def get_many(self, *keys: str) -> Iterable[Tuple[str, T_wire_cov]]:
         """
         Get all the values corresponding to the specified keys.
 
         Returns:
-            Existing values indexed by their corresponding keys.
-            Missing keys are omitted.
+            Existing key-value pairs.
         """
-        values = {}
+        entries = []
         for key in keys:
             try:
-                value = await self[key]
+                value = await self.get(key)
             except KeyError:
                 pass
             else:
-                values[key] = value
-        return values
+                entries.append((key, value))
+        return entries
 
 
-class AsyncBackendWrite(Protocol[T_value_contra]):
+class AsyncBackendWrite(Protocol[T_wire_contra]):
     """
     Describes the write operations of an asynchronous cache.
     """
@@ -80,28 +67,30 @@ class AsyncBackendWrite(Protocol[T_value_contra]):
         """
         raise NotImplementedError
 
-    async def set(self, key: str, value: T_value_contra, time_to_live: Optional[timedelta] = None) -> None:
+    async def set(
+        self,
+        key: str,
+        value: T_wire_contra,
+        *,
+        time_to_live: Optional[timedelta] = None,
+        if_not_exists: bool = False,
+    ) -> None:
         """
-        Put the value into the cache, overwriting an existing one.
-        """
-        raise NotImplementedError
-
-    async def set_default(self, key: str, value: T_value_contra, time_to_live: Optional[timedelta] = None) -> None:
-        """
-        Put the value into the cache, only if it isn't already existing.
+        Put the value into the cache.
         """
         raise NotImplementedError
 
     async def set_many(
         self,
-        items: Union[Iterable[Tuple[str, T_value_contra]]],
+        items: Iterable[Tuple[str, T_wire_contra]],
+        *,
         time_to_live: Optional[timedelta] = None,
     ) -> None:
         """
         Put all the specified values to the cache.
         """
         for (key, value) in items:
-            await self.set(key, value, time_to_live)
+            await self.set(key, value, time_to_live=time_to_live)
 
     async def delete(self, key: str) -> bool:
         """
@@ -112,16 +101,8 @@ class AsyncBackendWrite(Protocol[T_value_contra]):
         """
         raise NotImplementedError
 
-    def __setitem__(self, _key: Any, _value: Any):
-        # Can't return an awaitable from it.
-        raise ValueError("this operation is not supported on an async backend")
 
-    def __delitem__(self, _key: Any, _value: Any):
-        # Can't return an awaitable from it.
-        raise ValueError("this operation is not supported on an async backend")
-
-
-class AsyncBackend(AsyncBackendRead[T_value], AsyncBackendWrite[T_value], Protocol[T_value]):
+class AsyncBackend(AsyncBackendRead[T_wire], AsyncBackendWrite[T_wire], Protocol[T_wire]):
     """
     Generic asynchronous cache backend.
     """
