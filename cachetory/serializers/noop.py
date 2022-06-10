@@ -1,7 +1,6 @@
 from typing import Generic
 
-from cachetory.interfaces.serializers import Serializer
-from cachetory.serializers.shared import T_value
+from cachetory.interfaces.serializers import Serializer, T_value
 
 
 class NoopSerializer(Generic[T_value], Serializer[T_value, T_value]):

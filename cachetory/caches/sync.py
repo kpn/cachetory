@@ -4,8 +4,7 @@ from typing import Dict, Generic, Iterable, Mapping, Optional, Tuple, Union
 from cachetory.caches.shared import T_default
 from cachetory.interfaces.backends.shared import T_wire
 from cachetory.interfaces.backends.sync import SyncBackend
-from cachetory.interfaces.serializers import Serializer
-from cachetory.serializers.shared import T_value
+from cachetory.interfaces.serializers import Serializer, T_value
 
 
 class Cache(Generic[T_value]):

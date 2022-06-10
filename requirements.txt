@@ -1,5 +1,5 @@
 # Package in develop mode
--e .
+-e .[zstd]
 
 # Distribution
 twine

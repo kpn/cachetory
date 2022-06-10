@@ -24,6 +24,9 @@ setup(
     install_requires=[
         "typing-extensions>=4.2.0,<5.0.0",
     ],
+    extras_require={
+        "zstd": ["zstd>=1.5.2.5,<2.0.0.0"],
+    },
     tests_require=["tox"],
     include_package_data=True,
     zip_safe=False,
