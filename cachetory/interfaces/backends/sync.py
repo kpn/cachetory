@@ -1,5 +1,5 @@
 """
-Cache backend protocol descriptors.
+Sync cache backend protocol descriptors.
 
 Note, that some methods provide reasonable default implementation,
 but implementors SHOULD override them for the sake of performance.
@@ -52,7 +52,7 @@ class SyncBackendRead(Protocol[TV]):
         except KeyError:
             return default
 
-    def get_all(self, *keys: str) -> Dict[str, TV]:
+    def get_many(self, *keys: str) -> Dict[str, TV]:
         """
         Get all the values corresponding to the specified keys.
 
@@ -101,7 +101,7 @@ class SyncBackendWrite(Protocol[TV_contra]):
         """
         raise NotImplementedError
 
-    def set_all(
+    def set_many(
         self,
         items: Union[Iterable[Tuple[str, TV_contra]]],
         time_to_live: Optional[timedelta] = None,

@@ -26,7 +26,6 @@ omit = ["tests/*"]
 
 [tool.mypy]
 no_implicit_optional = true
-plugins = ["mypy_typing_asserts.mypy_plugin"]
 
 [build-system]
 requires = ["setuptools>=42", "wheel", "setuptools_scm[toml]>=3.4"]

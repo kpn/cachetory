@@ -3,21 +3,14 @@ from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 from typing import Dict, Generic, Optional
 
-from cachetory.interfaces.backend import TV, SyncBackendRead, SyncBackendWrite
+from cachetory.interfaces.backends.sync import TV, SyncBackendRead, SyncBackendWrite
 
 
-class MemoryBackend(SyncBackendRead[TV], SyncBackendWrite[TV]):
+class SyncMemoryBackend(SyncBackendRead[TV], SyncBackendWrite[TV]):
     __slots__ = ("_entries",)
 
     def __init__(self):
         self._entries: Dict[str, _Entry[TV]] = {}
-
-    def _get_entry(self, key: str) -> _Entry[TV]:
-        entry = self._entries[key]
-        if entry.deadline is not None and entry.deadline > datetime.now(timezone.utc):
-            self._entries.pop(key, None)  # might get popped by another thread
-            raise KeyError(f"`{key}` has expired")
-        return entry
 
     def __getitem__(self, key: str) -> TV:
         return self._get_entry(key).value
@@ -35,10 +28,21 @@ class MemoryBackend(SyncBackendRead[TV], SyncBackendWrite[TV]):
         self._entries[key] = _Entry[TV](value, deadline)
 
     def delete(self, key: str) -> bool:
-        return self._entries.pop(key, _SENTINEL) is _SENTINEL
+        return self._entries.pop(key, _SENTINEL) is not _SENTINEL
 
     def __delitem__(self, key: str) -> None:
         del self._entries[key]
+
+    def _get_entry(self, key: str) -> _Entry[TV]:
+        entry = self._entries[key]
+        if entry.deadline is not None and entry.deadline <= datetime.now(timezone.utc):
+            self._entries.pop(key, None)  # might get popped by another thread
+            raise KeyError(f"`{key}` has expired")
+        return entry
+
+    @property
+    def size(self) -> int:
+        return len(self._entries)
 
 
 class _Entry(Generic[TV]):
