@@ -12,15 +12,15 @@ from typing import Any, Awaitable, Dict, Iterable, Optional, Tuple, Union
 
 from typing_extensions import Protocol
 
-from cachetory.interfaces.backends.shared import TV, T_default, TV_contra
+from cachetory.interfaces.backends.shared import T_default, T_value, T_value_contra
 
 
-class AsyncBackendRead(Protocol[TV]):
+class AsyncBackendRead(Protocol[T_value]):
     """
     Describes the read operations of an asynchronous cache.
     """
 
-    def __getitem__(self, key: str) -> Awaitable[TV]:
+    def __getitem__(self, key: str) -> Awaitable[T_value]:
         """
         Retrieve a value from the cache.
 
@@ -31,7 +31,7 @@ class AsyncBackendRead(Protocol[TV]):
         """
         raise NotImplementedError
 
-    async def get(self, key: str, default: T_default = None) -> Union[TV, T_default]:  # type: ignore
+    async def get(self, key: str, default: T_default = None) -> Union[T_value, T_default]:  # type: ignore
         """
         Retrieve a value from the cache.
 
@@ -43,7 +43,7 @@ class AsyncBackendRead(Protocol[TV]):
         except KeyError:
             return default
 
-    async def get_many(self, *keys: str) -> Dict[str, TV]:
+    async def get_many(self, *keys: str) -> Dict[str, T_value]:
         """
         Get all the values corresponding to the specified keys.
 
@@ -62,7 +62,7 @@ class AsyncBackendRead(Protocol[TV]):
         return values
 
 
-class AsyncBackendWrite(Protocol[TV_contra]):
+class AsyncBackendWrite(Protocol[T_value_contra]):
     """
     Describes the write operations of an asynchronous cache.
     """
@@ -80,13 +80,13 @@ class AsyncBackendWrite(Protocol[TV_contra]):
         """
         raise NotImplementedError
 
-    async def set(self, key: str, value: TV_contra, time_to_live: Optional[timedelta] = None) -> None:
+    async def set(self, key: str, value: T_value_contra, time_to_live: Optional[timedelta] = None) -> None:
         """
         Put the value into the cache, overwriting an existing one.
         """
         raise NotImplementedError
 
-    async def set_default(self, key: str, value: TV_contra, time_to_live: Optional[timedelta] = None) -> None:
+    async def set_default(self, key: str, value: T_value_contra, time_to_live: Optional[timedelta] = None) -> None:
         """
         Put the value into the cache, only if it isn't already existing.
         """
@@ -94,7 +94,7 @@ class AsyncBackendWrite(Protocol[TV_contra]):
 
     async def set_many(
         self,
-        items: Union[Iterable[Tuple[str, TV_contra]]],
+        items: Union[Iterable[Tuple[str, T_value_contra]]],
         time_to_live: Optional[timedelta] = None,
     ) -> None:
         """
@@ -121,7 +121,7 @@ class AsyncBackendWrite(Protocol[TV_contra]):
         raise ValueError("this operation is not supported on an async backend")
 
 
-class AsyncBackend(AsyncBackendRead[TV], AsyncBackendWrite[TV], Protocol[TV]):
+class AsyncBackend(AsyncBackendRead[T_value], AsyncBackendWrite[T_value], Protocol[T_value]):
     """
     Generic asynchronous cache backend.
     """

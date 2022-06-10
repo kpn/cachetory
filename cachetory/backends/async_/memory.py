@@ -3,18 +3,18 @@ from typing import Any, Awaitable, Coroutine, Generic, Optional
 
 from cachetory.backends.sync.memory import SyncMemoryBackend
 from cachetory.interfaces.backends.async_ import AsyncBackendRead, AsyncBackendWrite
-from cachetory.interfaces.backends.shared import TV
+from cachetory.interfaces.backends.shared import T_value
 from cachetory.private.asyncio import postpone
 
 
-class AsyncMemoryBackend(Generic[TV], AsyncBackendRead[TV], AsyncBackendWrite[TV]):
+class AsyncMemoryBackend(Generic[T_value], AsyncBackendRead[T_value], AsyncBackendWrite[T_value]):
     __slots__ = ("_backend",)
 
     def __init__(self):
         # We'll simply delegate call to the wrapped backend.
         self._backend = SyncMemoryBackend()
 
-    def __getitem__(self, key: str) -> Awaitable[TV]:
+    def __getitem__(self, key: str) -> Awaitable[T_value]:
         # We want to retrieve a value when the awaitable gets actually awaited,
         # and that might happen somewhat later allowing the backend to change in the meantime.
         return postpone(self._backend.__getitem__, key)
@@ -25,7 +25,7 @@ class AsyncMemoryBackend(Generic[TV], AsyncBackendRead[TV], AsyncBackendWrite[TV
     def set(
         self,
         key: str,
-        value: TV,
+        value: T_value,
         time_to_live: Optional[timedelta] = None,
     ) -> Coroutine[Any, Any, None]:
         return postpone(self._backend.set, key, value, time_to_live)
@@ -33,7 +33,7 @@ class AsyncMemoryBackend(Generic[TV], AsyncBackendRead[TV], AsyncBackendWrite[TV
     def set_default(
         self,
         key: str,
-        value: TV,
+        value: T_value,
         time_to_live: Optional[timedelta] = None,
     ) -> Coroutine[Any, Any, None]:
         return postpone(self._backend.set_default, key, value, time_to_live)

@@ -12,16 +12,16 @@ from typing import Dict, Iterable, Optional, Tuple, Union
 
 from typing_extensions import Protocol
 
-from cachetory.interfaces.backends.shared import TV, T_default, TV_contra
+from cachetory.interfaces.backends.shared import T_default, T_value, T_value_contra
 from cachetory.private.datetime import make_deadline
 
 
-class SyncBackendRead(Protocol[TV]):
+class SyncBackendRead(Protocol[T_value]):
     """
     Describes the read operations of a synchronous cache.
     """
 
-    def __getitem__(self, key: str) -> TV:
+    def __getitem__(self, key: str) -> T_value:
         """
         Retrieve a value from the cache.
 
@@ -32,7 +32,7 @@ class SyncBackendRead(Protocol[TV]):
         """
         raise NotImplementedError
 
-    def get(self, key: str, default: T_default = None) -> Union[TV, T_default]:  # type: ignore
+    def get(self, key: str, default: T_default = None) -> Union[T_value, T_default]:  # type: ignore
         """
         Retrieve a value from the cache.
 
@@ -44,7 +44,7 @@ class SyncBackendRead(Protocol[TV]):
         except KeyError:
             return default
 
-    def get_many(self, *keys: str) -> Dict[str, TV]:
+    def get_many(self, *keys: str) -> Dict[str, T_value]:
         """
         Get all the values corresponding to the specified keys.
 
@@ -63,7 +63,7 @@ class SyncBackendRead(Protocol[TV]):
         return values
 
 
-class SyncBackendWrite(Protocol[TV_contra]):
+class SyncBackendWrite(Protocol[T_value_contra]):
     """
     Describes the write operations of a synchronous cache.
     """
@@ -80,19 +80,19 @@ class SyncBackendWrite(Protocol[TV_contra]):
         """
         raise NotImplementedError
 
-    def __setitem__(self, key: str, value: TV_contra) -> None:
+    def __setitem__(self, key: str, value: T_value_contra) -> None:
         """
         Put the value into the cache, overwriting an existing one.
         """
         self.set(key, value, None)
 
-    def set(self, key: str, value: TV_contra, time_to_live: Optional[timedelta] = None) -> None:
+    def set(self, key: str, value: T_value_contra, time_to_live: Optional[timedelta] = None) -> None:
         """
         Put the value into the cache, overwriting an existing one.
         """
         raise NotImplementedError
 
-    def set_default(self, key: str, value: TV_contra, time_to_live: Optional[timedelta] = None) -> None:
+    def set_default(self, key: str, value: T_value_contra, time_to_live: Optional[timedelta] = None) -> None:
         """
         Put the value into the cache, only if it isn't already existing.
         """
@@ -100,7 +100,7 @@ class SyncBackendWrite(Protocol[TV_contra]):
 
     def set_many(
         self,
-        items: Union[Iterable[Tuple[str, TV_contra]]],
+        items: Union[Iterable[Tuple[str, T_value_contra]]],
         time_to_live: Optional[timedelta] = None,
     ) -> None:
         """
@@ -133,7 +133,7 @@ class SyncBackendWrite(Protocol[TV_contra]):
         raise NotImplementedError
 
 
-class SyncBackend(SyncBackendRead[TV], SyncBackendWrite[TV], Protocol[TV]):
+class SyncBackend(SyncBackendRead[T_value], SyncBackendWrite[T_value], Protocol[T_value]):
     """
     Generic synchronous cache backend.
     This is a shorthand to combine the read and write operations.
