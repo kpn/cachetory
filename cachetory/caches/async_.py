@@ -49,10 +49,7 @@ class Cache(Generic[T_value]):
     ) -> None:
         if isinstance(items, Mapping):
             items = items.items()
-        await self._backend.set_many(
-            ((key, self._serializer.serialize(value)) for key, value in items),
-            time_to_live=time_to_live,
-        )
+        await self._backend.set_many((key, self._serializer.serialize(value)) for key, value in items)
 
     async def delete(self, key: str) -> bool:
         return await self._backend.delete(key)

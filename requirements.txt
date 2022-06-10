@@ -1,5 +1,5 @@
 # Package in develop mode
--e .[zstd]
+-e .[redis,zstd]
 
 # Distribution
 twine
@@ -23,3 +23,4 @@ freezegun
 # Typing
 types-mock
 types-freezegun
+types-redis

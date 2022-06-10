@@ -49,14 +49,10 @@ class Cache(Generic[T_value]):
     def set_many(
         self,
         items: Union[Iterable[Tuple[str, T_value]], Mapping[str, T_value]],
-        time_to_live: Optional[timedelta] = None,
     ) -> None:
         if isinstance(items, Mapping):
             items = items.items()
-        self._backend.set_many(
-            ((key, self._serializer.serialize(value)) for key, value in items),
-            time_to_live=time_to_live,
-        )
+        self._backend.set_many((key, self._serializer.serialize(value)) for key, value in items)
 
     def delete(self, key: str) -> bool:
         return self._backend.delete(key)

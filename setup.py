@@ -26,6 +26,7 @@ setup(
     ],
     extras_require={
         "zstd": ["zstd>=1.5.2.5,<2.0.0.0"],
+        "redis": ["redis>=4.3.3,<5.0.0"],
     },
     tests_require=["tox"],
     include_package_data=True,

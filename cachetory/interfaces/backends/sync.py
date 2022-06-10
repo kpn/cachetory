@@ -80,17 +80,12 @@ class SyncBackendWrite(Protocol[T_wire_contra]):
         """
         raise NotImplementedError
 
-    def set_many(
-        self,
-        items: Iterable[Tuple[str, T_wire_contra]],
-        *,
-        time_to_live: Optional[timedelta] = None,
-    ) -> None:
+    def set_many(self, items: Iterable[Tuple[str, T_wire_contra]]) -> None:
         """
         Put all the specified values to the cache.
         """
         for (key, value) in items:
-            self.set(key, value, time_to_live=time_to_live)
+            self.set(key, value)
 
     def delete(self, key: str) -> bool:
         """
