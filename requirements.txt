@@ -7,7 +7,8 @@ wheel
 
 # Code style
 mypy
-isort[pyproject]
+isort; python_version < '3.8'
+isort[pyproject]; python_version >= '3.8'
 flake8
 black
 
