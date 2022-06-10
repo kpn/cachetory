@@ -1,3 +1,4 @@
+import os
 from typing import Generator
 
 from pytest import fixture, mark
@@ -9,7 +10,7 @@ test_redis = mark.skipif("not config.getoption('test_redis')")
 
 @fixture
 def backend() -> Generator[SyncRedisBackend, None, None]:
-    backend = SyncRedisBackend()
+    backend = SyncRedisBackend.from_url(os.environ.get("REDIS_URL", "redis://localhost:6379"))
     try:
         yield backend
     finally:

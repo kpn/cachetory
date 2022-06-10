@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import itertools
 from datetime import datetime, timedelta
 from typing import Iterable, Optional, Tuple
@@ -8,8 +10,12 @@ from cachetory.interfaces.backends.sync import SyncBackendRead, SyncBackendWrite
 
 
 class SyncRedisBackend(SyncBackendRead[bytes], SyncBackendWrite[bytes]):
-    def __init__(self):
-        self._client = redis.StrictRedis()
+    @classmethod
+    def from_url(cls, url: str) -> SyncRedisBackend:
+        return cls(redis.Redis.from_url(url))
+
+    def __init__(self, client: redis.Redis):
+        self._client = client
 
     def get(self, key: str) -> bytes:
         data = self._client.get(key)
