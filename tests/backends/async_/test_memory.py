@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 
-from pytest import mark, raises, fixture
 from freezegun import freeze_time
+from pytest import fixture, mark
 
 from cachetory.backends.async_.memory import AsyncMemoryBackend
 
