@@ -107,3 +107,7 @@ class AsyncBackend(AsyncBackendRead[T_wire], AsyncBackendWrite[T_wire], Protocol
     """
     Generic asynchronous cache backend.
     """
+
+    @classmethod
+    async def from_url(cls, url: str) -> AsyncBackend:
+        raise NotImplementedError

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import TypeVar
 
 from typing_extensions import Protocol
@@ -36,3 +38,7 @@ class Serializer(Serialize[T_value, T_wire], Deserialize[T_value, T_wire], Proto
     """
     Combines `serialize` and `deserialize` in one protocol.
     """
+
+    @classmethod
+    def from_url(cls, url: str) -> Serializer[T_value, T_wire]:
+        raise NotImplementedError

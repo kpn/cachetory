@@ -107,3 +107,7 @@ class SyncBackend(SyncBackendRead[T_wire], SyncBackendWrite[T_wire], Protocol[T_
     """
     Generic synchronous cache backend.
     """
+
+    @classmethod
+    def from_url(cls, url: str) -> SyncBackend:
+        raise NotImplementedError

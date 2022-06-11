@@ -1,26 +1,42 @@
-from typing import Generic
+from __future__ import annotations
+
+from urllib.parse import parse_qs, urlparse
 
 import zstd  # type: ignore
 
-from cachetory.interfaces.serializers import Serializer, T_value
+from cachetory.interfaces.serializers import Serializer
 
 
-class ZstdCompressor(Generic[T_value], Serializer[T_value, bytes]):
+class ZstdCompressor(Serializer[bytes, bytes]):
     """
-    Wraps inner serializer with Zstandard compression.
+    Compresses and decompresses a byte array into a byte array.
     """
 
-    __slots__ = ("inner", "level", "threads")
+    __slots__ = ("level", "threads")
 
-    def __init__(self, inner: Serializer[T_value, bytes], *, level: int = 3, threads: int = 0):
-        self._inner = inner
-        self._level = level
-        self._threads = threads
+    @classmethod
+    def from_url(cls, url: str) -> ZstdCompressor:
+        parsed_url = urlparse(url)
+        params = parse_qs(parsed_url.query)
 
-    def serialize(self, value: T_value) -> bytes:
-        data = self._inner.serialize(value)
-        return zstd.compress(data, self._level, self._threads)
+        try:
+            compression_level = int(params["compression_level"][0])
+        except (KeyError, IndexError):
+            compression_level = 3
 
-    def deserialize(self, data: bytes) -> T_value:
-        data = zstd.decompress(data)
-        return self._inner.deserialize(data)
+        return cls(compression_level=compression_level)
+
+    def __init__(
+        self,
+        *,
+        compression_level: int = 3,
+        compression_threads: int = 0,
+    ):
+        self._level = compression_level
+        self._threads = compression_threads
+
+    def serialize(self, value: bytes) -> bytes:
+        return zstd.compress(value, self._level, self._threads)
+
+    def deserialize(self, data: bytes) -> bytes:
+        return zstd.decompress(data)
