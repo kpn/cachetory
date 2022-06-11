@@ -4,12 +4,16 @@ from datetime import datetime, timedelta, timezone
 from typing import Dict, Generic, Optional
 
 from cachetory.interfaces.backends.shared import T_wire
-from cachetory.interfaces.backends.sync import SyncBackendRead, SyncBackendWrite
+from cachetory.interfaces.backends.sync import SyncBackend
 from cachetory.private.datetime import make_deadline
 
 
-class SyncMemoryBackend(Generic[T_wire], SyncBackendRead[T_wire], SyncBackendWrite[T_wire]):
+class SyncMemoryBackend(Generic[T_wire], SyncBackend[T_wire]):
     __slots__ = ("_entries",)
+
+    @classmethod
+    def from_url(cls, _url: str) -> SyncMemoryBackend:
+        return SyncMemoryBackend()
 
     def __init__(self):
         self._entries: Dict[str, _Entry[T_wire]] = {}

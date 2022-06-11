@@ -106,7 +106,4 @@ class SyncBackendWrite(Protocol[T_wire_contra]):
 class SyncBackend(SyncBackendRead[T_wire], SyncBackendWrite[T_wire], Protocol[T_wire]):
     """
     Generic synchronous cache backend.
-    This is a shorthand to combine the read and write operations.
-    At the time of writing there seemed no way to please `mypy`
-    while defining all the operations in a single protocol class.
     """

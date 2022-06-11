@@ -6,10 +6,10 @@ from typing import Iterable, Optional, Tuple
 
 import redis
 
-from cachetory.interfaces.backends.sync import SyncBackendRead, SyncBackendWrite
+from cachetory.interfaces.backends.sync import SyncBackend
 
 
-class SyncRedisBackend(SyncBackendRead[bytes], SyncBackendWrite[bytes]):
+class SyncRedisBackend(SyncBackend[bytes]):
     @classmethod
     def from_url(cls, url: str) -> SyncRedisBackend:
         return cls(redis.Redis.from_url(url))
