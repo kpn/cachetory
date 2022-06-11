@@ -25,8 +25,9 @@ setup(
         "typing-extensions>=4.2.0,<5.0.0",
     ],
     extras_require={
+        "redis-async": ["aioredis>=2.0.1,<3.0.0"],
+        "redis-sync": ["redis>=4.3.3,<5.0.0"],
         "zstd": ["zstd>=1.5.2.5,<2.0.0.0"],
-        "redis": ["redis>=4.3.3,<5.0.0"],
     },
     tests_require=["tox"],
     include_package_data=True,

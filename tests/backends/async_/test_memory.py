@@ -46,7 +46,7 @@ async def test_delete_missing(backend: AsyncMemoryBackend[int]):
 async def test_set_get_many(backend: AsyncMemoryBackend[int]):
     await backend.set_many([("foo", 42), ("bar", 100500)])
     assert backend.size == 2
-    assert await backend.get_many("foo", "bar") == [("foo", 42), ("bar", 100500)]
+    assert [entry async for entry in backend.get_many("foo", "bar")] == [("foo", 42), ("bar", 100500)]
 
 
 @mark.asyncio

@@ -8,7 +8,7 @@ but implementors SHOULD override them for the sake of performance.
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
-from typing import Iterable, Optional, Tuple
+from typing import AsyncIterable, Iterable, Optional, Tuple
 
 from typing_extensions import Protocol
 
@@ -31,22 +31,20 @@ class AsyncBackendRead(Protocol[T_wire_cov]):
         """
         raise NotImplementedError
 
-    async def get_many(self, *keys: str) -> Iterable[Tuple[str, T_wire_cov]]:
+    async def get_many(self, *keys: str) -> AsyncIterable[Tuple[str, T_wire_cov]]:
         """
         Get all the values corresponding to the specified keys.
 
         Returns:
             Existing key-value pairs.
         """
-        entries = []
         for key in keys:
             try:
                 value = await self.get(key)
             except KeyError:
                 pass
             else:
-                entries.append((key, value))
-        return entries
+                yield key, value
 
 
 class AsyncBackendWrite(Protocol[T_wire_contra]):

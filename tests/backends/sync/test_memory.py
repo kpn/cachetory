@@ -40,7 +40,7 @@ def test_delete_missing(backend: SyncMemoryBackend[int]):
 def test_set_get_many(backend: SyncMemoryBackend[int]):
     backend.set_many([("foo", 42), ("bar", 100500)])
     assert backend.size == 2
-    assert backend.get_many("foo", "bar") == [("foo", 42), ("bar", 100500)]
+    assert list(backend.get_many("foo", "bar")) == [("foo", 42), ("bar", 100500)]
 
 
 def test_set_with_ttl(backend: SyncMemoryBackend[int]):

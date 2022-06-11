@@ -39,15 +39,13 @@ class SyncBackendRead(Protocol[T_wire_cov]):
         Returns:
             Existing key-value pairs.
         """
-        entries = []
         for key in keys:
             try:
                 value = self.get(key)
             except KeyError:
                 pass
             else:
-                entries.append((key, value))
-        return entries
+                yield key, value
 
 
 class SyncBackendWrite(Protocol[T_wire_contra]):

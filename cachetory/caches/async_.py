@@ -23,7 +23,7 @@ class Cache(Generic[T_value]):
             return self._serializer.deserialize(data)
 
     async def get_many(self, *keys: str) -> Dict[str, T_value]:
-        return {key: self._serializer.deserialize(data) for key, data in await self._backend.get_many(*keys)}
+        return {key: self._serializer.deserialize(data) async for key, data in self._backend.get_many(*keys)}
 
     async def expire_in(self, key: str, time_to_live: Optional[timedelta] = None) -> None:
         return await self._backend.expire_in(key, time_to_live)

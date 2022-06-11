@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta
-from typing import Generic, Iterable, Optional, Tuple
+from typing import AsyncIterable, Generic, Iterable, Optional, Tuple
 
 from cachetory.interfaces.backends.async_ import AsyncBackend
 from cachetory.interfaces.backends.private import T_wire
@@ -15,8 +15,9 @@ class AsyncDummyBackend(Generic[T_wire], AsyncBackend[T_wire]):
     async def get(self, key: str) -> T_wire:
         raise KeyError(key)
 
-    async def get_many(self, *keys: str) -> Iterable[Tuple[str, T_wire]]:
-        return []
+    async def get_many(self, *keys: str) -> AsyncIterable[Tuple[str, T_wire]]:
+        for _ in ():
+            yield ()  # type: ignore
 
     async def expire_in(self, key: str, time_to_live: Optional[timedelta] = None) -> None:
         return None
