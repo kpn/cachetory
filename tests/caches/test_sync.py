@@ -7,7 +7,7 @@ from cachetory.caches.sync import Cache
 @fixture
 def cache() -> Cache[int]:
     return Cache(
-        serializer=serializers.from_url("pickle+zstd://"),
+        serializer=serializers.from_url("pickle+zstd://pickle-protocol=5&compression-level=3"),
         backend=backends.sync.from_url("memory://"),
     )
 

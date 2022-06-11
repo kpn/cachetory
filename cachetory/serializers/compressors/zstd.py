@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from contextlib import suppress
 from urllib.parse import parse_qs, urlparse
 
 import zstd  # type: ignore
@@ -12,19 +13,17 @@ class ZstdCompressor(Serializer[bytes, bytes]):
     Compresses and decompresses a byte array into a byte array.
     """
 
-    __slots__ = ("level", "threads")
+    __slots__ = ("_level", "_threads")
 
     @classmethod
     def from_url(cls, url: str) -> ZstdCompressor:
-        parsed_url = urlparse(url)
-        params = parse_qs(parsed_url.query)
-
-        try:
-            compression_level = int(params["compression_level"][0])
-        except (KeyError, IndexError):
-            compression_level = 3
-
-        return cls(compression_level=compression_level)
+        params = parse_qs(urlparse(url).query)
+        parsed_params = {}
+        with suppress(KeyError, IndexError):
+            parsed_params["compression_level"] = int(params["compression-level"][0])
+        with suppress(KeyError, IndexError):
+            parsed_params["compression_threads"] = int(params["compression-threads"][0])
+        return cls(**parsed_params)
 
     def __init__(
         self,
