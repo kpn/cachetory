@@ -71,3 +71,9 @@ def test_expire_in(backend: SyncMemoryBackend[int]):
     with freeze_time("2022-06-10 21:50:00"), raises(KeyError):
         assert backend.get("foo")
     assert backend.size == 0
+
+
+def test_clear(backend: SyncMemoryBackend[int]):
+    backend.set("foo", 42)
+    backend.clear()
+    assert backend.size == 0

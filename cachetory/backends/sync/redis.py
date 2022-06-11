@@ -55,3 +55,6 @@ class SyncRedisBackend(SyncBackendRead[bytes], SyncBackendWrite[bytes]):
 
     def delete(self, key: str) -> bool:
         return bool(self._client.delete(key))
+
+    def clear(self) -> None:
+        self._client.flushdb()

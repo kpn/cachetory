@@ -96,6 +96,12 @@ class SyncBackendWrite(Protocol[T_wire_contra]):
         """
         raise NotImplementedError
 
+    def clear(self) -> None:
+        """
+        Clears the backend storage.
+        """
+        raise NotImplementedError
+
 
 class SyncBackend(SyncBackendRead[T_wire], SyncBackendWrite[T_wire], Protocol[T_wire]):
     """

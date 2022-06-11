@@ -81,3 +81,10 @@ async def test_expire_in(backend: AsyncMemoryBackend[int]):
     with freeze_time("2022-06-10 21:50:00"), raises(KeyError):
         assert await backend.get("foo")
     assert backend.size == 0
+
+
+@mark.asyncio
+async def test_clear(backend: AsyncMemoryBackend[int]):
+    await backend.set("foo", 42)
+    await backend.clear()
+    assert backend.size == 0

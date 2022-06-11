@@ -13,7 +13,7 @@ def backend() -> Generator[SyncRedisBackend, None, None]:
     try:
         yield backend
     finally:
-        backend._client.flushdb()  # TODO: add `.clear()` to cache backends.
+        backend.clear()
 
 
 @test_redis

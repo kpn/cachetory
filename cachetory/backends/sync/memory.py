@@ -42,6 +42,9 @@ class SyncMemoryBackend(Generic[T_wire], SyncBackendRead[T_wire], SyncBackendWri
     def delete(self, key: str) -> bool:
         return self._entries.pop(key, _SENTINEL) is not _SENTINEL
 
+    def clear(self) -> None:
+        self._entries.clear()
+
     def _get_entry(self, key: str) -> _Entry[T_wire]:
         entry = self._entries[key]
         if entry.deadline is not None and entry.deadline <= datetime.now(timezone.utc):

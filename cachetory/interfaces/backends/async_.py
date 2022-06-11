@@ -96,6 +96,12 @@ class AsyncBackendWrite(Protocol[T_wire_contra]):
         """
         raise NotImplementedError
 
+    async def clear(self) -> None:
+        """
+        Clears the backend storage.
+        """
+        raise NotImplementedError
+
 
 class AsyncBackend(AsyncBackendRead[T_wire], AsyncBackendWrite[T_wire], Protocol[T_wire]):
     """

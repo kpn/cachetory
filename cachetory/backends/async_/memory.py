@@ -39,6 +39,9 @@ class AsyncMemoryBackend(Generic[T_wire], AsyncBackendRead[T_wire], AsyncBackend
     def delete(self, key: str) -> Coroutine[Any, Any, bool]:
         return postpone(self._backend.delete, key)
 
+    def clear(self) -> Coroutine[Any, Any, None]:
+        return postpone(self._backend.clear)
+
     @property
     def size(self) -> int:
         return self._backend.size
