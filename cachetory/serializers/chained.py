@@ -5,9 +5,17 @@ from urllib.parse import urlparse
 
 from cachetory.interfaces.backends.private import T_wire
 from cachetory.interfaces.serializers import Serializer, T_value
-from cachetory.serializers.compressors import ZstdCompressor
+from cachetory.serializers.compressors.zlib import ZlibCompressor
 from cachetory.serializers.noop import NoopSerializer
 from cachetory.serializers.pickle import PickleSerializer
+
+try:
+    # noinspection PyUnresolvedReferences
+    from cachetory.serializers.compressors import ZstdCompressor
+except ImportError:
+    is_zstd_available = False
+else:
+    is_zstd_available = True
 
 
 class ChainedSerializer(Generic[T_value, T_wire], Serializer[T_value, T_wire]):
@@ -44,6 +52,8 @@ class ChainedSerializer(Generic[T_value, T_wire], Serializer[T_value, T_wire]):
             return PickleSerializer.from_url(url)
         if scheme in ("noop", "null"):
             return NoopSerializer.from_url(url)
-        if scheme == "zstd":
+        if scheme == "zstd" and is_zstd_available:
             return ZstdCompressor.from_url(url)
+        if scheme == "zlib":
+            return ZlibCompressor.from_url(url)
         raise ValueError(f"`{scheme}://` is not supported")

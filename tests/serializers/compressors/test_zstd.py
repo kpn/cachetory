@@ -1,4 +1,4 @@
-from cachetory.serializers.compressors import ZstdCompressor
+from cachetory.serializers.compressors.zstd import ZstdCompressor
 
 
 def test_serialize_deserialize():

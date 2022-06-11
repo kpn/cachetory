@@ -1,3 +1,5 @@
+from .zlib import ZlibCompressor  # noqa
+
 try:
     from .zstd import ZstdCompressor  # noqa
 except ImportError:

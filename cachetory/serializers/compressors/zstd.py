@@ -9,10 +9,6 @@ from cachetory.interfaces.serializers import Serializer
 
 
 class ZstdCompressor(Serializer[bytes, bytes]):
-    """
-    Compresses and decompresses a byte array into a byte array.
-    """
-
     __slots__ = ("_level", "_threads")
 
     @classmethod

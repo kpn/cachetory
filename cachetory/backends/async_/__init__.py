@@ -9,9 +9,9 @@ try:
     # noinspection PyUnresolvedReferences
     from .redis import AsyncRedisBackend
 except ImportError:
-    is_redis_enabled = False
+    is_redis_available = False
 else:
-    is_redis_enabled = True
+    is_redis_available = True
 
 
 async def from_url(url: str) -> AsyncBackend:
@@ -19,9 +19,9 @@ async def from_url(url: str) -> AsyncBackend:
     scheme = parsed_url.scheme
     if scheme == "memory":
         return await AsyncMemoryBackend.from_url(url)
-    if scheme in ("redis", "rediss") and is_redis_enabled:
+    if scheme in ("redis", "rediss") and is_redis_available:
         return await AsyncRedisBackend.from_url(url)
-    if scheme == "redis+unix" and is_redis_enabled:
+    if scheme == "redis+unix" and is_redis_available:
         return await AsyncRedisBackend.from_url(url[6:])  # unix://…
     if scheme == "dummy":
         return await AsyncDummyBackend.from_url(url)
