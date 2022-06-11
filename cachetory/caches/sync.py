@@ -1,8 +1,8 @@
 from datetime import timedelta
 from typing import Dict, Generic, Iterable, Mapping, Optional, Tuple, Union
 
-from cachetory.caches.shared import T_default
-from cachetory.interfaces.backends.shared import T_wire
+from cachetory.caches.private import T_default
+from cachetory.interfaces.backends.private import T_wire
 from cachetory.interfaces.backends.sync import SyncBackend
 from cachetory.interfaces.serializers import Serializer, T_value
 
@@ -10,7 +10,7 @@ from cachetory.interfaces.serializers import Serializer, T_value
 class Cache(Generic[T_value]):
     __slots__ = ("_serializer", "_backend")
 
-    def __init__(self, serializer: Serializer[T_value, T_wire], backend: SyncBackend[T_wire]):
+    def __init__(self, *, serializer: Serializer[T_value, T_wire], backend: SyncBackend[T_wire]):
         self._serializer = serializer
         self._backend = backend
 

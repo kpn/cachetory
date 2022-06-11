@@ -5,7 +5,7 @@ from typing import Any, Coroutine, Generic, Optional
 
 from cachetory.backends.sync.memory import SyncMemoryBackend
 from cachetory.interfaces.backends.async_ import AsyncBackend
-from cachetory.interfaces.backends.shared import T_wire
+from cachetory.interfaces.backends.private import T_wire
 from cachetory.private.asyncio import postpone
 
 

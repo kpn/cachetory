@@ -1,4 +1,4 @@
-from cachetory.interfaces.backends.shared import T_wire
+from cachetory.interfaces.backends.private import T_wire
 from cachetory.interfaces.serializers import Serializer, T_value
 
 from .chained import ChainedSerializer

@@ -4,7 +4,7 @@ from typing import TypeVar
 
 from typing_extensions import Protocol
 
-from cachetory.interfaces.backends.shared import T_wire
+from cachetory.interfaces.backends.private import T_wire
 
 T_value_cov = TypeVar("T_value_cov", covariant=True)
 T_value_contra = TypeVar("T_value_contra", contravariant=True)

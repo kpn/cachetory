@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, Generic, Iterable, cast
 from urllib.parse import urlparse
 
-from cachetory.interfaces.backends.shared import T_wire
+from cachetory.interfaces.backends.private import T_wire
 from cachetory.interfaces.serializers import Serializer, T_value
 from cachetory.serializers.compressors import ZstdCompressor
 from cachetory.serializers.noop import NoopSerializer

@@ -12,7 +12,7 @@ from typing import Iterable, Optional, Tuple
 
 from typing_extensions import Protocol
 
-from cachetory.interfaces.backends.shared import T_wire, T_wire_contra, T_wire_cov
+from cachetory.interfaces.backends.private import T_wire, T_wire_contra, T_wire_cov
 
 
 class AsyncBackendRead(Protocol[T_wire_cov]):

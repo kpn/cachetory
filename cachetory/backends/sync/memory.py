@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 from typing import Dict, Generic, Optional
 
-from cachetory.interfaces.backends.shared import T_wire
+from cachetory.interfaces.backends.private import T_wire
 from cachetory.interfaces.backends.sync import SyncBackend
 from cachetory.private.datetime import make_deadline
 
