@@ -42,11 +42,7 @@ class Cache(Generic[T_value]):
             if_not_exists=if_not_exists,
         )
 
-    async def set_many(
-        self,
-        items: Union[Iterable[Tuple[str, T_value]], Mapping[str, T_value]],
-        time_to_live: Optional[timedelta] = None,
-    ) -> None:
+    async def set_many(self, items: Union[Iterable[Tuple[str, T_value]], Mapping[str, T_value]]) -> None:
         if isinstance(items, Mapping):
             items = items.items()
         await self._backend.set_many((key, self._serializer.serialize(value)) for key, value in items)
