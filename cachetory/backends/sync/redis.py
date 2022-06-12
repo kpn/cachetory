@@ -10,6 +10,10 @@ from cachetory.interfaces.backends.sync import SyncBackend
 
 
 class RedisBackend(SyncBackend[bytes]):
+    """
+    Redis (`aioredis`) backend.
+    """
+
     @classmethod
     def from_url(cls, url: str) -> RedisBackend:
         if url.startswith("redis+"):

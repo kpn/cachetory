@@ -10,6 +10,10 @@ from cachetory.private.asyncio import postpone
 
 
 class MemoryBackend(AsyncBackend[WireT], Generic[WireT]):
+    """
+    Memory backend that stores everything in a local dictionary.
+    """
+
     __slots__ = ("_inner",)
 
     @classmethod

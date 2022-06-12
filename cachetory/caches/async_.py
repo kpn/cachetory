@@ -14,6 +14,10 @@ _NOT_SET = NotSet()
 
 
 class Cache(AbstractAsyncContextManager, Generic[ValueT]):
+    """
+    Asynchronous cache.
+    """
+
     __slots__ = ("_serializer", "_backend", "_serialize_executor")
 
     def __init__(

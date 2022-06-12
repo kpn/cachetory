@@ -121,6 +121,12 @@ class SyncBackend(
     @classmethod
     @abstractmethod
     def from_url(cls, url: str) -> SyncBackend:
+        """
+        Create a synchronous cache backend from the specified URL.
+
+        Returns:
+            An instance of the specific backend class.
+        """
         raise NotImplementedError
 
     def __exit__(self, exc_type, exc_value, traceback) -> None:

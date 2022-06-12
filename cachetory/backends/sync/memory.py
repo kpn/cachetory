@@ -9,6 +9,10 @@ from cachetory.private.datetime import make_deadline
 
 
 class MemoryBackend(SyncBackend[WireT], Generic[WireT]):
+    """
+    Memory backend that stores everything in a local dictionary.
+    """
+
     __slots__ = ("_entries",)
 
     @classmethod

@@ -21,6 +21,7 @@ else:
 class ChainedSerializer(Serializer[ValueT, WireT], Generic[ValueT, WireT]):
     """
     Sequentially applies the chain of serializers.
+    Allows defining multiple steps of serialization.
     """
 
     __slots__ = ("_layers",)

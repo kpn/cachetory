@@ -8,6 +8,10 @@ from cachetory.interfaces.serializers import Serializer
 
 
 class ZlibCompressor(Serializer[bytes, bytes]):
+    """
+    Uses the built-in zlib compression.
+    """
+
     __slots__ = ("_level",)
 
     @classmethod

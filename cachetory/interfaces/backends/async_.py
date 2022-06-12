@@ -121,6 +121,12 @@ class AsyncBackend(
     @classmethod
     @abstractmethod
     async def from_url(cls, url: str) -> AsyncBackend:
+        """
+        Create an asynchronous cache backend from the specified URL.
+
+        Returns:
+            An instance of the specific backend class.
+        """
         raise NotImplementedError
 
     async def __aexit__(self, exc_type, exc_value, traceback) -> None:

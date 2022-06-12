@@ -9,17 +9,23 @@ try:
     # noinspection PyUnresolvedReferences
     from .redis import RedisBackend
 except ImportError:
-    is_redis_available = False
+    _is_redis_available = False
 else:
-    is_redis_available = True
+    _is_redis_available = True
 
 
 async def from_url(url: str) -> AsyncBackend:
+    """
+    Creates an asynchronous backend from the given URL.
+
+    Examples:
+        >>> await from_url("redis://localhost:6379")
+    """
     parsed_url = urlparse(url)
     scheme = parsed_url.scheme
     if scheme == "memory":
         return await MemoryBackend.from_url(url)
-    if scheme in ("redis", "rediss", "redis+unix") and is_redis_available:
+    if scheme in ("redis", "rediss", "redis+unix") and _is_redis_available:
         return await RedisBackend.from_url(url)
     if scheme == "dummy":
         return await DummyBackend.from_url(url)

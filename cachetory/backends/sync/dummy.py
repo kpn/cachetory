@@ -8,6 +8,10 @@ from cachetory.interfaces.backends.sync import SyncBackend
 
 
 class DummyBackend(SyncBackend[WireT], Generic[WireT]):
+    """
+    Dummy backend that stores nothing.
+    """
+
     @classmethod
     def from_url(cls, url: str) -> DummyBackend:
         return DummyBackend()

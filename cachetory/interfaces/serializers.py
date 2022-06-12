@@ -50,4 +50,10 @@ class Serializer(Serialize[ValueT, WireT], Deserialize[ValueT, WireT], Protocol[
 
     @classmethod
     def from_url(cls, url: str) -> Serializer[ValueT, WireT]:
+        """
+        Instantiate a serializer from the specified URL.
+
+        Returns:
+            An instance of specific serializer class.
+        """
         raise NotImplementedError
