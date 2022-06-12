@@ -1,11 +1,7 @@
-from pytest import mark
-
 from cachetory import serializers
 from cachetory.backends import sync as sync_backends
 from cachetory.caches.sync import Cache
 from tests.support import if_redis_enabled
-
-_test_redis = mark.skipif("not config.getoption('test_redis')")
 
 
 def test_get_set_in_memory():

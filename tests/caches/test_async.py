@@ -5,8 +5,6 @@ from cachetory.backends import async_ as async_backends
 from cachetory.caches.async_ import Cache
 from tests.support import if_redis_enabled
 
-_test_redis = mark.skipif("not config.getoption('test_redis')")
-
 
 @mark.asyncio
 async def test_get_set_in_memory():
