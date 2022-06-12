@@ -18,6 +18,6 @@ def backend() -> Generator[SyncRedisBackend, None, None]:
 
 
 @_test_redis
-def test_set_get(backend: SyncRedisBackend):
+def test_get_existing(backend: SyncRedisBackend):
     backend.set("foo", b"hello")
     assert backend.get("foo") == b"hello"

@@ -32,7 +32,9 @@ class AsyncRedisBackend(AsyncBackend[bytes]):
 
     async def expire_at(self, key: str, deadline: Optional[datetime]) -> None:
         if deadline:
-            await self._client.pexpireat(key, deadline)
+            # One can pass `datetime` directly to `pexpireat`, but the latter
+            # incorrectly converts datetime into timestamp.
+            await self._client.pexpireat(key, int(deadline.timestamp() * 1000.0))
         else:
             await self._client.persist(key)
 
@@ -50,7 +52,7 @@ class AsyncRedisBackend(AsyncBackend[bytes]):
         time_to_live: Optional[timedelta] = None,
         if_not_exists: bool = False,
     ) -> bool:
-        return bool(await self._client.set(key, value, ex=time_to_live, nx=if_not_exists))
+        return bool(await self._client.set(key, value, px=time_to_live, nx=if_not_exists))
 
     async def set_many(self, items: Iterable[Tuple[str, bytes]]) -> None:
         await self._client.execute_command("MSET", *itertools.chain.from_iterable(items))

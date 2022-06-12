@@ -79,6 +79,8 @@ async def test_expire_in(backend: AsyncMemoryBackend[int]):
     with freeze_time("2022-06-10 21:49:00"):
         await backend.set("foo", 42)
         await backend.expire_in("foo", timedelta(seconds=59))
+    with freeze_time("2022-06-10 21:49:58"):
+        assert await backend.get("foo") == 42
     with freeze_time("2022-06-10 21:50:00"), raises(KeyError):
         assert await backend.get("foo")
     assert backend.size == 0

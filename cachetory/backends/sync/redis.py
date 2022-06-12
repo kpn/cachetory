@@ -30,7 +30,9 @@ class SyncRedisBackend(SyncBackend[bytes]):
 
     def expire_at(self, key: str, deadline: Optional[datetime]) -> None:
         if deadline:
-            self._client.pexpireat(key, deadline)
+            # One can pass `datetime` directly to `pexpireat`, but the latter
+            # incorrectly converts datetime into timestamp.
+            self._client.pexpireat(key, int(deadline.timestamp() * 1000.0))
         else:
             self._client.persist(key)
 
@@ -48,7 +50,7 @@ class SyncRedisBackend(SyncBackend[bytes]):
         time_to_live: Optional[timedelta] = None,
         if_not_exists: bool = False,
     ) -> bool:
-        return bool(self._client.set(key, value, ex=time_to_live, nx=if_not_exists))
+        return bool(self._client.set(key, value, px=time_to_live, nx=if_not_exists))
 
     def set_many(self, items: Iterable[Tuple[str, bytes]]) -> None:
         self._client.execute_command("MSET", *itertools.chain.from_iterable(items))
