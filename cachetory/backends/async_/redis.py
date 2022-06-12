@@ -9,12 +9,12 @@ import aioredis
 from cachetory.interfaces.backends.async_ import AsyncBackend
 
 
-class AsyncRedisBackend(AsyncBackend[bytes]):
+class RedisBackend(AsyncBackend[bytes]):
     __slots__ = ("_client",)
 
     @classmethod
-    async def from_url(cls, url: str) -> AsyncRedisBackend:
-        return AsyncRedisBackend(aioredis.Redis.from_url(url))
+    async def from_url(cls, url: str) -> RedisBackend:
+        return RedisBackend(aioredis.Redis.from_url(url))
 
     def __init__(self, client: aioredis.Redis):
         self._client = client

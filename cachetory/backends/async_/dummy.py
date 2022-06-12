@@ -7,10 +7,10 @@ from cachetory.interfaces.backends.async_ import AsyncBackend
 from cachetory.interfaces.backends.private import WireT
 
 
-class AsyncDummyBackend(AsyncBackend[WireT], Generic[WireT]):
+class DummyBackend(AsyncBackend[WireT], Generic[WireT]):
     @classmethod
-    async def from_url(cls, url: str) -> AsyncDummyBackend:
-        return AsyncDummyBackend()
+    async def from_url(cls, url: str) -> DummyBackend:
+        return DummyBackend()
 
     async def get(self, key: str) -> WireT:
         raise KeyError(key)

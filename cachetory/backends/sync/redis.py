@@ -9,9 +9,9 @@ import redis
 from cachetory.interfaces.backends.sync import SyncBackend
 
 
-class SyncRedisBackend(SyncBackend[bytes]):
+class RedisBackend(SyncBackend[bytes]):
     @classmethod
-    def from_url(cls, url: str) -> SyncRedisBackend:
+    def from_url(cls, url: str) -> RedisBackend:
         return cls(redis.Redis.from_url(url))
 
     def __init__(self, client: redis.Redis):

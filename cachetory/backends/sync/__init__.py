@@ -2,12 +2,12 @@ from urllib.parse import urlparse
 
 from cachetory.interfaces.backends.sync import SyncBackend
 
-from .dummy import SyncDummyBackend
-from .memory import SyncMemoryBackend
+from .dummy import DummyBackend
+from .memory import MemoryBackend
 
 try:
     # noinspection PyUnresolvedReferences
-    from .redis import SyncRedisBackend
+    from .redis import RedisBackend
 except ImportError:
     is_redis_available = False
 else:
@@ -18,11 +18,11 @@ def from_url(url: str) -> SyncBackend:
     parsed_url = urlparse(url)
     scheme = parsed_url.scheme
     if scheme == "memory":
-        return SyncMemoryBackend.from_url(url)
+        return MemoryBackend.from_url(url)
     if scheme in ("redis", "rediss") and is_redis_available:
-        return SyncRedisBackend.from_url(url)
+        return RedisBackend.from_url(url)
     if scheme == "redis+unix" and is_redis_available:
-        return SyncRedisBackend.from_url(url[6:])  # unix://…
+        return RedisBackend.from_url(url[6:])  # unix://…
     if scheme == "dummy":
-        return SyncDummyBackend.from_url(url)
+        return DummyBackend.from_url(url)
     raise ValueError(f"`{scheme}://` is not supported")

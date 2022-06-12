@@ -8,12 +8,12 @@ from cachetory.interfaces.backends.sync import SyncBackend
 from cachetory.private.datetime import make_deadline
 
 
-class SyncMemoryBackend(SyncBackend[WireT], Generic[WireT]):
+class MemoryBackend(SyncBackend[WireT], Generic[WireT]):
     __slots__ = ("_entries",)
 
     @classmethod
-    def from_url(cls, _url: str) -> SyncMemoryBackend:
-        return SyncMemoryBackend()
+    def from_url(cls, _url: str) -> MemoryBackend:
+        return MemoryBackend()
 
     def __init__(self):
         self._entries: Dict[str, _Entry[WireT]] = {}

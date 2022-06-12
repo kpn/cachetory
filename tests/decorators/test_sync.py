@@ -1,6 +1,6 @@
 from pytest import fixture
 
-from cachetory.backends import SyncMemoryBackend
+from cachetory.backends.sync import MemoryBackend
 from cachetory.caches.sync import Cache
 from cachetory.decorators.sync import cached
 from cachetory.serializers import NoopSerializer
@@ -8,7 +8,7 @@ from cachetory.serializers import NoopSerializer
 
 @fixture
 def cache() -> Cache[int]:
-    return Cache(serializer=NoopSerializer(), backend=SyncMemoryBackend[int]())
+    return Cache(serializer=NoopSerializer(), backend=MemoryBackend[int]())
 
 
 def test_simple(cache: Cache[int]):

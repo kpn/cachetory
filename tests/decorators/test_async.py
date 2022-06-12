@@ -1,6 +1,6 @@
 from pytest import fixture, mark
 
-from cachetory.backends import AsyncMemoryBackend
+from cachetory.backends.async_ import MemoryBackend
 from cachetory.caches.async_ import Cache
 from cachetory.decorators.async_ import cached
 from cachetory.serializers import NoopSerializer
@@ -8,7 +8,7 @@ from cachetory.serializers import NoopSerializer
 
 @fixture
 def cache() -> Cache[int]:
-    return Cache(serializer=NoopSerializer(), backend=AsyncMemoryBackend[int]())
+    return Cache(serializer=NoopSerializer(), backend=MemoryBackend[int]())
 
 
 @mark.asyncio
