@@ -21,5 +21,6 @@ def test_get_set_in_redis():
         serializer=serializers.from_url("pickle+zstd://pickle-protocol=5&compression-level=3"),
         backend=backends.sync.from_url("redis://localhost:6379"),
     )
-    cache.set("foo", 42)
-    assert cache.get("foo") == 42
+    with cache:
+        cache.set("foo", 42)
+        assert cache.get("foo") == 42

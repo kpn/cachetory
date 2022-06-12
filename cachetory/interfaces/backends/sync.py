@@ -7,8 +7,10 @@ but implementors SHOULD override them for the sake of performance.
 
 from __future__ import annotations
 
+from abc import ABCMeta, abstractmethod
+from contextlib import AbstractContextManager
 from datetime import datetime, timedelta
-from typing import Iterable, Optional, Tuple
+from typing import Generic, Iterable, Optional, Tuple
 
 from typing_extensions import Protocol
 
@@ -105,11 +107,21 @@ class SyncBackendWrite(Protocol[T_wire_contra]):
         raise NotImplementedError
 
 
-class SyncBackend(SyncBackendRead[T_wire], SyncBackendWrite[T_wire], Protocol[T_wire]):
+class SyncBackend(
+    Generic[T_wire],
+    AbstractContextManager,
+    SyncBackendRead[T_wire],
+    SyncBackendWrite[T_wire],
+    metaclass=ABCMeta,
+):
     """
     Generic synchronous cache backend.
     """
 
     @classmethod
+    @abstractmethod
     def from_url(cls, url: str) -> SyncBackend:
         raise NotImplementedError
+
+    def __exit__(self, exc_type, exc_value, traceback) -> None:
+        return None

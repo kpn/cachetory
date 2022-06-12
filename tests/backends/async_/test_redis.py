@@ -9,11 +9,12 @@ _test_redis = mark.skipif("not config.getoption('test_redis')")
 
 @fixture
 async def backend() -> AsyncIterable[AsyncRedisBackend]:
-    backend = await AsyncRedisBackend.from_url("redis://localhost:6379")
-    try:
-        yield backend
-    finally:
+    async with await AsyncRedisBackend.from_url("redis://localhost:6379") as backend:
         await backend.clear()
+        try:
+            yield backend
+        finally:
+            await backend.clear()
 
 
 @_test_redis

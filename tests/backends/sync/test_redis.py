@@ -9,11 +9,12 @@ _test_redis = mark.skipif("not config.getoption('test_redis')")
 
 @fixture
 def backend() -> Generator[SyncRedisBackend, None, None]:
-    backend = SyncRedisBackend.from_url("redis://localhost:6379")
-    try:
-        yield backend
-    finally:
+    with SyncRedisBackend.from_url("redis://localhost:6379") as backend:
         backend.clear()
+        try:
+            yield backend
+        finally:
+            backend.clear()
 
 
 @_test_redis

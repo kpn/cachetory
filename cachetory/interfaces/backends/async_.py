@@ -7,8 +7,10 @@ but implementors SHOULD override them for the sake of performance.
 
 from __future__ import annotations
 
+from abc import ABCMeta, abstractmethod
+from contextlib import AbstractAsyncContextManager
 from datetime import datetime, timedelta, timezone
-from typing import AsyncIterable, Iterable, Optional, Tuple
+from typing import AsyncIterable, Generic, Iterable, Optional, Tuple
 
 from typing_extensions import Protocol
 
@@ -105,11 +107,21 @@ class AsyncBackendWrite(Protocol[T_wire_contra]):
         raise NotImplementedError
 
 
-class AsyncBackend(AsyncBackendRead[T_wire], AsyncBackendWrite[T_wire], Protocol[T_wire]):
+class AsyncBackend(
+    Generic[T_wire],
+    AbstractAsyncContextManager,
+    AsyncBackendRead[T_wire],
+    AsyncBackendWrite[T_wire],
+    metaclass=ABCMeta,
+):
     """
     Generic asynchronous cache backend.
     """
 
     @classmethod
+    @abstractmethod
     async def from_url(cls, url: str) -> AsyncBackend:
         raise NotImplementedError
+
+    async def __aexit__(self, exc_type, exc_value, traceback) -> None:
+        return None

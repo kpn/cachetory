@@ -58,3 +58,6 @@ class SyncRedisBackend(SyncBackend[bytes]):
 
     def clear(self) -> None:
         self._client.flushdb()
+
+    def __exit__(self, exc_type, exc_value, traceback) -> None:
+        return self._client.__exit__(exc_type, exc_value, traceback)

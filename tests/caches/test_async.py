@@ -7,7 +7,7 @@ _test_redis = mark.skipif("not config.getoption('test_redis')")
 
 
 @mark.asyncio
-async def test_get_set_memory():
+async def test_get_set_in_memory():
     cache = Cache[int](
         serializer=serializers.from_url("pickle+zstd://"),
         backend=(await backends.async_.from_url("memory://")),
@@ -23,5 +23,6 @@ async def test_get_set_in_redis():
         serializer=serializers.from_url("pickle+zstd://pickle-protocol=5&compression-level=3"),
         backend=(await backends.async_.from_url("redis://localhost:6379")),
     )
-    await cache.set("foo", 42)
-    assert await cache.get("foo") == 42
+    async with cache:
+        await cache.set("foo", 42)
+        assert await cache.get("foo") == 42

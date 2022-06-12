@@ -60,3 +60,7 @@ class AsyncRedisBackend(AsyncBackend[bytes]):
 
     async def clear(self) -> None:
         await self._client.flushdb()
+
+    async def __aexit__(self, exc_type, exc_value, traceback) -> None:
+        await self._client.connection_pool.disconnect()  # https://github.com/aio-libs/aioredis-py/issues/1103
+        return await self._client.__aexit__(exc_type, exc_value, traceback)
