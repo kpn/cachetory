@@ -2,20 +2,20 @@ from __future__ import annotations
 
 from typing import Generic
 
-from cachetory.interfaces.serializers import Serializer, T_value
+from cachetory.interfaces.serializers import Serializer, ValueT
 
 
-class NoopSerializer(Serializer[T_value, T_value], Generic[T_value]):
+class NoopSerializer(Serializer[ValueT, ValueT], Generic[ValueT]):
     """
     No-operation serializer: just forwards the value to and from backend.
     """
 
     @classmethod
-    def from_url(cls, url: str) -> NoopSerializer[T_value]:
-        return NoopSerializer[T_value]()
+    def from_url(cls, url: str) -> NoopSerializer[ValueT]:
+        return NoopSerializer[ValueT]()
 
-    def serialize(self, value: T_value) -> T_value:
+    def serialize(self, value: ValueT) -> ValueT:
         return value
 
-    def deserialize(self, data: T_value) -> T_value:
+    def deserialize(self, data: ValueT) -> ValueT:
         return data

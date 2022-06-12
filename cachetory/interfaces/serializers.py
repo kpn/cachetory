@@ -28,14 +28,14 @@ class Deserialize(Protocol[ValueT_co, WireT_contra]):
         raise NotImplementedError
 
 
-T_value = TypeVar("T_value")
+ValueT = TypeVar("ValueT")
 
 
-class Serializer(Serialize[T_value, WireT], Deserialize[T_value, WireT], Protocol[T_value, WireT]):
+class Serializer(Serialize[ValueT, WireT], Deserialize[ValueT, WireT], Protocol[ValueT, WireT]):
     """
     Combines `serialize` and `deserialize` in one protocol.
     """
 
     @classmethod
-    def from_url(cls, url: str) -> Serializer[T_value, WireT]:
+    def from_url(cls, url: str) -> Serializer[ValueT, WireT]:
         raise NotImplementedError
