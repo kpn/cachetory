@@ -2,7 +2,7 @@ from datetime import timedelta
 from functools import wraps
 from typing import Callable, Optional, Union
 
-from typing_extensions import Concatenate, ParamSpec
+from typing_extensions import ParamSpec
 
 from cachetory.caches.sync import Cache
 from cachetory.decorators.private import make_key_by_default
@@ -12,12 +12,12 @@ P = ParamSpec("P")  # original function parameter specs
 
 
 def cached(
-    cache: Union[Cache, Callable[P, Cache[ValueT]]],
+    cache: Union[Cache[ValueT], Callable[..., Cache[ValueT]]],  # no way to use `P` here
     *,
-    make_key: Callable[Concatenate[Callable[P, ValueT], P], str] = make_key_by_default,
+    make_key: Callable[..., str] = make_key_by_default,  # no way to use `P` here
     time_to_live: Optional[timedelta] = None,
     if_not_exists: bool = False,
-):
+) -> Callable[[Callable[P, ValueT]], Callable[P, ValueT]]:
     """
     Args:
         cache: `Cache` instance or a callable tha returns a `Cache` instance for each function call.
@@ -28,7 +28,7 @@ def cached(
 
     def wrap(callable_: Callable[P, ValueT]) -> Callable[P, ValueT]:
         @wraps(callable_)
-        def cached_callable(*args, **kwargs) -> ValueT:
+        def cached_callable(*args: P.args, **kwargs: P.kwargs) -> ValueT:
             cache_ = cache() if callable(cache) else cache
             key_ = make_key(callable_, *args, **kwargs)
             try:

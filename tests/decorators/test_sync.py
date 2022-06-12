@@ -7,11 +7,11 @@ from cachetory.serializers import NoopSerializer
 
 
 @fixture
-def cache() -> Cache:
-    return Cache(serializer=NoopSerializer(), backend=SyncMemoryBackend())
+def cache() -> Cache[int]:
+    return Cache(serializer=NoopSerializer(), backend=SyncMemoryBackend[int]())
 
 
-def test_simple(cache):
+def test_simple(cache: Cache[int]):
     call_counter = 0
 
     @cached(cache)
