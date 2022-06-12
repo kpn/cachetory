@@ -8,7 +8,7 @@ from cachetory.interfaces.backends.private import T_wire
 from cachetory.interfaces.serializers import Serializer, T_value
 
 
-class Cache(Generic[T_value], AbstractAsyncContextManager):
+class Cache(AbstractAsyncContextManager, Generic[T_value]):
     __slots__ = ("_serializer", "_backend")
 
     def __init__(self, *, serializer: Serializer[T_value, T_wire], backend: AsyncBackend[T_wire]):

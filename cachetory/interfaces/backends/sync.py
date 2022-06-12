@@ -108,10 +108,10 @@ class SyncBackendWrite(Protocol[T_wire_contra]):
 
 
 class SyncBackend(
-    Generic[T_wire],
     AbstractContextManager,
     SyncBackendRead[T_wire],
     SyncBackendWrite[T_wire],
+    Generic[T_wire],
     metaclass=ABCMeta,
 ):
     """

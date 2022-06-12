@@ -8,7 +8,7 @@ from urllib.parse import parse_qs, urlparse
 from cachetory.interfaces.serializers import Serializer, T_value
 
 
-class PickleSerializer(Generic[T_value], Serializer[T_value, bytes]):
+class PickleSerializer(Serializer[T_value, bytes], Generic[T_value]):
     __slots__ = ("protocol",)
 
     @classmethod

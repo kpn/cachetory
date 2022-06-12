@@ -5,7 +5,7 @@ from typing import Generic
 from cachetory.interfaces.serializers import Serializer, T_value
 
 
-class NoopSerializer(Generic[T_value], Serializer[T_value, T_value]):
+class NoopSerializer(Serializer[T_value, T_value], Generic[T_value]):
     """
     No-operation serializer: just forwards the value to and from backend.
     """

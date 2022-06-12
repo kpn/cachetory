@@ -7,7 +7,7 @@ from cachetory.interfaces.backends.async_ import AsyncBackend
 from cachetory.interfaces.backends.private import T_wire
 
 
-class AsyncDummyBackend(Generic[T_wire], AsyncBackend[T_wire]):
+class AsyncDummyBackend(AsyncBackend[T_wire], Generic[T_wire]):
     @classmethod
     async def from_url(cls, url: str) -> AsyncDummyBackend:
         return AsyncDummyBackend()

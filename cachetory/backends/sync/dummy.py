@@ -7,7 +7,7 @@ from cachetory.interfaces.backends.private import T_wire
 from cachetory.interfaces.backends.sync import SyncBackend
 
 
-class SyncDummyBackend(Generic[T_wire], SyncBackend[T_wire]):
+class SyncDummyBackend(SyncBackend[T_wire], Generic[T_wire]):
     @classmethod
     def from_url(cls, url: str) -> SyncDummyBackend:
         return SyncDummyBackend()

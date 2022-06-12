@@ -11,12 +11,12 @@ def backend() -> SyncMemoryBackend[int]:
     return SyncMemoryBackend[int]()
 
 
-def test_get_item_existing(backend: SyncMemoryBackend[int]):
+def test_get_existing(backend: SyncMemoryBackend[int]):
     backend.set("foo", 42)
     assert backend.get("foo") == 42
 
 
-def test_get_item_missing(backend: SyncMemoryBackend[int]):
+def test_get_missing(backend: SyncMemoryBackend[int]):
     with raises(KeyError):
         backend.get("foo")
 
@@ -31,6 +31,8 @@ def test_set_default(backend: SyncMemoryBackend[int]):
 def test_delete_existing(backend: SyncMemoryBackend[int]):
     backend.set("foo", 42)
     assert backend.delete("foo")
+    with raises(KeyError):
+        backend.get("foo")
 
 
 def test_delete_missing(backend: SyncMemoryBackend[int]):

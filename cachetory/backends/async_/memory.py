@@ -9,7 +9,7 @@ from cachetory.interfaces.backends.private import T_wire
 from cachetory.private.asyncio import postpone
 
 
-class AsyncMemoryBackend(Generic[T_wire], AsyncBackend[T_wire]):
+class AsyncMemoryBackend(AsyncBackend[T_wire], Generic[T_wire]):
     __slots__ = ("_backend",)
 
     @classmethod

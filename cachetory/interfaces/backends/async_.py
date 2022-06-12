@@ -108,10 +108,10 @@ class AsyncBackendWrite(Protocol[T_wire_contra]):
 
 
 class AsyncBackend(
-    Generic[T_wire],
     AbstractAsyncContextManager,
     AsyncBackendRead[T_wire],
     AsyncBackendWrite[T_wire],
+    Generic[T_wire],
     metaclass=ABCMeta,
 ):
     """

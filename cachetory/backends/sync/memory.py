@@ -8,7 +8,7 @@ from cachetory.interfaces.backends.sync import SyncBackend
 from cachetory.private.datetime import make_deadline
 
 
-class SyncMemoryBackend(Generic[T_wire], SyncBackend[T_wire]):
+class SyncMemoryBackend(SyncBackend[T_wire], Generic[T_wire]):
     __slots__ = ("_entries",)
 
     @classmethod

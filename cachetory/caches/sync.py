@@ -8,7 +8,7 @@ from cachetory.interfaces.backends.sync import SyncBackend
 from cachetory.interfaces.serializers import Serializer, T_value
 
 
-class Cache(Generic[T_value], AbstractContextManager):
+class Cache(AbstractContextManager, Generic[T_value]):
     __slots__ = ("_serializer", "_backend")
 
     def __init__(self, *, serializer: Serializer[T_value, T_wire], backend: SyncBackend[T_wire]):

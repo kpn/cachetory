@@ -18,7 +18,7 @@ else:
     is_zstd_available = True
 
 
-class ChainedSerializer(Generic[T_value, T_wire], Serializer[T_value, T_wire]):
+class ChainedSerializer(Serializer[T_value, T_wire], Generic[T_value, T_wire]):
     """
     Sequentially applies the chain of serializers.
     """

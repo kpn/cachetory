@@ -12,13 +12,13 @@ async def backend() -> AsyncMemoryBackend[int]:
 
 
 @mark.asyncio
-async def test_get_item_existing(backend: AsyncMemoryBackend[int]):
+async def test_get_existing(backend: AsyncMemoryBackend[int]):
     await backend.set("foo", 42)
     assert await backend.get("foo") == 42
 
 
 @mark.asyncio
-async def test_get_item_missing(backend: AsyncMemoryBackend[int]):
+async def test_get_missing(backend: AsyncMemoryBackend[int]):
     with raises(KeyError):
         assert await backend.get("foo")
 
@@ -35,6 +35,8 @@ async def test_set_default(backend: AsyncMemoryBackend[int]):
 async def test_delete_existing(backend: AsyncMemoryBackend[int]):
     await backend.set("foo", 42)
     assert await backend.delete("foo")
+    with raises(KeyError):
+        await backend.get("foo")
 
 
 @mark.asyncio
