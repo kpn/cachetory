@@ -4,41 +4,38 @@ from typing import TypeVar
 
 from typing_extensions import Protocol
 
-from cachetory.interfaces.backends.private import T_wire
+from cachetory.interfaces.backends.private import WireT, WireT_co, WireT_contra
 
-T_value_cov = TypeVar("T_value_cov", covariant=True)
-T_value_contra = TypeVar("T_value_contra", contravariant=True)
-
-T_wire_cov = TypeVar("T_wire_cov", covariant=True)
-T_wire_contra = TypeVar("T_wire_contra", contravariant=True)
+ValueT_co = TypeVar("ValueT_co", covariant=True)
+ValueT_contra = TypeVar("ValueT_contra", contravariant=True)
 
 
-class Serialize(Protocol[T_value_contra, T_wire_cov]):
+class Serialize(Protocol[ValueT_contra, WireT_co]):
     """
     Defines the `serialize` conversion.
     """
 
-    def serialize(self, value: T_value_contra) -> T_wire_cov:
+    def serialize(self, value: ValueT_contra) -> WireT_co:
         raise NotImplementedError
 
 
-class Deserialize(Protocol[T_value_cov, T_wire_contra]):
+class Deserialize(Protocol[ValueT_co, WireT_contra]):
     """
     Defines the `deserialize` conversion.
     """
 
-    def deserialize(self, data: T_wire_contra) -> T_value_cov:
+    def deserialize(self, data: WireT_contra) -> ValueT_co:
         raise NotImplementedError
 
 
 T_value = TypeVar("T_value")
 
 
-class Serializer(Serialize[T_value, T_wire], Deserialize[T_value, T_wire], Protocol[T_value, T_wire]):
+class Serializer(Serialize[T_value, WireT], Deserialize[T_value, WireT], Protocol[T_value, WireT]):
     """
     Combines `serialize` and `deserialize` in one protocol.
     """
 
     @classmethod
-    def from_url(cls, url: str) -> Serializer[T_value, T_wire]:
+    def from_url(cls, url: str) -> Serializer[T_value, WireT]:
         raise NotImplementedError

@@ -5,11 +5,11 @@ from typing import Any, Coroutine, Generic, Optional
 
 from cachetory.backends.sync.memory import SyncMemoryBackend
 from cachetory.interfaces.backends.async_ import AsyncBackend
-from cachetory.interfaces.backends.private import T_wire
+from cachetory.interfaces.backends.private import WireT
 from cachetory.private.asyncio import postpone
 
 
-class AsyncMemoryBackend(AsyncBackend[T_wire], Generic[T_wire]):
+class AsyncMemoryBackend(AsyncBackend[WireT], Generic[WireT]):
     __slots__ = ("_backend",)
 
     @classmethod
@@ -20,7 +20,7 @@ class AsyncMemoryBackend(AsyncBackend[T_wire], Generic[T_wire]):
         # We'll simply delegate call to the wrapped backend.
         self._backend = SyncMemoryBackend()
 
-    def get(self, key: str) -> Coroutine[Any, Any, T_wire]:
+    def get(self, key: str) -> Coroutine[Any, Any, WireT]:
         return postpone(self._backend.get, key)
 
     def expire_at(self, key: str, deadline: Optional[datetime]) -> Coroutine[Any, Any, None]:
@@ -29,7 +29,7 @@ class AsyncMemoryBackend(AsyncBackend[T_wire], Generic[T_wire]):
     def set(
         self,
         key: str,
-        value: T_wire,
+        value: WireT,
         *,
         time_to_live: Optional[timedelta] = None,
         if_not_exists: bool = False,

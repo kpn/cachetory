@@ -14,15 +14,15 @@ from typing import AsyncIterable, Generic, Iterable, Optional, Tuple
 
 from typing_extensions import Protocol
 
-from cachetory.interfaces.backends.private import T_wire, T_wire_contra, T_wire_cov
+from cachetory.interfaces.backends.private import WireT, WireT_co, WireT_contra
 
 
-class AsyncBackendRead(Protocol[T_wire_cov]):
+class AsyncBackendRead(Protocol[WireT_co]):
     """
     Describes the read operations of an asynchronous cache.
     """
 
-    async def get(self, key: str) -> T_wire_cov:
+    async def get(self, key: str) -> WireT_co:
         """
         Retrieve a value from the cache.
 
@@ -33,7 +33,7 @@ class AsyncBackendRead(Protocol[T_wire_cov]):
         """
         raise NotImplementedError
 
-    async def get_many(self, *keys: str) -> AsyncIterable[Tuple[str, T_wire_cov]]:
+    async def get_many(self, *keys: str) -> AsyncIterable[Tuple[str, WireT_co]]:
         """
         Get all the values corresponding to the specified keys.
 
@@ -49,7 +49,7 @@ class AsyncBackendRead(Protocol[T_wire_cov]):
                 yield key, value
 
 
-class AsyncBackendWrite(Protocol[T_wire_contra]):
+class AsyncBackendWrite(Protocol[WireT_contra]):
     """
     Describes the write operations of an asynchronous cache.
     """
@@ -70,7 +70,7 @@ class AsyncBackendWrite(Protocol[T_wire_contra]):
     async def set(
         self,
         key: str,
-        value: T_wire_contra,
+        value: WireT_contra,
         *,
         time_to_live: Optional[timedelta] = None,
         if_not_exists: bool = False,
@@ -84,7 +84,7 @@ class AsyncBackendWrite(Protocol[T_wire_contra]):
         """
         raise NotImplementedError
 
-    async def set_many(self, items: Iterable[Tuple[str, T_wire_contra]]) -> None:
+    async def set_many(self, items: Iterable[Tuple[str, WireT_contra]]) -> None:
         """
         Put all the specified values to the cache.
         """
@@ -109,9 +109,9 @@ class AsyncBackendWrite(Protocol[T_wire_contra]):
 
 class AsyncBackend(
     AbstractAsyncContextManager,
-    AsyncBackendRead[T_wire],
-    AsyncBackendWrite[T_wire],
-    Generic[T_wire],
+    AsyncBackendRead[WireT],
+    AsyncBackendWrite[WireT],
+    Generic[WireT],
     metaclass=ABCMeta,
 ):
     """

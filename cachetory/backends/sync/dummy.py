@@ -3,19 +3,19 @@ from __future__ import annotations
 from datetime import datetime, timedelta
 from typing import Generic, Iterable, Optional, Tuple
 
-from cachetory.interfaces.backends.private import T_wire
+from cachetory.interfaces.backends.private import WireT
 from cachetory.interfaces.backends.sync import SyncBackend
 
 
-class SyncDummyBackend(SyncBackend[T_wire], Generic[T_wire]):
+class SyncDummyBackend(SyncBackend[WireT], Generic[WireT]):
     @classmethod
     def from_url(cls, url: str) -> SyncDummyBackend:
         return SyncDummyBackend()
 
-    def get(self, key: str) -> T_wire:
+    def get(self, key: str) -> WireT:
         raise KeyError(key)
 
-    def get_many(self, *keys: str) -> Iterable[Tuple[str, T_wire]]:
+    def get_many(self, *keys: str) -> Iterable[Tuple[str, WireT]]:
         return []
 
     def expire_in(self, key: str, time_to_live: Optional[timedelta] = None) -> None:
@@ -27,14 +27,14 @@ class SyncDummyBackend(SyncBackend[T_wire], Generic[T_wire]):
     def set(
         self,
         key: str,
-        value: T_wire,
+        value: WireT,
         *,
         time_to_live: Optional[timedelta] = None,
         if_not_exists: bool = False,
     ) -> bool:
         return True
 
-    def set_many(self, items: Iterable[Tuple[str, T_wire]]) -> None:
+    def set_many(self, items: Iterable[Tuple[str, WireT]]) -> None:
         return None
 
     def delete(self, key: str) -> bool:

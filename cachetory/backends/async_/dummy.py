@@ -4,18 +4,18 @@ from datetime import datetime, timedelta
 from typing import AsyncIterable, Generic, Iterable, Optional, Tuple
 
 from cachetory.interfaces.backends.async_ import AsyncBackend
-from cachetory.interfaces.backends.private import T_wire
+from cachetory.interfaces.backends.private import WireT
 
 
-class AsyncDummyBackend(AsyncBackend[T_wire], Generic[T_wire]):
+class AsyncDummyBackend(AsyncBackend[WireT], Generic[WireT]):
     @classmethod
     async def from_url(cls, url: str) -> AsyncDummyBackend:
         return AsyncDummyBackend()
 
-    async def get(self, key: str) -> T_wire:
+    async def get(self, key: str) -> WireT:
         raise KeyError(key)
 
-    async def get_many(self, *keys: str) -> AsyncIterable[Tuple[str, T_wire]]:
+    async def get_many(self, *keys: str) -> AsyncIterable[Tuple[str, WireT]]:
         for _ in ():
             yield ()  # type: ignore
 
@@ -28,14 +28,14 @@ class AsyncDummyBackend(AsyncBackend[T_wire], Generic[T_wire]):
     async def set(
         self,
         key: str,
-        value: T_wire,
+        value: WireT,
         *,
         time_to_live: Optional[timedelta] = None,
         if_not_exists: bool = False,
     ) -> bool:
         return True
 
-    async def set_many(self, items: Iterable[Tuple[str, T_wire]]) -> None:
+    async def set_many(self, items: Iterable[Tuple[str, WireT]]) -> None:
         return None
 
     async def delete(self, key: str) -> bool:

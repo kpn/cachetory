@@ -14,16 +14,16 @@ from typing import Generic, Iterable, Optional, Tuple
 
 from typing_extensions import Protocol
 
-from cachetory.interfaces.backends.private import T_wire, T_wire_contra, T_wire_cov
+from cachetory.interfaces.backends.private import WireT, WireT_co, WireT_contra
 from cachetory.private.datetime import make_deadline
 
 
-class SyncBackendRead(Protocol[T_wire_cov]):
+class SyncBackendRead(Protocol[WireT_co]):
     """
     Describes the read operations of a synchronous cache.
     """
 
-    def get(self, key: str) -> T_wire_cov:
+    def get(self, key: str) -> WireT_co:
         """
         Retrieve a value from the cache.
 
@@ -34,7 +34,7 @@ class SyncBackendRead(Protocol[T_wire_cov]):
         """
         raise NotImplementedError
 
-    def get_many(self, *keys: str) -> Iterable[Tuple[str, T_wire_cov]]:
+    def get_many(self, *keys: str) -> Iterable[Tuple[str, WireT_co]]:
         """
         Get all the values corresponding to the specified keys.
 
@@ -50,7 +50,7 @@ class SyncBackendRead(Protocol[T_wire_cov]):
                 yield key, value
 
 
-class SyncBackendWrite(Protocol[T_wire_contra]):
+class SyncBackendWrite(Protocol[WireT_contra]):
     """
     Describes the write operations of a synchronous cache.
     """
@@ -70,7 +70,7 @@ class SyncBackendWrite(Protocol[T_wire_contra]):
     def set(
         self,
         key: str,
-        value: T_wire_contra,
+        value: WireT_contra,
         *,
         time_to_live: Optional[timedelta] = None,
         if_not_exists: bool = False,
@@ -84,7 +84,7 @@ class SyncBackendWrite(Protocol[T_wire_contra]):
         """
         raise NotImplementedError
 
-    def set_many(self, items: Iterable[Tuple[str, T_wire_contra]]) -> None:
+    def set_many(self, items: Iterable[Tuple[str, WireT_contra]]) -> None:
         """
         Put all the specified values to the cache.
         """
@@ -109,9 +109,9 @@ class SyncBackendWrite(Protocol[T_wire_contra]):
 
 class SyncBackend(
     AbstractContextManager,
-    SyncBackendRead[T_wire],
-    SyncBackendWrite[T_wire],
-    Generic[T_wire],
+    SyncBackendRead[WireT],
+    SyncBackendWrite[WireT],
+    Generic[WireT],
     metaclass=ABCMeta,
 ):
     """

@@ -3,12 +3,12 @@ from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 from typing import Dict, Generic, Optional
 
-from cachetory.interfaces.backends.private import T_wire
+from cachetory.interfaces.backends.private import WireT
 from cachetory.interfaces.backends.sync import SyncBackend
 from cachetory.private.datetime import make_deadline
 
 
-class SyncMemoryBackend(SyncBackend[T_wire], Generic[T_wire]):
+class SyncMemoryBackend(SyncBackend[WireT], Generic[WireT]):
     __slots__ = ("_entries",)
 
     @classmethod
@@ -16,9 +16,9 @@ class SyncMemoryBackend(SyncBackend[T_wire], Generic[T_wire]):
         return SyncMemoryBackend()
 
     def __init__(self):
-        self._entries: Dict[str, _Entry[T_wire]] = {}
+        self._entries: Dict[str, _Entry[WireT]] = {}
 
-    def get(self, key: str) -> T_wire:
+    def get(self, key: str) -> WireT:
         return self._get_entry(key).value
 
     def expire_at(self, key: str, deadline: Optional[datetime]) -> None:
@@ -32,16 +32,16 @@ class SyncMemoryBackend(SyncBackend[T_wire], Generic[T_wire]):
     def set(
         self,
         key: str,
-        value: T_wire,
+        value: WireT,
         *,
         time_to_live: Optional[timedelta] = None,
         if_not_exists: bool = False,
     ) -> bool:
-        entry = _Entry[T_wire](value, make_deadline(time_to_live))
+        entry = _Entry[WireT](value, make_deadline(time_to_live))
         if if_not_exists:
             return self._entries.setdefault(key, entry) is entry
         else:
-            self._entries[key] = _Entry[T_wire](value, make_deadline(time_to_live))
+            self._entries[key] = _Entry[WireT](value, make_deadline(time_to_live))
             return True
 
     def delete(self, key: str) -> bool:
@@ -50,7 +50,7 @@ class SyncMemoryBackend(SyncBackend[T_wire], Generic[T_wire]):
     def clear(self) -> None:
         self._entries.clear()
 
-    def _get_entry(self, key: str) -> _Entry[T_wire]:
+    def _get_entry(self, key: str) -> _Entry[WireT]:
         entry = self._entries[key]
         if entry.deadline is not None and entry.deadline <= datetime.now(timezone.utc):
             self._entries.pop(key, None)  # might get popped by another thread
@@ -62,17 +62,17 @@ class SyncMemoryBackend(SyncBackend[T_wire], Generic[T_wire]):
         return len(self._entries)
 
 
-class _Entry(Generic[T_wire]):
+class _Entry(Generic[WireT]):
     """
     `mypy` doesn't support generic named tuples, thus defining this little one.
     """
 
-    value: T_wire
+    value: WireT
     deadline: Optional[datetime]
 
     __slots__ = ("value", "deadline")
 
-    def __init__(self, value: T_wire, deadline: Optional[datetime]):
+    def __init__(self, value: WireT, deadline: Optional[datetime]):
         self.value = value
         self.deadline = deadline
 

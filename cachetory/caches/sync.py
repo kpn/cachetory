@@ -2,8 +2,8 @@ from contextlib import AbstractContextManager
 from datetime import timedelta
 from typing import Dict, Generic, Iterable, Mapping, Optional, Tuple, Union
 
-from cachetory.caches.private import T_default
-from cachetory.interfaces.backends.private import T_wire
+from cachetory.caches.private import DefaultT
+from cachetory.interfaces.backends.private import WireT
 from cachetory.interfaces.backends.sync import SyncBackend
 from cachetory.interfaces.serializers import Serializer, T_value
 
@@ -11,14 +11,14 @@ from cachetory.interfaces.serializers import Serializer, T_value
 class Cache(AbstractContextManager, Generic[T_value]):
     __slots__ = ("_serializer", "_backend")
 
-    def __init__(self, *, serializer: Serializer[T_value, T_wire], backend: SyncBackend[T_wire]):
+    def __init__(self, *, serializer: Serializer[T_value, WireT], backend: SyncBackend[WireT]):
         self._serializer = serializer
         self._backend = backend
 
     def __getitem__(self, key: str) -> T_value:
         return self._serializer.deserialize(self._backend.get(key))
 
-    def get(self, key: str, default: T_default = None) -> Union[T_value, T_default]:  # type: ignore
+    def get(self, key: str, default: DefaultT = None) -> Union[T_value, DefaultT]:  # type: ignore
         try:
             return self[key]
         except KeyError:

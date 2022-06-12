@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, Generic, Iterable, cast
 from urllib.parse import urlparse
 
-from cachetory.interfaces.backends.private import T_wire
+from cachetory.interfaces.backends.private import WireT
 from cachetory.interfaces.serializers import Serializer, T_value
 from cachetory.serializers.compressors.zlib import ZlibCompressor
 from cachetory.serializers.noop import NoopSerializer
@@ -18,7 +18,7 @@ else:
     is_zstd_available = True
 
 
-class ChainedSerializer(Serializer[T_value, T_wire], Generic[T_value, T_wire]):
+class ChainedSerializer(Serializer[T_value, WireT], Generic[T_value, WireT]):
     """
     Sequentially applies the chain of serializers.
     """
@@ -26,7 +26,7 @@ class ChainedSerializer(Serializer[T_value, T_wire], Generic[T_value, T_wire]):
     __slots__ = ("_layers",)
 
     @classmethod
-    def from_url(cls, url: str) -> ChainedSerializer[T_value, T_wire]:
+    def from_url(cls, url: str) -> ChainedSerializer[T_value, WireT]:
         parsed_url = urlparse(url)
         schemes = parsed_url.scheme.split("+")
         return cls(cls._make_layer(scheme, url) for scheme in schemes)
@@ -34,13 +34,13 @@ class ChainedSerializer(Serializer[T_value, T_wire], Generic[T_value, T_wire]):
     def __init__(self, layers: Iterable[Serializer]):
         self._layers = list(layers)
 
-    def serialize(self, value: T_value) -> T_wire:
+    def serialize(self, value: T_value) -> WireT:
         value = cast(Any, value)
         for layer in self._layers:
             value = layer.serialize(value)
-        return cast(T_wire, value)
+        return cast(WireT, value)
 
-    def deserialize(self, data: T_wire) -> T_value:
+    def deserialize(self, data: WireT) -> T_value:
         value = cast(Any, data)
         for layer in self._layers[::-1]:
             value = layer.deserialize(value)

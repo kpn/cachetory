@@ -2,20 +2,20 @@ from contextlib import AbstractAsyncContextManager
 from datetime import timedelta
 from typing import Dict, Generic, Iterable, Mapping, Optional, Tuple, Union
 
-from cachetory.caches.private import T_default
+from cachetory.caches.private import DefaultT
 from cachetory.interfaces.backends.async_ import AsyncBackend
-from cachetory.interfaces.backends.private import T_wire
+from cachetory.interfaces.backends.private import WireT
 from cachetory.interfaces.serializers import Serializer, T_value
 
 
 class Cache(AbstractAsyncContextManager, Generic[T_value]):
     __slots__ = ("_serializer", "_backend")
 
-    def __init__(self, *, serializer: Serializer[T_value, T_wire], backend: AsyncBackend[T_wire]):
+    def __init__(self, *, serializer: Serializer[T_value, WireT], backend: AsyncBackend[WireT]):
         self._serializer = serializer
         self._backend = backend
 
-    async def get(self, key: str, default: T_default = None) -> Union[T_value, T_default]:  # type: ignore
+    async def get(self, key: str, default: DefaultT = None) -> Union[T_value, DefaultT]:  # type: ignore
         try:
             data = await self._backend.get(key)
         except KeyError:

@@ -9,12 +9,12 @@ from typing import TypeVar
 # Why not just `bytes`? The generic type would allow implementing e.g. a memory backend
 # which doesn't necessarily need a serializer and is able to store the values directly.
 # See, for example, `SyncMemoryBackend` and `NoopSerializer`.
-T_wire_cov = TypeVar("T_wire_cov", covariant=True)
+WireT_co = TypeVar("WireT_co", covariant=True)
 
 # The contravariance ensures that given A > B: SyncBackendWrite[A] < SyncBackendWrite[B],
 # meaning that user can safely pass SyncBackendWrite[A] in place of SyncBackendWrite[B].
 # And this is needed because SyncBackendWrite[B] accepts B as a parameter,
 # and so should SyncBackendWrite[A].
-T_wire_contra = TypeVar("T_wire_contra", contravariant=True)
+WireT_contra = TypeVar("WireT_contra", contravariant=True)
 
-T_wire = TypeVar("T_wire")
+WireT = TypeVar("WireT")

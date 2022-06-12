@@ -1,3 +1,3 @@
 from typing import TypeVar
 
-T_default = TypeVar("T_default")
+DefaultT = TypeVar("DefaultT")
