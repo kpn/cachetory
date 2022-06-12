@@ -6,8 +6,7 @@ from pytest import fixture, mark, raises
 
 from cachetory.backends import AsyncRedisBackend
 from cachetory.private.datetime import make_deadline
-
-_test_redis = mark.skipif("not config.getoption('test_redis')")
+from tests.support import if_redis_enabled
 
 
 @fixture
@@ -20,21 +19,21 @@ async def backend() -> AsyncIterable[AsyncRedisBackend]:
             await backend.clear()
 
 
-@_test_redis
+@if_redis_enabled
 @mark.asyncio
 async def test_get_existing(backend: AsyncRedisBackend):
     await backend.set("foo", b"hello")
     assert await backend.get("foo") == b"hello"
 
 
-@_test_redis
+@if_redis_enabled
 @mark.asyncio
 async def test_get_missing(backend: AsyncRedisBackend):
     with raises(KeyError):
         assert await backend.get("foo")
 
 
-@_test_redis
+@if_redis_enabled
 @mark.asyncio
 async def test_set_default(backend: AsyncRedisBackend):
     assert await backend.set("foo", b"hello", if_not_exists=True)
@@ -42,7 +41,7 @@ async def test_set_default(backend: AsyncRedisBackend):
     assert await backend.get("foo") == b"hello"
 
 
-@_test_redis
+@if_redis_enabled
 @mark.asyncio
 async def test_delete_existing(backend: AsyncRedisBackend):
     await backend.set("foo", b"hello")
@@ -51,20 +50,20 @@ async def test_delete_existing(backend: AsyncRedisBackend):
         await backend.get("foo")
 
 
-@_test_redis
+@if_redis_enabled
 @mark.asyncio
 async def test_delete_missing(backend: AsyncRedisBackend):
     assert not await backend.delete("foo")
 
 
-@_test_redis
+@if_redis_enabled
 @mark.asyncio
 async def test_set_get_many(backend: AsyncRedisBackend):
     await backend.set_many([("shields", b"up"), ("alert", b"red")])
     assert [entry async for entry in backend.get_many("shields", "alert")] == [("shields", b"up"), ("alert", b"red")]
 
 
-@_test_redis
+@if_redis_enabled
 @mark.asyncio
 async def test_set_with_ttl(backend: AsyncRedisBackend):
     await backend.set("foo", b"bar", time_to_live=timedelta(seconds=0.25))
@@ -74,7 +73,7 @@ async def test_set_with_ttl(backend: AsyncRedisBackend):
         assert await backend.get("foo")
 
 
-@_test_redis
+@if_redis_enabled
 @mark.asyncio
 async def test_expire_at(backend: AsyncRedisBackend):
     await backend.set("foo", b"bar")
@@ -85,7 +84,7 @@ async def test_expire_at(backend: AsyncRedisBackend):
         assert await backend.get("foo")
 
 
-@_test_redis
+@if_redis_enabled
 @mark.asyncio
 async def test_expire_in(backend: AsyncRedisBackend):
     await backend.set("foo", b"bar")
@@ -96,7 +95,7 @@ async def test_expire_in(backend: AsyncRedisBackend):
         assert await backend.get("foo")
 
 
-@_test_redis
+@if_redis_enabled
 @mark.asyncio
 async def test_clear(backend: AsyncRedisBackend):
     await backend.set("foo", b"bar")

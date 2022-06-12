@@ -2,6 +2,7 @@ from pytest import mark
 
 from cachetory import backends, serializers
 from cachetory.caches.sync import Cache
+from tests.support import if_redis_enabled
 
 _test_redis = mark.skipif("not config.getoption('test_redis')")
 
@@ -15,7 +16,7 @@ def test_get_set_in_memory():
     assert cache.get("foo") == 42
 
 
-@_test_redis
+@if_redis_enabled
 def test_get_set_in_redis():
     cache = Cache[int](
         serializer=serializers.from_url("pickle+zstd://pickle-protocol=5&compression-level=3"),

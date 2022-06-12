@@ -1,10 +1,9 @@
 from typing import Generator
 
-from pytest import fixture, mark
+from pytest import fixture
 
 from cachetory.backends import SyncRedisBackend
-
-_test_redis = mark.skipif("not config.getoption('test_redis')")
+from tests.support import if_redis_enabled
 
 
 @fixture
@@ -17,7 +16,7 @@ def backend() -> Generator[SyncRedisBackend, None, None]:
             backend.clear()
 
 
-@_test_redis
+@if_redis_enabled
 def test_get_existing(backend: SyncRedisBackend):
     backend.set("foo", b"hello")
     assert backend.get("foo") == b"hello"

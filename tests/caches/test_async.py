@@ -2,6 +2,7 @@ from pytest import mark
 
 from cachetory import backends, serializers
 from cachetory.caches.async_ import Cache
+from tests.support import if_redis_enabled
 
 _test_redis = mark.skipif("not config.getoption('test_redis')")
 
@@ -16,7 +17,7 @@ async def test_get_set_in_memory():
     assert await cache.get("foo") == 42
 
 
-@_test_redis
+@if_redis_enabled
 @mark.asyncio
 async def test_get_set_in_redis():
     cache = Cache[int](
