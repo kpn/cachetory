@@ -1,10 +1,10 @@
 from datetime import timedelta
 from functools import wraps
-from typing import Callable, Optional, Union
+from typing import Awaitable, Callable, Optional, Union
 
 from typing_extensions import ParamSpec
 
-from cachetory.caches.sync import Cache
+from cachetory.caches.async_ import Cache
 from cachetory.decorators import shared
 from cachetory.interfaces.serializers import ValueT
 
@@ -15,12 +15,12 @@ Original wrapped function parameter specification.
 
 
 def cached(
-    cache: Union[Cache[ValueT], Callable[..., Cache[ValueT]]],  # no way to use `P` here
+    cache: Union[Cache[ValueT], Callable[..., Awaitable[Cache[ValueT]]]],  # no way to use `P` here
     *,
     make_key: Callable[..., str] = shared.make_key,  # no way to use `P` here
     time_to_live: Optional[timedelta] = None,
     if_not_exists: bool = False,
-) -> Callable[[Callable[P, ValueT]], Callable[P, ValueT]]:
+) -> Callable[[Callable[P, Awaitable[ValueT]]], Callable[P, Awaitable[ValueT]]]:
     """
     Args:
         cache: `Cache` instance or a callable tha returns a `Cache` instance for each function call.
@@ -29,16 +29,15 @@ def cached(
         time_to_live: cached value expiration time.
     """
 
-    def wrap(callable_: Callable[P, ValueT]) -> Callable[P, ValueT]:
+    def wrap(callable_: Callable[P, Awaitable[ValueT]]) -> Callable[P, Awaitable[ValueT]]:
         @wraps(callable_)
-        def cached_callable(*args: P.args, **kwargs: P.kwargs) -> ValueT:
-            cache_ = cache() if callable(cache) else cache
+        async def cached_callable(*args: P.args, **kwargs: P.kwargs) -> ValueT:
+            cache_ = await cache() if callable(cache) else cache
             key_ = make_key(callable_, *args, **kwargs)
-            try:
-                value = cache_[key_]
-            except KeyError:
-                value = callable_(*args, **kwargs)
-                cache_.set(key_, value, time_to_live=time_to_live, if_not_exists=if_not_exists)
+            value = await cache_.get(key_)
+            if value is None:
+                value = await callable_(*args, **kwargs)
+                await cache_.set(key_, value, time_to_live=time_to_live, if_not_exists=if_not_exists)
             return value
 
         return cached_callable
