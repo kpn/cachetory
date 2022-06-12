@@ -30,7 +30,7 @@ async def test_get_existing(backend: AsyncRedisBackend):
 @mark.asyncio
 async def test_get_missing(backend: AsyncRedisBackend):
     with raises(KeyError):
-        assert await backend.get("foo")
+        await backend.get("foo")
 
 
 @if_redis_enabled
@@ -70,7 +70,7 @@ async def test_set_with_ttl(backend: AsyncRedisBackend):
     assert await backend.get("foo") == b"bar"
     await sleep(0.5)
     with raises(KeyError):
-        assert await backend.get("foo")
+        await backend.get("foo")
 
 
 @if_redis_enabled
@@ -81,7 +81,7 @@ async def test_expire_at(backend: AsyncRedisBackend):
     assert await backend.get("foo") == b"bar"
     await sleep(0.5)
     with raises(KeyError):
-        assert await backend.get("foo")
+        await backend.get("foo")
 
 
 @if_redis_enabled
@@ -92,7 +92,7 @@ async def test_expire_in(backend: AsyncRedisBackend):
     assert await backend.get("foo") == b"bar"
     await sleep(0.5)
     with raises(KeyError):
-        assert await backend.get("foo")
+        await backend.get("foo")
 
 
 @if_redis_enabled
@@ -101,4 +101,4 @@ async def test_clear(backend: AsyncRedisBackend):
     await backend.set("foo", b"bar")
     await backend.clear()
     with raises(KeyError):
-        assert await backend.get("foo")
+        await backend.get("foo")
