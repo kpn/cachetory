@@ -22,8 +22,8 @@ def test_get_item_missing(backend: SyncMemoryBackend[int]):
 
 
 def test_set_default(backend: SyncMemoryBackend[int]):
-    backend.set("foo", 42, if_not_exists=True)
-    backend.set("foo", 43, if_not_exists=True)
+    assert backend.set("foo", 42, if_not_exists=True)
+    assert not backend.set("foo", 43, if_not_exists=True)
     assert backend.get("foo") == 42
     assert backend.size == 1
 

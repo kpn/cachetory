@@ -33,7 +33,7 @@ class AsyncMemoryBackend(Generic[T_wire], AsyncBackend[T_wire]):
         *,
         time_to_live: Optional[timedelta] = None,
         if_not_exists: bool = False,
-    ) -> Coroutine[Any, Any, None]:
+    ) -> Coroutine[Any, Any, bool]:
         return postpone(
             self._backend.set,
             key,

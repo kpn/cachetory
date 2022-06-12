@@ -31,8 +31,8 @@ class SyncDummyBackend(Generic[T_wire], SyncBackend[T_wire]):
         *,
         time_to_live: Optional[timedelta] = None,
         if_not_exists: bool = False,
-    ) -> None:
-        return None
+    ) -> bool:
+        return True
 
     def set_many(self, items: Iterable[Tuple[str, T_wire]]) -> None:
         return None

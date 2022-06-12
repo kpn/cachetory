@@ -36,12 +36,13 @@ class SyncMemoryBackend(Generic[T_wire], SyncBackend[T_wire]):
         *,
         time_to_live: Optional[timedelta] = None,
         if_not_exists: bool = False,
-    ) -> None:
+    ) -> bool:
         entry = _Entry[T_wire](value, make_deadline(time_to_live))
         if if_not_exists:
-            self._entries.setdefault(key, entry)
+            return self._entries.setdefault(key, entry) is entry
         else:
             self._entries[key] = _Entry[T_wire](value, make_deadline(time_to_live))
+            return True
 
     def delete(self, key: str) -> bool:
         return self._entries.pop(key, _SENTINEL) is not _SENTINEL

@@ -47,8 +47,8 @@ class SyncRedisBackend(SyncBackend[bytes]):
         *,
         time_to_live: Optional[timedelta] = None,
         if_not_exists: bool = False,
-    ) -> None:
-        self._client.set(key, value, ex=time_to_live, nx=if_not_exists)
+    ) -> bool:
+        return bool(self._client.set(key, value, ex=time_to_live, nx=if_not_exists))
 
     def set_many(self, items: Iterable[Tuple[str, bytes]]) -> None:
         self._client.execute_command("MSET", *itertools.chain.from_iterable(items))

@@ -25,8 +25,8 @@ async def test_get_item_missing(backend: AsyncMemoryBackend[int]):
 
 @mark.asyncio
 async def test_set_default(backend: AsyncMemoryBackend[int]):
-    await backend.set("foo", 42, if_not_exists=True)
-    await backend.set("foo", 43, if_not_exists=True)
+    assert await backend.set("foo", 42, if_not_exists=True)
+    assert not await backend.set("foo", 43, if_not_exists=True)
     assert await backend.get("foo") == 42
     assert backend.size == 1
 

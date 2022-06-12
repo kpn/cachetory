@@ -72,9 +72,13 @@ class AsyncBackendWrite(Protocol[T_wire_contra]):
         *,
         time_to_live: Optional[timedelta] = None,
         if_not_exists: bool = False,
-    ) -> None:
+    ) -> bool:
         """
         Put the value into the cache.
+
+        Returns:
+            `True` if the value has been successfully set, `False` when `if_not_exists` is true
+            and the key is already existing.
         """
         raise NotImplementedError
 
