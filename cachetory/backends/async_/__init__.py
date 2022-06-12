@@ -19,10 +19,8 @@ async def from_url(url: str) -> AsyncBackend:
     scheme = parsed_url.scheme
     if scheme == "memory":
         return await MemoryBackend.from_url(url)
-    if scheme in ("redis", "rediss") and is_redis_available:
+    if scheme in ("redis", "rediss", "redis+unix") and is_redis_available:
         return await RedisBackend.from_url(url)
-    if scheme == "redis+unix" and is_redis_available:
-        return await RedisBackend.from_url(url[6:])  # unix://…
     if scheme == "dummy":
         return await DummyBackend.from_url(url)
     raise ValueError(f"`{scheme}://` is not supported")
