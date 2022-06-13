@@ -41,17 +41,17 @@ with cache:
 
 ### Supported operations
 
-| Operation                                         |                                                          |
-|:--------------------------------------------------|:---------------------------------------------------------|
-| `get(key, default)`                               | Retrieve a value (or return a default one)               |
-| `__getitem__(key)`                                | Retrieve a value or raise `KeyError` (only sync `Cache`) |
-| `get_many(*keys)`                                 | Retrieve many values as a dictionary                     |
-| `set(key, value, *, time_to_live, if_not_exists)` | Set a value and return if the value has been changed     |
-| `__setitem__(key, value)`                         | Set a value (only sync `Cache`)                          |
-| `set_many(items)`                                 | Set many values                                          |
-| `expire_in(key, time_to_live)`                    | Set an expiration duration on a key                      |
-| `delete(key)`                                     | Delete a key and return whether the key existed          |
-| `__delitem__(key)`                                | Delete a key (only sync `Cache`)                         |
+| Operation                                         |                                                              |
+|:--------------------------------------------------|:-------------------------------------------------------------|
+| `get(key, default)`                               | **Retrieve** a value (or return a default one)               |
+| `__getitem__(key)`                                | **Retrieve** a value or raise `KeyError` (only sync `Cache`) |
+| `get_many(*keys)`                                 | **Retrieve** many values as a dictionary                     |
+| `set(key, value, *, time_to_live, if_not_exists)` | **Set** a value and return if the value has been changed     |
+| `__setitem__(key, value)`                         | **Set** a value (only sync `Cache`)                          |
+| `set_many(items)`                                 | **Set** many values                                          |
+| `expire_in(key, time_to_live)`                    | **Set** an expiration duration on a key                      |
+| `delete(key)`                                     | **Delete** a key and return whether the key existed          |
+| `__delitem__(key)`                                | **Delete** a key (only sync `Cache`)                         |
 
 ### Instantiating a `Cache`
 
@@ -64,9 +64,9 @@ Both sync and async `Cache`s requires at least these parameters to work:
 ### Instantiating a backend
 
 There is a few ways to instantiate a backend:
-- By directly instantiating a backend class via its `__init__`
-- By instantiating a specific backend class via its `from_url` class method. In that case the URL is forwarded to underlying client (if any)
-- By using `cachetory.[sync|async_].from_url` function. In that case specific backend class is chosen by the URL's scheme (see the scheme badges below), and the URL is forwarded to its `from_url` class method. This is especially useful to configure an arbitrary backend from a single configuration option – instead of hard-coding a specific backend class.
+- By **directly instantiating** a backend class via its `__init__`
+- By instantiating a specific backend class **via its `from_url` class method**. In that case the URL is forwarded to underlying client (if any)
+- **By using `cachetory.[sync|async_].from_url` function.** In that case specific backend class is chosen by the URL's scheme (see the scheme badges below), and the URL is forwarded to its `from_url` class method. This is especially useful to configure an arbitrary backend from a single configuration option – instead of hard-coding a specific backend class.
 
 ### Instantiating a serializer
 
@@ -75,6 +75,8 @@ Instantiating of a serializer is very much similar to that of a backend. To inst
 `cachetory.serializers.from_url` supports scheme joining with `+`, as in `pickle+zlib://`. In that case multiple serializers are instantiated and applied sequentially (in the example a value would be serialized by `pickle` and the serialized value is then compressed by `zlib`). Deserialization order is, of course, the opposite.
 
 ### Decorators
+
+TODO
 
 ## Supported backends
 
@@ -92,7 +94,7 @@ Instantiating of a serializer is very much similar to that of a backend. To inst
 
 The URL is forwarded to the underlying client, which means one can use whatever options the client provides. The only special case is `redis+unix://`: the leading `redis+` is first stripped and the rest is forwarded.
 
-All the cache operations are atomic, including `get_many` and `set_many`.
+All the cache operations are **atomic**, including `get_many` and `set_many`.
 
 ### Memory
 
@@ -102,6 +104,8 @@ All the cache operations are atomic, including `get_many` and `set_many`.
 |:----------------------------------------|:------------------------------------------|
 | `cachetory.backends.sync.MemoryBackend` | `cachetory.backends.async_.MemoryBackend` |
 
+TODO
+
 ### Dummy
 
 ![scheme: dummy](https://img.shields.io/badge/scheme-dummy://-important)
@@ -109,6 +113,8 @@ All the cache operations are atomic, including `get_many` and `set_many`.
 | Sync                                    | Async                                     |
 |:----------------------------------------|:------------------------------------------|
 | `cachetory.backends.sync.DummyBackend`  | `cachetory.backends.async_.DummyBackend`  |
+
+TODO
 
 ## Supported serializers
 
@@ -119,6 +125,8 @@ All the cache operations are atomic, including `get_many` and `set_many`.
 | Class                                    |
 |:-----------------------------------------|
 | `cachetory.serializers.PickleSerializer` |
+
+TODO
 
 ### No-operation
 
@@ -147,6 +155,8 @@ Compressors are packaged separately in `cachetory.serializers.compressors`.
 |:---------------------------------------------------|
 | `cachetory.serializers.compressors.ZlibCompressor` |
 
+TODO
+
 ## Zstandard
 
 ![scheme: zstd](https://img.shields.io/badge/scheme-zstd://-important)
@@ -156,3 +166,5 @@ Compressors are packaged separately in `cachetory.serializers.compressors`.
 | Class                                              |
 |:---------------------------------------------------|
 | `cachetory.serializers.compressors.ZstdCompressor` |
+
+TODO
