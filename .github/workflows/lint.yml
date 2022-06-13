@@ -28,4 +28,4 @@ jobs:
     - name: Run lint checks
       run: make lint
       env:
-        PYTHON: python${{ matrix.python-version }}
+        PYTHON: python
