@@ -78,7 +78,7 @@ Instantiating of a serializer is very much similar to that of a backend. To inst
 
 ## Supported backends
 
-### Redis: `cachetory.backends.sync.RedisBackend` and `cachetory.backends.async_.RedisBackend`
+### Redis
 
 ![scheme: redis](https://img.shields.io/badge/scheme-redis://-important)
 ![scheme: rediss](https://img.shields.io/badge/scheme-rediss://-important)
@@ -86,30 +86,50 @@ Instantiating of a serializer is very much similar to that of a backend. To inst
 ![extra: redis-sync](https://img.shields.io/badge/sync-redis--sync-blue)
 ![extra: redis-async](https://img.shields.io/badge/async-redis--async-blueviolet)
 
+| Sync                                   | Async                                    |
+|:---------------------------------------|:-----------------------------------------|
+| `cachetory.backends.sync.RedisBackend` | `cachetory.backends.async_.RedisBackend` |
+
 The URL is forwarded to the underlying client, which means one can use whatever options the client provides. The only special case is `redis+unix://`: the leading `redis+` is first stripped and the rest is forwarded.
 
 All the cache operations are atomic, including `get_many` and `set_many`.
 
-### Memory: `cachetory.backends.sync.MemoryBackend` and `cachetory.backends.async_.MemoryBackend`
+### Memory
 
 ![scheme: memory](https://img.shields.io/badge/scheme-memory://-important)
 
-### Dummy: `cachetory.backends.sync.DummyBackend` and `cachetory.backends.async_.DummyBackend`
+| Sync                                    | Async                                     |
+|:----------------------------------------|:------------------------------------------|
+| `cachetory.backends.sync.MemoryBackend` | `cachetory.backends.async_.MemoryBackend` |
+
+### Dummy
 
 ![scheme: dummy](https://img.shields.io/badge/scheme-dummy://-important)
 
+| Sync                                    | Async                                     |
+|:----------------------------------------|:------------------------------------------|
+| `cachetory.backends.sync.DummyBackend`  | `cachetory.backends.async_.DummyBackend`  |
+
 ## Supported serializers
 
-### Pickle: `cachetory.serializers.PickleSerializer`
+### Pickle
 
 ![scheme: pickle](https://img.shields.io/badge/scheme-pickle://-important)
 
-### No-operation: `cachetory.serializers.NoopSerializer`
+| Class                                    |
+|:-----------------------------------------|
+| `cachetory.serializers.PickleSerializer` |
+
+### No-operation
 
 ![scheme: noop](https://img.shields.io/badge/scheme-noop://-important)
 ![scheme: null](https://img.shields.io/badge/scheme-null://-important)
 
-`cachetory.serializers.NoopSerializer` does nothing and just bypasses value back and forth. Most of the backends don't support that and require some kind of serialization.
+| Class                                   |
+|:----------------------------------------|
+| `cachetory.serializers.NoopSerializer`  |
+
+`NoopSerializer` does nothing and just bypasses value back and forth. Most of the backends don't support that and require some kind of serialization.
 
 However, it is possible to use `NoopSerializer` with `MemoryBackend`, because the latter just stores all values in a Python dictionary and doesn't necessarily require values to be serialized.
 
@@ -119,12 +139,20 @@ However, it is possible to use `NoopSerializer` with `MemoryBackend`, because th
 
 Compressors are packaged separately in `cachetory.serializers.compressors`.
 
-## Zlib: `cachetory.serializers.compressors.ZlibCompressor`
+## Zlib
 
 ![scheme: zlib](https://img.shields.io/badge/scheme-zlib://-important)
 
-## Zstandard: `cachetory.serializers.compressors.ZstdCompressor`
+| Class                                              |
+|:---------------------------------------------------|
+| `cachetory.serializers.compressors.ZlibCompressor` |
+
+## Zstandard
 
 ![scheme: zstd](https://img.shields.io/badge/scheme-zstd://-important)
 ![scheme: zstandard](https://img.shields.io/badge/scheme-zstandard://-important)
 ![extra: zstd](https://img.shields.io/badge/extra-zstd-blue)
+
+| Class                                              |
+|:---------------------------------------------------|
+| `cachetory.serializers.compressors.ZstdCompressor` |
