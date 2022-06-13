@@ -53,7 +53,7 @@ class ChainedSerializer(Serializer[ValueT, WireT], Generic[ValueT, WireT]):
             return PickleSerializer.from_url(url)
         if scheme in ("noop", "null"):
             return NoopSerializer.from_url(url)
-        if scheme == "zstd" and is_zstd_available:
+        if scheme in ("zstd", "zstandard") and is_zstd_available:
             return ZstdCompressor.from_url(url)
         if scheme == "zlib":
             return ZlibCompressor.from_url(url)
