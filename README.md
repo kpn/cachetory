@@ -37,38 +37,77 @@ with cache:
     assert cache.get("foo") == 42
 ```
 
-### Specifying a backend
+## Tutorial
 
-### Specifying a serializer
+### Supported operations
+
+| Operation                                         |                                                          |
+|:--------------------------------------------------|:---------------------------------------------------------|
+| `get(key, default)`                               | Retrieve a value (or return a default one)               |
+| `__getitem__(key)`                                | Retrieve a value or raise `KeyError` (only sync `Cache`) |
+| `get_many(*keys)`                                 | Retrieve many values as a dictionary                     |
+| `set(key, value, *, time_to_live, if_not_exists)` | Set a value and return if the value has been changed     |
+| `__setitem__(key, value)`                         | Set a value (only sync `Cache`)                          |
+| `set_many(items)`                                 | Set many values                                          |
+| `expire_in(key, time_to_live)`                    | Set an expiration duration on a key                      |
+| `delete(key)`                                     | Delete a key and return whether the key existed          |
+| `__delitem__(key)`                                | Delete a key (only sync `Cache`)                         |
+
+### Instantiating a `Cache`
+
+Both sync and async `Cache`s requires at least these parameters to work:
+- `backend`: functions as a storage
+- `serializer`: is responsible for converting actual values from and to something that a backend would be able to store
+
+`Cache` may be annotated with a value type, like this: `Cache[ValueT]`, which provides type hints for the cache methods.
+
+### Instantiating a backend
+
+There is a few ways to instantiate a backend:
+- By directly instantiating a backend class via its `__init__`
+- By instantiating a specific backend class via its `from_url` class method. In that case the URL is forwarded to underlying client (if any)
+- By using `cachetory.[sync|async_].from_url` function. In that case specific backend class is chosen by the URL's scheme (see the scheme badges below), and the URL is forwarded to its `from_url` class method. This is especially useful to configure an arbitrary backend from a single configuration option – instead of hard-coding a specific backend class.
+
+### Instantiating a serializer
+
+Instantiating of a serializer is very much similar to that of a backend. To instantiate it by a URL use `cachetory.serializers.from_url` – unlike the back-end case there are no separate sync and async versions.
+
+`cachetory.serializers.from_url` supports scheme joining with `+`, as in `pickle+zlib://`. In that case multiple serializers are instantiated and applied sequentially (in the example a value would be serialized by `pickle` and the serialized value is then compressed by `zlib`). Deserialization order is, of course, the opposite.
+
+### Decorators
 
 ## Supported backends
 
-### Redis
+### Redis: `cachetory.backends.sync.RedisBackend` and `cachetory.backends.async_.RedisBackend`
 
-![schema: redis](https://img.shields.io/badge/schema-redis://-important)
-![schema: rediss](https://img.shields.io/badge/schema-rediss://-important)
-![schema: redis+unix](https://img.shields.io/badge/schema-redis+unix://-important)
+![scheme: redis](https://img.shields.io/badge/scheme-redis://-important)
+![scheme: rediss](https://img.shields.io/badge/scheme-rediss://-important)
+![scheme: redis+unix](https://img.shields.io/badge/scheme-redis+unix://-important)
 ![extra: redis-sync](https://img.shields.io/badge/sync-redis--sync-blue)
 ![extra: redis-async](https://img.shields.io/badge/async-redis--async-blueviolet)
 
-### Memory
+The URL is forwarded to the underlying client, which means one can use whatever options the client provides. The only special case is `redis+unix://`: the leading `redis+` is first stripped and the rest is forwarded.
 
-![schema: memory](https://img.shields.io/badge/schema-memory://-important)
+All the cache operations are atomic, including `get_many` and `set_many`.
 
-### Dummy
+### Memory: `cachetory.backends.sync.MemoryBackend` and `cachetory.backends.async_.MemoryBackend`
 
-![schema: dummy](https://img.shields.io/badge/schema-dummy://-important)
+![scheme: memory](https://img.shields.io/badge/scheme-memory://-important)
+
+### Dummy: `cachetory.backends.sync.DummyBackend` and `cachetory.backends.async_.DummyBackend`
+
+![scheme: dummy](https://img.shields.io/badge/scheme-dummy://-important)
 
 ## Supported serializers
 
-### Pickle
+### Pickle: `cachetory.serializers.PickleSerializer`
 
-![schema: pickle](https://img.shields.io/badge/schema-pickle://-important)
+![scheme: pickle](https://img.shields.io/badge/scheme-pickle://-important)
 
-### No-operation
+### No-operation: `cachetory.serializers.NoopSerializer`
 
-![schema: noop](https://img.shields.io/badge/schema-noop://-important)
-![schema: null](https://img.shields.io/badge/schema-null://-important)
+![scheme: noop](https://img.shields.io/badge/scheme-noop://-important)
+![scheme: null](https://img.shields.io/badge/scheme-null://-important)
 
 `cachetory.serializers.NoopSerializer` does nothing and just bypasses value back and forth. Most of the backends don't support that and require some kind of serialization.
 
@@ -76,16 +115,16 @@ However, it is possible to use `NoopSerializer` with `MemoryBackend`, because th
 
 ## Supported compressors
 
-Compressor is basically just a partial case of serializer: it's a serializer from `bytes` to and from `bytes`, which by definition provides some kind of data compression.
+**Compressor** is basically just a partial case of serializer: it's a serializer from `bytes` to and from `bytes`, which by definition provides some kind of data compression.
 
 Compressors are packaged separately in `cachetory.serializers.compressors`.
 
-## Zlib
+## Zlib: `cachetory.serializers.compressors.ZlibCompressor`
 
-![schema: zlib](https://img.shields.io/badge/schema-zlib://-important)
+![scheme: zlib](https://img.shields.io/badge/scheme-zlib://-important)
 
-## Zstandard
+## Zstandard: `cachetory.serializers.compressors.ZstdCompressor`
 
-![schema: zstd](https://img.shields.io/badge/schema-zstd://-important)
-![schema: zstandard](https://img.shields.io/badge/schema-zstandard://-important)
+![scheme: zstd](https://img.shields.io/badge/scheme-zstd://-important)
+![scheme: zstandard](https://img.shields.io/badge/scheme-zstandard://-important)
 ![extra: zstd](https://img.shields.io/badge/extra-zstd-blue)
