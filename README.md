@@ -172,7 +172,25 @@ However, it is possible to use `NoopSerializer` with `MemoryBackend`, because th
 
 **Compressor** is basically just a partial case of serializer: it's a serializer from `bytes` to and from `bytes`, which by definition provides some kind of data compression.
 
-Compressors are packaged separately in `cachetory.serializers.compressors`.
+It also means that you can use a compressor alone, effectively making a cache of compressed blobs:
+
+```python
+from datetime import timedelta
+
+from cachetory.caches.sync import Cache
+from cachetory.serializers.compressors import ZlibCompressor
+from cachetory.backends.sync import RedisBackend
+
+cache = Cache[bytes](
+    serializer=ZlibCompressor(),
+    backend=RedisBackend(...),
+)
+cache.set(
+    "my-blob",
+    b"this huge blob will be compressed and stored in Redis for an hour",
+    time_to_live=timedelta(hours=1),
+)
+```
 
 ## Zlib
 
