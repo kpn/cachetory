@@ -60,7 +60,10 @@ async def test_delete_missing(backend: RedisBackend):
 @mark.asyncio
 async def test_set_get_many(backend: RedisBackend):
     await backend.set_many([("shields", b"up"), ("alert", b"red")])
-    assert [entry async for entry in backend.get_many("shields", "alert")] == [("shields", b"up"), ("alert", b"red")]
+    assert [entry async for entry in backend.get_many("shields", "alert", "missing")] == [
+        ("shields", b"up"),
+        ("alert", b"red"),
+    ]
 
 
 @if_redis_enabled

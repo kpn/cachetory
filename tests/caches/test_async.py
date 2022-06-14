@@ -8,7 +8,7 @@ from tests.support import if_redis_enabled
 
 @fixture
 async def memory_cache() -> Cache[int]:
-    return Cache[int, bytes](
+    return Cache(
         serializer=serializers.from_url("pickle+zstd://"),
         backend=(await async_backends.from_url("memory://")),
     )

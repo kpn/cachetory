@@ -54,7 +54,7 @@ async def test_delete_missing(backend: RedisBackend):
 @if_redis_enabled
 async def test_set_get_many(backend: RedisBackend):
     backend.set_many([("shields", b"up"), ("alert", b"red")])
-    assert list(backend.get_many("shields", "alert")) == [("shields", b"up"), ("alert", b"red")]
+    assert list(backend.get_many("shields", "alert", "missing")) == [("shields", b"up"), ("alert", b"red")]
 
 
 @if_redis_enabled
