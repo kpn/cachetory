@@ -61,7 +61,7 @@ async def test_serialize_executor():
 @mark.asyncio
 async def test_get_set_in_redis():
     cache = Cache[int](
-        serializer=serializers.from_url("pickle+zstd://?pickle-protocol=4&compression-level=3"),
+        serializer=serializers.from_url("pickle+zlib://"),
         backend=(await async_backends.from_url("redis://localhost:6379")),
     )
     async with cache:

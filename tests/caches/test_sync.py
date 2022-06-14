@@ -55,7 +55,7 @@ def test_del_item(memory_cache: Cache[int]):
 @if_redis_enabled
 def test_get_set_in_redis():
     cache = Cache[int](
-        serializer=serializers.from_url("pickle+zstd://?pickle-protocol=4&compression-level=3"),
+        serializer=serializers.from_url("pickle+zlib://"),
         backend=sync_backends.from_url("redis://localhost:6379"),
     )
     with cache:

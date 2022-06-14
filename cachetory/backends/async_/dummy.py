@@ -20,7 +20,7 @@ class DummyBackend(AsyncBackend[WireT], Generic[WireT]):
         raise KeyError(key)
 
     async def get_many(self, *keys: str) -> AsyncIterable[Tuple[str, WireT]]:
-        for _ in ():
+        for _ in ():  # pragma: no cover
             yield ()  # type: ignore
 
     async def expire_in(self, key: str, time_to_live: Optional[timedelta] = None) -> None:  # pragma: no cover
