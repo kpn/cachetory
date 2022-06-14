@@ -22,6 +22,7 @@ setup(
     packages=find_packages(exclude=["tests*"]),
     python_requires=">=3.7",
     install_requires=[
+        "pydantic>=1.9.1,<2.0.0",
         "typing-extensions>=4.2.0,<5.0.0",
     ],
     extras_require={

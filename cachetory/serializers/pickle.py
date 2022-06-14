@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import pickle
-from contextlib import suppress
 from typing import Generic
 from urllib.parse import parse_qsl, urlparse
+
+from pydantic import BaseModel, Field, conint
 
 from cachetory.interfaces.serializers import Serializer, ValueT
 
@@ -17,11 +18,8 @@ class PickleSerializer(Serializer[ValueT, bytes], Generic[ValueT]):
 
     @classmethod
     def from_url(cls, url: str) -> PickleSerializer[ValueT]:
-        params = dict(parse_qsl(urlparse(url).query))
-        parsed_params = {}
-        with suppress(KeyError, IndexError):
-            parsed_params["pickle_protocol"] = int(params["pickle-protocol"])
-        return cls(**parsed_params)
+        params = _UrlParams.parse_obj(dict(parse_qsl(urlparse(url).query)))
+        return cls(pickle_protocol=params.pickle_protocol)
 
     def __init__(self, pickle_protocol: int = pickle.HIGHEST_PROTOCOL):
         self.protocol = pickle_protocol
@@ -31,3 +29,7 @@ class PickleSerializer(Serializer[ValueT, bytes], Generic[ValueT]):
 
     def deserialize(self, data: bytes) -> ValueT:
         return pickle.loads(data)
+
+
+class _UrlParams(BaseModel):
+    pickle_protocol: conint(ge=0, le=pickle.HIGHEST_PROTOCOL) = Field(pickle.HIGHEST_PROTOCOL, alias="pickle-protocol")  # type: ignore

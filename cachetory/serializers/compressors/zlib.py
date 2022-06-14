@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import zlib
-from contextlib import suppress
 from urllib.parse import parse_qsl, urlparse
+
+from pydantic import BaseModel, Field, conint
 
 from cachetory.interfaces.serializers import Serializer
 
@@ -16,11 +17,8 @@ class ZlibCompressor(Serializer[bytes, bytes]):
 
     @classmethod
     def from_url(cls, url: str) -> ZlibCompressor:
-        params = dict(parse_qsl(urlparse(url).query))
-        parsed_params = {}
-        with suppress(KeyError, IndexError):
-            parsed_params["compression_level"] = int(params["compression-level"])
-        return cls(**parsed_params)
+        params = _UrlParams.parse_obj(dict(parse_qsl(urlparse(url).query)))
+        return cls(compression_level=params.compression_level)
 
     def __init__(self, *, compression_level: int = zlib.Z_DEFAULT_COMPRESSION):
         self._level = compression_level
@@ -30,3 +28,10 @@ class ZlibCompressor(Serializer[bytes, bytes]):
 
     def deserialize(self, data: bytes) -> bytes:
         return zlib.decompress(data)
+
+
+class _UrlParams(BaseModel):
+    compression_level: conint(ge=-1, le=9) = Field(  # type: ignore
+        zlib.Z_DEFAULT_COMPRESSION,
+        alias="compression-level",
+    )

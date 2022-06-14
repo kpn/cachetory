@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from contextlib import suppress
 from urllib.parse import parse_qsl, urlparse
 
 import zstd  # type: ignore
+from pydantic import BaseModel, Field, conint
 
 from cachetory.interfaces.serializers import Serializer
 
@@ -17,13 +17,8 @@ class ZstdCompressor(Serializer[bytes, bytes]):
 
     @classmethod
     def from_url(cls, url: str) -> ZstdCompressor:
-        params = dict(parse_qsl(urlparse(url).query))
-        parsed_params = {}
-        with suppress(KeyError, IndexError):
-            parsed_params["compression_level"] = int(params["compression-level"])
-        with suppress(KeyError, IndexError):
-            parsed_params["compression_threads"] = int(params["compression-threads"])
-        return cls(**parsed_params)
+        params = _UrlParams.parse_obj(dict(parse_qsl(urlparse(url).query)))
+        return cls(compression_level=params.compression_level, compression_threads=params.compression_threads)
 
     def __init__(
         self,
@@ -39,3 +34,8 @@ class ZstdCompressor(Serializer[bytes, bytes]):
 
     def deserialize(self, data: bytes) -> bytes:
         return zstd.decompress(data)
+
+
+class _UrlParams(BaseModel):
+    compression_level: int = Field(3, alias="compression-level")  # type: ignore
+    compression_threads: conint(ge=0) = Field(0, alias="compression-threads")  # type: ignore
