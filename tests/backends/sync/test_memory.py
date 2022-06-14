@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+from typing import Iterable
 
 from freezegun import freeze_time
 from pytest import fixture, raises
@@ -7,8 +8,9 @@ from cachetory.backends.sync.memory import MemoryBackend
 
 
 @fixture
-def backend() -> MemoryBackend[int]:
-    return MemoryBackend[int]()
+def backend() -> Iterable[MemoryBackend[int]]:
+    with MemoryBackend[int]() as backend:
+        yield backend
 
 
 def test_get_existing(backend: MemoryBackend[int]):

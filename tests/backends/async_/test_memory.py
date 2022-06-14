@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+from typing import AsyncIterable
 
 from freezegun import freeze_time
 from pytest import fixture, mark, raises
@@ -7,8 +8,9 @@ from cachetory.backends.async_.memory import MemoryBackend
 
 
 @fixture
-async def backend() -> MemoryBackend[int]:
-    return MemoryBackend[int]()
+async def backend() -> AsyncIterable[MemoryBackend[int]]:
+    async with MemoryBackend[int]() as backend:
+        yield backend
 
 
 @mark.asyncio

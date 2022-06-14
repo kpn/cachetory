@@ -1,6 +1,6 @@
 from datetime import timedelta
 from time import sleep
-from typing import Generator
+from typing import Iterable
 
 from pytest import fixture, raises
 
@@ -10,7 +10,7 @@ from tests.support import if_redis_enabled
 
 
 @fixture
-def backend() -> Generator[RedisBackend, None, None]:
+def backend() -> Iterable[RedisBackend]:
     with RedisBackend.from_url("redis://localhost:6379") as backend:
         backend.clear()
         try:
