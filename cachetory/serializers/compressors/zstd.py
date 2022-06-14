@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from contextlib import suppress
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qsl, urlparse
 
 import zstd  # type: ignore
 
@@ -17,12 +17,12 @@ class ZstdCompressor(Serializer[bytes, bytes]):
 
     @classmethod
     def from_url(cls, url: str) -> ZstdCompressor:
-        params = parse_qs(urlparse(url).query)
+        params = dict(parse_qsl(urlparse(url).query))
         parsed_params = {}
         with suppress(KeyError, IndexError):
-            parsed_params["compression_level"] = int(params["compression-level"][0])
+            parsed_params["compression_level"] = int(params["compression-level"])
         with suppress(KeyError, IndexError):
-            parsed_params["compression_threads"] = int(params["compression-threads"][0])
+            parsed_params["compression_threads"] = int(params["compression-threads"])
         return cls(**parsed_params)
 
     def __init__(

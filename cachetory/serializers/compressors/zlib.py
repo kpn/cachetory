@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import zlib
 from contextlib import suppress
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qsl, urlparse
 
 from cachetory.interfaces.serializers import Serializer
 
@@ -16,10 +16,10 @@ class ZlibCompressor(Serializer[bytes, bytes]):
 
     @classmethod
     def from_url(cls, url: str) -> ZlibCompressor:
-        params = parse_qs(urlparse(url).query)
+        params = dict(parse_qsl(urlparse(url).query))
         parsed_params = {}
         with suppress(KeyError, IndexError):
-            parsed_params["compression_level"] = int(params["compression-level"][0])
+            parsed_params["compression_level"] = int(params["compression-level"])
         return cls(**parsed_params)
 
     def __init__(self, *, compression_level: int = zlib.Z_DEFAULT_COMPRESSION):
