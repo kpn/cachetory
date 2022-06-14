@@ -22,7 +22,7 @@ class AsyncBackendRead(Protocol[WireT_co]):
     Describes the read operations of an asynchronous cache.
     """
 
-    async def get(self, key: str) -> WireT_co:
+    async def get(self, key: str) -> WireT_co:  # pragma: no cover
         """
         Retrieve a value from the cache.
 
@@ -61,7 +61,7 @@ class AsyncBackendWrite(Protocol[WireT_contra]):
         deadline = datetime.now(timezone.utc) + time_to_live if time_to_live is not None else None
         await self.expire_at(key, deadline)
 
-    async def expire_at(self, key: str, deadline: Optional[datetime]) -> None:
+    async def expire_at(self, key: str, deadline: Optional[datetime]) -> None:  # pragma: no cover
         """
         Set the expiration deadline on the key.
         """
@@ -74,7 +74,7 @@ class AsyncBackendWrite(Protocol[WireT_contra]):
         *,
         time_to_live: Optional[timedelta] = None,
         if_not_exists: bool = False,
-    ) -> bool:
+    ) -> bool:  # pragma: no cover
         """
         Put the value into the cache.
 
@@ -91,7 +91,7 @@ class AsyncBackendWrite(Protocol[WireT_contra]):
         for (key, value) in items:
             await self.set(key, value)
 
-    async def delete(self, key: str) -> bool:
+    async def delete(self, key: str) -> bool:  # pragma: no cover
         """
         Delete the key from the cache.
 
@@ -100,7 +100,7 @@ class AsyncBackendWrite(Protocol[WireT_contra]):
         """
         raise NotImplementedError
 
-    async def clear(self) -> None:
+    async def clear(self) -> None:  # pragma: no cover
         """
         Clears the backend storage.
         """
@@ -120,7 +120,7 @@ class AsyncBackend(
 
     @classmethod
     @abstractmethod
-    async def from_url(cls, url: str) -> AsyncBackend:
+    async def from_url(cls, url: str) -> AsyncBackend:  # pragma: no cover
         """
         Create an asynchronous cache backend from the specified URL.
 

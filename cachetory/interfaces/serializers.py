@@ -24,7 +24,7 @@ class Serialize(Protocol[ValueT_contra, WireT_co]):
     Defines the `serialize` conversion.
     """
 
-    def serialize(self, value: ValueT_contra) -> WireT_co:
+    def serialize(self, value: ValueT_contra) -> WireT_co:  # pragma: no cover
         raise NotImplementedError
 
 
@@ -33,7 +33,7 @@ class Deserialize(Protocol[ValueT_co, WireT_contra]):
     Defines the `deserialize` conversion.
     """
 
-    def deserialize(self, data: WireT_contra) -> ValueT_co:
+    def deserialize(self, data: WireT_contra) -> ValueT_co:  # pragma: no cover
         raise NotImplementedError
 
 
@@ -49,7 +49,7 @@ class Serializer(Serialize[ValueT, WireT], Deserialize[ValueT, WireT], Protocol[
     """
 
     @classmethod
-    def from_url(cls, url: str) -> Serializer[ValueT, WireT]:
+    def from_url(cls, url: str) -> Serializer[ValueT, WireT]:  # pragma: no cover
         """
         Instantiate a serializer from the specified URL.
 

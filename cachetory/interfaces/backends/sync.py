@@ -23,7 +23,7 @@ class SyncBackendRead(Protocol[WireT_co]):
     Describes the read operations of a synchronous cache.
     """
 
-    def get(self, key: str) -> WireT_co:
+    def get(self, key: str) -> WireT_co:  # pragma: no cover
         """
         Retrieve a value from the cache.
 
@@ -61,7 +61,7 @@ class SyncBackendWrite(Protocol[WireT_contra]):
         """
         self.expire_at(key, make_deadline(time_to_live))
 
-    def expire_at(self, key: str, deadline: Optional[datetime]) -> None:
+    def expire_at(self, key: str, deadline: Optional[datetime]) -> None:  # pragma: no cover
         """
         Set the expiration deadline on the key.
         """
@@ -74,7 +74,7 @@ class SyncBackendWrite(Protocol[WireT_contra]):
         *,
         time_to_live: Optional[timedelta] = None,
         if_not_exists: bool = False,
-    ) -> bool:
+    ) -> bool:  # pragma: no cover
         """
         Put the value into the cache.
 
@@ -91,7 +91,7 @@ class SyncBackendWrite(Protocol[WireT_contra]):
         for (key, value) in items:
             self.set(key, value)
 
-    def delete(self, key: str) -> bool:
+    def delete(self, key: str) -> bool:  # pragma: no cover
         """
         Delete the key from the cache.
 
@@ -100,7 +100,7 @@ class SyncBackendWrite(Protocol[WireT_contra]):
         """
         raise NotImplementedError
 
-    def clear(self) -> None:
+    def clear(self) -> None:  # pragma: no cover
         """
         Clears the backend storage.
         """
@@ -120,7 +120,7 @@ class SyncBackend(
 
     @classmethod
     @abstractmethod
-    def from_url(cls, url: str) -> SyncBackend:
+    def from_url(cls, url: str) -> SyncBackend:  # pragma: no cover
         """
         Create a synchronous cache backend from the specified URL.
 
