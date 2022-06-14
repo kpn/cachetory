@@ -57,6 +57,7 @@ with cache:
 ### Instantiating a `Cache`
 
 Both sync and async `Cache`s requires at least these parameters to work:
+
 - `backend`: functions as a storage
 - `serializer`: is responsible for converting actual values from and to something that a backend would be able to store
 
@@ -65,6 +66,7 @@ Both sync and async `Cache`s requires at least these parameters to work:
 ### Instantiating a backend
 
 There is a few ways to instantiate a backend:
+
 - By **directly instantiating** a backend class via its `__init__`
 - By instantiating a specific backend class **via its `from_url` class method**. In that case the URL is forwarded to underlying client (if any)
 - **By using `cachetory.[sync|async_].from_url` function.** In that case specific backend class is chosen by the URL's scheme (see the scheme badges below), and the URL is forwarded to its `from_url` class method. This is especially useful to configure an arbitrary backend from a single configuration option – instead of hard-coding a specific backend class.
@@ -104,7 +106,31 @@ serializer = cachetory.serializers.PickleSerializer(pickle_protocol=pickle.DEFAU
 
 ### Decorators
 
-TODO
+#### Decorate a function with `@cached`
+
+`@cached` performs [memoization](https://en.wikipedia.org/wiki/Memoization) of a wrapped function:
+
+```python
+from cachetory.caches.sync import Cache
+from cachetory.decorators.shared import make_key
+from cachetory.decorators.sync import cached
+
+cache = Cache[int](backend=..., serializer=...)
+another_cache = Cache[int](backend=..., serializer=...)
+
+
+@cached(
+    cache,  # may also be a callable that returns a specific cache for each call, e.g.:
+    # `cache=lambda wrapped_callable, *args, **kwargs: cache if … else another_cache`
+
+    # The following parameters are optional (shown the defaults):
+    make_key=make_key,  # cache key generator
+    time_to_live=None,  # forwarded to `Cache.set`
+    if_not_exists=False,  # forwarded to `Cache.set`
+)
+def expensive_function() -> int:
+    return 42
+```
 
 ## Supported backends
 
@@ -132,7 +158,12 @@ All the cache operations are **atomic**, including `get_many` and `set_many`.
 |:----------------------------------------|:------------------------------------------|
 | `cachetory.backends.sync.MemoryBackend` | `cachetory.backends.async_.MemoryBackend` |
 
-TODO
+Simple memory backend that stores values in a plain dictionary.
+
+Note the following **caveats**:
+
+- This backend does **not** copy values. Meaning that mutating a stored value mutates it in the backend too. If this is not desirable, consider using another serializer or making up your own serializer which copies values in its `serialize` method.
+- Expired items actually get deleted **only** when accessed. If you put a value into the backend and never try to retrieve it – it'll stay in memory forever.
 
 ### Dummy
 
@@ -142,7 +173,8 @@ TODO
 |:----------------------------------------|:------------------------------------------|
 | `cachetory.backends.sync.DummyBackend`  | `cachetory.backends.async_.DummyBackend`  |
 
-TODO
+Dummy backend that always succeeds but never stores anything. Any values get forgotten immediately,
+and operations behave as if the cache always is empty.
 
 ## Supported serializers
 
