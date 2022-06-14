@@ -1,4 +1,5 @@
 from pytest import fixture
+
 from cachetory import serializers
 from cachetory.backends import sync as sync_backends
 from cachetory.caches.sync import Cache
@@ -7,7 +8,7 @@ from tests.support import if_redis_enabled
 
 @fixture
 def memory_cache() -> Cache[int]:
-    return Cache[int](
+    return Cache[int, bytes](
         serializer=serializers.from_url("pickle+zstd://?pickle-protocol=4&compression-level=3"),
         backend=sync_backends.from_url("memory://"),
     )

@@ -1,4 +1,4 @@
-from pytest import mark, fixture
+from pytest import fixture, mark
 
 from cachetory import serializers
 from cachetory.backends import async_ as async_backends
@@ -8,7 +8,7 @@ from tests.support import if_redis_enabled
 
 @fixture
 async def memory_cache() -> Cache[int]:
-    return Cache[int](
+    return Cache[int, bytes](
         serializer=serializers.from_url("pickle+zstd://"),
         backend=(await async_backends.from_url("memory://")),
     )
