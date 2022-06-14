@@ -19,6 +19,11 @@ def test_get_set_in_memory(memory_cache: Cache[int]):
     assert memory_cache.get("foo") == 42
 
 
+def test_set_item(memory_cache: Cache[int]):
+    memory_cache["foo"] = 42
+    assert memory_cache.get("foo") == 42
+
+
 def test_get_default(memory_cache: Cache[int]):
     assert memory_cache.get("missing", 100500) == 100500
 
