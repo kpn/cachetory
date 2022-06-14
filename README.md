@@ -182,6 +182,8 @@ and operations behave as if the cache always is empty.
 
 ![scheme: pickle](https://img.shields.io/badge/scheme-pickle://-important)
 
+Serializes using the standard [`pickle`](https://docs.python.org/3/library/pickle.html) module.
+
 | Class                                    |
 |:-----------------------------------------|
 | `cachetory.serializers.PickleSerializer` |
