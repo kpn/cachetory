@@ -62,7 +62,7 @@ class Cache(AbstractAsyncContextManager, Generic[ValueT]):
     async def set_many(self, items: Union[Iterable[Tuple[str, ValueT]], Mapping[str, ValueT]]) -> None:
         if isinstance(items, Mapping):
             items = items.items()
-        await self._backend.set_many((key, await self._serialize(value)) for key, value in items)
+        await self._backend.set_many([(key, await self._serialize(value)) for key, value in items])
 
     async def delete(self, key: str) -> bool:
         return await self._backend.delete(key)
