@@ -9,6 +9,10 @@ from cachetory.interfaces.serializers import Serializer, ValueT
 
 
 class PickleSerializer(Serializer[ValueT, bytes], Generic[ValueT]):
+    """
+    Uses the standard built-in `pickle` serialization.
+    """
+
     __slots__ = ("protocol",)
 
     @classmethod

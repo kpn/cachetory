@@ -153,7 +153,9 @@ TODO
 |:-----------------------------------------|
 | `cachetory.serializers.PickleSerializer` |
 
-TODO
+| URL parameter     |                                                                                                  |
+|:------------------|--------------------------------------------------------------------------------------------------|
+| `pickle-protocol` | Version of [`pickle` protocol](https://docs.python.org/3/library/pickle.html#data-stream-format) |
 
 ### No-operation
 
@@ -196,11 +198,15 @@ cache.set(
 
 ![scheme: zlib](https://img.shields.io/badge/scheme-zlib://-important)
 
+Uses the built-in [`zlib`](https://docs.python.org/3/library/zlib.html) module.
+
 | Class                                              |
 |:---------------------------------------------------|
 | `cachetory.serializers.compressors.ZlibCompressor` |
 
-TODO
+| URL parameter         |                                                     |
+|:----------------------|-----------------------------------------------------|
+| `compression-level`   | From `0` (no compression) to `9` (best compression) |
 
 ## Zstandard
 
@@ -208,8 +214,13 @@ TODO
 ![scheme: zstandard](https://img.shields.io/badge/scheme-zstandard://-important)
 ![extra: zstd](https://img.shields.io/badge/extra-zstd-blue)
 
+Uses [`python-zstd`](https://github.com/sergey-dryabzhinsky/python-zstd) for [Zstandard](https://facebook.github.io/zstd/) compression.
+
 | Class                                              |
 |:---------------------------------------------------|
 | `cachetory.serializers.compressors.ZstdCompressor` |
 
-TODO
+| URL parameter         |                                                             |
+|:----------------------|-------------------------------------------------------------|
+| `compression-level`   | See: https://github.com/sergey-dryabzhinsky/python-zstd#api |
+| `compression-threads` | See: https://github.com/sergey-dryabzhinsky/python-zstd#api |
