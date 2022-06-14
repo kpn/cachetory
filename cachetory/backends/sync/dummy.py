@@ -16,16 +16,16 @@ class DummyBackend(SyncBackend[WireT], Generic[WireT]):
     def from_url(cls, url: str) -> DummyBackend:
         return DummyBackend()
 
-    def get(self, key: str) -> WireT:
+    def get(self, key: str) -> WireT:  # pragma: no cover
         raise KeyError(key)
 
-    def get_many(self, *keys: str) -> Iterable[Tuple[str, WireT]]:
+    def get_many(self, *keys: str) -> Iterable[Tuple[str, WireT]]:  # pragma: no cover
         return []
 
-    def expire_in(self, key: str, time_to_live: Optional[timedelta] = None) -> None:
+    def expire_in(self, key: str, time_to_live: Optional[timedelta] = None) -> None:  # pragma: no cover
         return None
 
-    def expire_at(self, key: str, deadline: Optional[datetime]) -> None:
+    def expire_at(self, key: str, deadline: Optional[datetime]) -> None:  # pragma: no cover
         return None
 
     def set(
@@ -35,14 +35,14 @@ class DummyBackend(SyncBackend[WireT], Generic[WireT]):
         *,
         time_to_live: Optional[timedelta] = None,
         if_not_exists: bool = False,
-    ) -> bool:
+    ) -> bool:  # pragma: no cover
         return True
 
-    def set_many(self, items: Iterable[Tuple[str, WireT]]) -> None:
+    def set_many(self, items: Iterable[Tuple[str, WireT]]) -> None:  # pragma: no cover
         return None
 
-    def delete(self, key: str) -> bool:
+    def delete(self, key: str) -> bool:  # pragma: no cover
         return False  # has never been there
 
-    def clear(self) -> None:
+    def clear(self) -> None:  # pragma: no cover
         return None  # already perfectly clean

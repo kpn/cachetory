@@ -16,17 +16,17 @@ class DummyBackend(AsyncBackend[WireT], Generic[WireT]):
     async def from_url(cls, url: str) -> DummyBackend:
         return DummyBackend()
 
-    async def get(self, key: str) -> WireT:
+    async def get(self, key: str) -> WireT:  # pragma: no cover
         raise KeyError(key)
 
     async def get_many(self, *keys: str) -> AsyncIterable[Tuple[str, WireT]]:
         for _ in ():
             yield ()  # type: ignore
 
-    async def expire_in(self, key: str, time_to_live: Optional[timedelta] = None) -> None:
+    async def expire_in(self, key: str, time_to_live: Optional[timedelta] = None) -> None:  # pragma: no cover
         return None
 
-    async def expire_at(self, key: str, deadline: Optional[datetime]) -> None:
+    async def expire_at(self, key: str, deadline: Optional[datetime]) -> None:  # pragma: no cover
         return None
 
     async def set(
@@ -36,14 +36,14 @@ class DummyBackend(AsyncBackend[WireT], Generic[WireT]):
         *,
         time_to_live: Optional[timedelta] = None,
         if_not_exists: bool = False,
-    ) -> bool:
+    ) -> bool:  # pragma: no cover
         return True
 
-    async def set_many(self, items: Iterable[Tuple[str, WireT]]) -> None:
+    async def set_many(self, items: Iterable[Tuple[str, WireT]]) -> None:  # pragma: no cover
         return None
 
-    async def delete(self, key: str) -> bool:
+    async def delete(self, key: str) -> bool:  # pragma: no cover
         return False  # has never been there
 
-    async def clear(self) -> None:
+    async def clear(self) -> None:  # pragma: no cover
         return None  # already perfectly clean
