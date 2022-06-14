@@ -46,6 +46,17 @@ async def test_delete(memory_cache: Cache[int]):
     assert await memory_cache.get("foo") is None
 
 
+@mark.asyncio
+async def test_serialize_executor():
+    cache = Cache(
+        serializer=serializers.from_url("pickle://"),
+        backend=(await async_backends.from_url("memory://")),
+        serialize_executor=None,  # that's the default executor, NOT «no executor»
+    )
+    await cache.set("foo", 42)
+    assert await cache.get("foo") == 42
+
+
 @if_redis_enabled
 @mark.asyncio
 async def test_get_set_in_redis():
