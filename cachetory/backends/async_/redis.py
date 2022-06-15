@@ -11,7 +11,7 @@ from cachetory.interfaces.backends.async_ import AsyncBackend
 
 class RedisBackend(AsyncBackend[bytes]):
     """
-    Redis (`redis-py`) backend.
+    Asynchronous Redis (`aioredis`) backend.
     """
 
     __slots__ = ("_client",)

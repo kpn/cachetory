@@ -11,7 +11,7 @@ from cachetory.interfaces.backends.sync import SyncBackend
 
 class RedisBackend(SyncBackend[bytes]):
     """
-    Redis (`aioredis`) backend.
+    Synchronous Redis (`redis-py`) backend.
     """
 
     @classmethod
