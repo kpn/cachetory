@@ -112,7 +112,7 @@ serializer = cachetory.serializers.PickleSerializer(pickle_protocol=pickle.DEFAU
 
 ```python
 from cachetory.caches.sync import Cache
-from cachetory.decorators.shared import make_key
+from cachetory.decorators.shared import make_default_key
 from cachetory.decorators.sync import cached
 
 cache = Cache[int](backend=..., serializer=...)
@@ -124,7 +124,7 @@ another_cache = Cache[int](backend=..., serializer=...)
     # `cache=lambda wrapped_callable, *args, **kwargs: cache if … else another_cache`
 
     # The following parameters are optional (shown the defaults):
-    make_key=make_key,  # cache key generator
+    make_key=make_default_key,  # cache key generator
     time_to_live=None,  # forwarded to `Cache.set`
     if_not_exists=False,  # forwarded to `Cache.set`
 )

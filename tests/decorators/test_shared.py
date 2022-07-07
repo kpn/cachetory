@@ -2,7 +2,7 @@ from typing import Any, Callable, Dict, Tuple
 
 from pytest import mark
 
-from cachetory.decorators.shared import make_key
+from cachetory.decorators.shared import make_default_key
 
 
 def _callable():
@@ -32,10 +32,10 @@ def _callable():
         ),
     ],
 )
-def test_make_key(
+def test_make_default_key(
     callable_: Callable[..., Any],
     args: Tuple[Any, ...],
     kwargs: Dict[str, Any],
     expected_key: str,
 ):
-    assert make_key(callable_, *args, **kwargs) == expected_key
+    assert make_default_key(callable_, *args, **kwargs) == expected_key

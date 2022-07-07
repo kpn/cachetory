@@ -1,7 +1,7 @@
 from typing import Any, Callable
 
 
-def make_key(callable_: Callable[..., Any], *args: Any, **kwargs: Any) -> str:
+def make_default_key(callable_: Callable[..., Any], *args: Any, **kwargs: Any) -> str:
     """
     Generates cache key given the callable and the arguments it's being called with.
     """

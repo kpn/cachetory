@@ -17,7 +17,7 @@ Original wrapped function parameter specification.
 def cached(
     cache: Union[Cache[ValueT], Callable[..., Cache[ValueT]]],  # no way to use `P` here
     *,
-    make_key: Callable[..., str] = shared.make_key,  # no way to use `P` here
+    make_key: Callable[..., str] = shared.make_default_key,  # no way to use `P` here
     time_to_live: Optional[timedelta] = None,
     if_not_exists: bool = False,
 ) -> Callable[[Callable[P, ValueT]], Callable[P, ValueT]]:
