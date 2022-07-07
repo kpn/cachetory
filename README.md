@@ -134,6 +134,8 @@ def expensive_function() -> int:
 
 ## Supported backends
 
+The badges indicate which schemes are supported by a particular backend, and which package extras are required for it – if any:
+
 ### Redis
 
 ![scheme: redis](https://img.shields.io/badge/scheme-redis://-important)
@@ -146,9 +148,9 @@ def expensive_function() -> int:
 |:---------------------------------------|:-----------------------------------------|
 | `cachetory.backends.sync.RedisBackend` | `cachetory.backends.async_.RedisBackend` |
 
-The URL is forwarded to the underlying client, which means one can use whatever options the client provides. The only special case is `redis+unix://`: the leading `redis+` is first stripped and the rest is forwarded.
+The URL is forwarded to the underlying client, which means one can use whatever options the client provides. The only special case is `redis+unix://`: the leading `redis+` is first stripped and the rest is forwarded to the client.
 
-All the cache operations are **atomic**, including `get_many` and `set_many`.
+All the cache operations are **atomic** in both sync and async, including `get_many` and `set_many`.
 
 ### Memory
 

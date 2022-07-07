@@ -25,7 +25,9 @@ def from_url(url: str) -> SyncBackend:
     scheme = parsed_url.scheme
     if scheme == "memory":
         return MemoryBackend.from_url(url)
-    if scheme in ("redis", "rediss", "redis+unix") and _is_redis_available:
+    if scheme in ("redis", "rediss", "redis+unix"):
+        if not _is_redis_available:
+            raise ValueError(f"`{scheme}://` requires `cachetory[redis-sync]` extra")
         return RedisBackend.from_url(url)
     if scheme == "dummy":
         return DummyBackend.from_url(url)

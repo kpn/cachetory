@@ -25,7 +25,9 @@ async def from_url(url: str) -> AsyncBackend:
     scheme = parsed_url.scheme
     if scheme == "memory":
         return await MemoryBackend.from_url(url)
-    if scheme in ("redis", "rediss", "redis+unix") and _is_redis_available:
+    if scheme in ("redis", "rediss", "redis+unix"):
+        if not _is_redis_available:
+            raise ValueError(f"`{scheme}://` requires `cachetory[redis-async]` extra")
         return await RedisBackend.from_url(url)
     if scheme == "dummy":
         return await DummyBackend.from_url(url)
