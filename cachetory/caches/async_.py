@@ -27,6 +27,14 @@ class Cache(AbstractAsyncContextManager, Generic[ValueT]):
         backend: AsyncBackend[WireT],
         serialize_executor: Union[None, Executor, NotSet] = _NOT_SET,
     ):
+        """
+        Args:
+            serialize_executor:
+                If specified, underlying serializing and deserializing will be performed
+                using the executor (for example, ``concurrent.futures.ProcessPoolExecutor``).
+                This may be useful to better utilize CPU when caching large blobs.
+                If not specified, (de)serialization is performed in the current thread.
+        """
         self._serializer = serializer
         self._backend = backend
         self._serialize_executor = serialize_executor
