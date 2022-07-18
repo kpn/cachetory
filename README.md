@@ -79,9 +79,9 @@ import cachetory.backends.sync
 import cachetory.backends.async_
 
 backend = cachetory.backends.sync.from_url("memory://")
-backend = cachetory.backends.async_.from_url("dummy://")
+backend = await cachetory.backends.async_.from_url("dummy://")
 backend = cachetory.backends.sync.RedisBackend(redis.Redis(...))
-backend = cachetory.backends.async_.from_url("redis://localhost:6379/1")
+backend = await cachetory.backends.async_.from_url("redis://localhost:6379/1")
 ```
 
 ### Instantiating a serializer
