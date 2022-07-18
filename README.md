@@ -143,6 +143,7 @@ The badges indicate which schemes are supported by a particular backend, and whi
 ![scheme: redis+unix](https://img.shields.io/badge/scheme-redis+unix://-important)
 ![extra: redis-sync](https://img.shields.io/badge/sync-redis--sync-blue)
 ![extra: redis-async](https://img.shields.io/badge/async-redis--async-blueviolet)
+![extra: hiredis-async](https://img.shields.io/badge/async-hiredis--async-blueviolet)
 
 | Sync                                   | Async                                    |
 |:---------------------------------------|:-----------------------------------------|
@@ -151,6 +152,8 @@ The badges indicate which schemes are supported by a particular backend, and whi
 The URL is forwarded to the underlying client, which means one can use whatever options the client provides. The only special case is `redis+unix://`: the leading `redis+` is first stripped and the rest is forwarded to the client.
 
 All the cache operations are **atomic** in both sync and async, including `get_many` and `set_many`.
+
+`hiredis-async` extra uses `aioredis` with [`hiredis`](https://github.com/redis/hiredis) parser.
 
 ### Memory
 
