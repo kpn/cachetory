@@ -10,7 +10,7 @@ from tests.support import if_redis_enabled
 async def memory_cache() -> Cache[int]:
     return Cache(
         serializer=serializers.from_url("pickle+zstd://"),
-        backend=(await async_backends.from_url("memory://")),
+        backend=async_backends.from_url("memory://"),
     )
 
 
@@ -50,7 +50,7 @@ async def test_delete(memory_cache: Cache[int]):
 async def test_serialize_executor():
     cache = Cache(
         serializer=serializers.from_url("pickle://"),
-        backend=(await async_backends.from_url("memory://")),
+        backend=async_backends.from_url("memory://"),
         serialize_executor=None,  # that's the default executor, NOT «no executor»
     )
     await cache.set("foo", 42)
@@ -62,7 +62,7 @@ async def test_serialize_executor():
 async def test_get_set_in_redis():
     cache = Cache[int](
         serializer=serializers.from_url("pickle+zlib://"),
-        backend=(await async_backends.from_url("redis://localhost:6379")),
+        backend=async_backends.from_url("redis://localhost:6379"),
     )
     async with cache:
         await cache.set("foo", 42)

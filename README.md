@@ -15,7 +15,7 @@ from cachetory.caches.async_ import Cache
 
 cache = Cache[int](
     serializer=serializers.from_url("pickle+zstd://?pickle-protocol=4&compression-level=3"),
-    backend=(await async_backends.from_url("redis://localhost:6379")),
+    backend=async_backends.from_url("redis://localhost:6379"),
 )
 async with cache:
     await cache.set("foo", 42)
@@ -80,9 +80,9 @@ import cachetory.backends.sync
 import cachetory.backends.async_
 
 backend = cachetory.backends.sync.from_url("memory://")
-backend = await cachetory.backends.async_.from_url("dummy://")
+backend = cachetory.backends.async_.from_url("dummy://")
 backend = cachetory.backends.sync.RedisBackend(redis.Redis(...))
-backend = await cachetory.backends.async_.from_url("redis://localhost:6379/1")
+backend = cachetory.backends.async_.from_url("redis://localhost:6379/1")
 ```
 
 ### Instantiating a serializer
