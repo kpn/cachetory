@@ -13,7 +13,7 @@ class DummyBackend(AsyncBackend[WireT], Generic[WireT]):
     """
 
     @classmethod
-    async def from_url(cls, url: str) -> DummyBackend:
+    def from_url(cls, url: str) -> DummyBackend:
         return DummyBackend()
 
     async def get(self, key: str) -> WireT:  # pragma: no cover

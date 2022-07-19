@@ -11,7 +11,7 @@ from tests.support import if_redis_enabled
 
 @fixture
 async def backend() -> AsyncIterable[RedisBackend]:
-    async with await RedisBackend.from_url("redis://localhost:6379") as backend:
+    async with RedisBackend.from_url("redis://localhost:6379") as backend:
         await backend.clear()
         try:
             yield backend

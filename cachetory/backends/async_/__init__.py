@@ -14,21 +14,21 @@ else:
     _is_redis_available = True
 
 
-async def from_url(url: str) -> AsyncBackend:
+def from_url(url: str) -> AsyncBackend:
     """
     Creates an asynchronous backend from the given URL.
 
     Examples:
-        >>> await from_url("redis://localhost:6379")
+        >>> from_url("redis://localhost:6379")
     """
     parsed_url = urlparse(url)
     scheme = parsed_url.scheme
     if scheme == "memory":
-        return await MemoryBackend.from_url(url)
+        return MemoryBackend.from_url(url)
     if scheme in ("redis", "rediss", "redis+unix"):
         if not _is_redis_available:
             raise ValueError(f"`{scheme}://` requires `cachetory[redis-async]` extra")
-        return await RedisBackend.from_url(url)
+        return RedisBackend.from_url(url)
     if scheme == "dummy":
-        return await DummyBackend.from_url(url)
+        return DummyBackend.from_url(url)
     raise ValueError(f"`{scheme}://` is not supported")

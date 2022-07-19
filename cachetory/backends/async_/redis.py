@@ -17,7 +17,7 @@ class RedisBackend(AsyncBackend[bytes]):
     __slots__ = ("_client",)
 
     @classmethod
-    async def from_url(cls, url: str) -> RedisBackend:
+    def from_url(cls, url: str) -> RedisBackend:
         if url.startswith("redis+"):
             url = url[6:]
         return RedisBackend(aioredis.Redis.from_url(url))

@@ -120,7 +120,7 @@ class AsyncBackend(
 
     @classmethod
     @abstractmethod
-    async def from_url(cls, url: str) -> AsyncBackend:  # pragma: no cover
+    def from_url(cls, url: str) -> AsyncBackend:  # pragma: no cover
         """
         Create an asynchronous cache backend from the specified URL.
 
