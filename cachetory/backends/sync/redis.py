@@ -25,13 +25,13 @@ class RedisBackend(SyncBackend[bytes]):
 
     def get(self, key: str) -> bytes:
         data = self._client.get(key)
-        if data:
+        if data is not None:
             return data
         raise KeyError(key)
 
     def get_many(self, *keys: str) -> Iterable[Tuple[str, bytes]]:
         for key, value in zip(keys, self._client.mget(*keys)):
-            if value:
+            if value is not None:
                 yield key, value
 
     def expire_at(self, key: str, deadline: Optional[datetime]) -> None:
