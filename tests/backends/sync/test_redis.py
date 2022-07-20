@@ -53,8 +53,8 @@ async def test_delete_missing(backend: RedisBackend):
 
 @if_redis_enabled
 async def test_set_get_many(backend: RedisBackend):
-    backend.set_many([("shields", b"up"), ("alert", b"red")])
-    assert list(backend.get_many("shields", "alert", "missing")) == [("shields", b"up"), ("alert", b"red")]
+    backend.set_many([("non-empty", b"foo"), ("empty", b"")])
+    assert list(backend.get_many("non-empty", "missing", "empty")) == [("non-empty", b"foo"), ("empty", b"")]
 
 
 @if_redis_enabled
@@ -92,3 +92,9 @@ async def test_clear(backend: RedisBackend):
     backend.clear()
     with raises(KeyError):
         backend.get("foo")
+
+
+@if_redis_enabled
+def test_get_empty_value(backend: RedisBackend):
+    backend.set("foo", b"")
+    assert backend.get("foo") == b""
