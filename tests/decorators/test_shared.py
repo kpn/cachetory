@@ -2,7 +2,7 @@ from typing import Any, Callable, Dict, Tuple
 
 from pytest import mark
 
-from cachetory.decorators.shared import make_default_key
+from cachetory.decorators.shared import make_default_hashed_key, make_default_key
 
 
 def _callable():
@@ -39,3 +39,14 @@ def test_make_default_key(
     expected_key: str,
 ):
     assert make_default_key(callable_, *args, **kwargs) == expected_key
+
+
+def test_make_default_hashed_key():
+    """
+    ``make_default_hashed_key`` calls ``make_default_key`` under the hood,
+    thus one smoke test is enough.
+    """
+    assert (
+        make_default_hashed_key(_callable, "a:b", foo="bar")
+        == "dc3305eaf5bc29bc29d70c3dbf7676c49bfd552cfbec17106fdf71cc01d176c9"
+    )

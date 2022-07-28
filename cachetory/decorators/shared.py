@@ -1,3 +1,4 @@
+from hashlib import blake2s
 from typing import Any, Callable
 
 
@@ -15,3 +16,12 @@ def make_default_key(callable_: Callable[..., Any], *args: Any, **kwargs: Any) -
         *(f"{str(key).replace(':', '::')}={str(value).replace(':', '::')}" for key, value in sorted(kwargs.items())),
     )
     return ":".join(parts)
+
+
+def make_default_hashed_key(callable_: Callable[..., Any], *args: Any, **kwargs: Any) -> str:
+    """
+    Generates a hashed cache key given the callable and the arguments it's being called with.
+
+    Uses ``blake2s`` as the fastest algorithm from ``hashlib``.
+    """
+    return blake2s(make_default_key(callable_, *args, **kwargs).encode()).hexdigest()
