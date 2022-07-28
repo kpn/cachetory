@@ -133,6 +133,11 @@ def expensive_function() -> int:
     return 42
 ```
 
+There's a few `make_key` functions provided by default:
+
+- `cachetory.decorators.shared.make_default_key` builds a human-readable cache key out of decorated function fully-qualified name and stringified arguments. The length of the key depends on the argument values.
+- `cachetory.decorators.shared.make_default_hashed_key` calls `make_default_key` under the hood but hashes the key and returns a hash hex digest – making it a fixed-length key and not human-readable.
+
 ## Supported backends
 
 The badges indicate which schemes are supported by a particular backend, and which package extras are required for it – if any:
