@@ -10,16 +10,36 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Build Changelog
+      id: changelog
+      uses: Bullrich/generate-release-changelog@master
+      env:
+        REPO: ${{ github.repository }}
+
+    - name: Update release
+      uses: tubone24/update_release@v1.3.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        release_name: ${{ github.ref_name }}
+        body: ${{ steps.changelog.outputs.changelog }}
+
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
         python-version: '3.7'
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install build
+
     - name: Build package
       run: python -m build
+
     - name: Publish package
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
