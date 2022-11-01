@@ -4,23 +4,23 @@ import itertools
 from datetime import datetime, timedelta
 from typing import Iterable, Optional, Tuple
 
-import redis
+from redis import Redis
 
 from cachetory.interfaces.backends.sync import SyncBackend
 
 
 class RedisBackend(SyncBackend[bytes]):
     """
-    Synchronous Redis (`redis-py`) backend.
+    Synchronous Redis backend.
     """
 
     @classmethod
     def from_url(cls, url: str) -> RedisBackend:
         if url.startswith("redis+"):
             url = url[6:]
-        return cls(redis.Redis.from_url(url))
+        return cls(Redis.from_url(url))
 
-    def __init__(self, client: redis.Redis):
+    def __init__(self, client: Redis):
         self._client = client
 
     def get(self, key: str) -> bytes:
