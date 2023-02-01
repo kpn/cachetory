@@ -1,7 +1,7 @@
 # `cachetory`
 
 [![PyPI](https://img.shields.io/pypi/v/cachetory)](https://pypi.org/project/cachetory/)
-[![Tests](https://github.com/kpn/cachetory/actions/workflows/tests.yml/badge.svg)](https://github.com/kpn/cachetory/actions/workflows/tests.yml)
+[![Checks](https://github.com/kpn/cachetory/actions/workflows/check.yml/badge.svg)](https://github.com/kpn/cachetory/actions/workflows/check.yml)
 [![Coverage](https://codecov.io/gh/kpn/cachetory/branch/main/graph/badge.svg?token=UNYTTvxiWk)](https://codecov.io/gh/kpn/cachetory)
 [![Code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/kpn/cachetory)
 
@@ -13,7 +13,7 @@ from cachetory.backends import async_ as async_backends
 from cachetory.caches.async_ import Cache
 
 
-cache = Cache[int](
+cache = Cache[int, bytes](
     serializer=serializers.from_url("pickle+zstd://?pickle-protocol=4&compression-level=3"),
     backend=async_backends.from_url("redis://localhost:6379"),
 )
@@ -30,7 +30,7 @@ from cachetory.backends import sync as sync_backends
 from cachetory.caches.sync import Cache
 
 
-cache = Cache[int](
+cache = Cache[int, bytes](
     serializer=serializers.from_url("pickle+zstd://"),
     backend=sync_backends.from_url("redis://localhost:6379"),
 )

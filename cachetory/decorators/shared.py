@@ -3,9 +3,7 @@ from typing import Any, Callable
 
 
 def make_default_key(callable_: Callable[..., Any], *args: Any, **kwargs: Any) -> str:
-    """
-    Generates cache key given the callable and the arguments it's being called with.
-    """
+    """Generate cache key given the callable and the arguments it's being called with."""
 
     # noinspection PyUnresolvedReferences
     parts = (
@@ -20,8 +18,8 @@ def make_default_key(callable_: Callable[..., Any], *args: Any, **kwargs: Any) -
 
 def make_default_hashed_key(callable_: Callable[..., Any], *args: Any, **kwargs: Any) -> str:
     """
-    Generates a hashed cache key given the callable and the arguments it's being called with.
+    Generate a hashed cache key given the callable and the arguments it's being called with.
 
-    Uses ``blake2s`` as the fastest algorithm from ``hashlib``.
+    Uses `blake2s` as the fastest algorithm from `hashlib`.
     """
     return blake2s(make_default_key(callable_, *args, **kwargs).encode()).hexdigest()

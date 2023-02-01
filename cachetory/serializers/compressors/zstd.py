@@ -9,9 +9,7 @@ from cachetory.interfaces.serializers import Serializer
 
 
 class ZstdCompressor(Serializer[bytes, bytes]):
-    """
-    Uses external `zstd` package for Zstandard compression.
-    """
+    """Uses external `zstd` package for Zstandard compression."""
 
     __slots__ = ("_level", "_threads")
 
@@ -25,7 +23,7 @@ class ZstdCompressor(Serializer[bytes, bytes]):
         *,
         compression_level: int = 3,
         compression_threads: int = 0,
-    ):
+    ) -> None:
         self._level = compression_level
         self._threads = compression_threads
 

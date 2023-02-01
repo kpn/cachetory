@@ -1,0 +1,96 @@
+name: Checks
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+
+env:
+  ANSICON: 1
+  FORCE_COLOR: 1
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+        - '3.8'
+        - '3.9'
+        - '3.10'
+        - '3.11'
+        - 'pypy-3.8'
+        - 'pypy-3.9'
+
+    services:
+      redis:
+        image: redis
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 1s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+    - name: "📥 Checkout"
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: "📥 Install Poetry"
+      run: pipx install poetry
+
+    - name: 🐍 Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: poetry
+
+    - name: "🗃 Cache"
+      if: success() || failure()
+      uses: actions/cache@v3
+      with:
+        path: |
+          .mypy_cache
+          .pytest_cache
+          .ruff_cache
+        key: ${{ runner.os }}-${{ matrix.python-version }}-check
+
+    - name: "📥 Install the package"
+      run: make install
+
+    - name: "🪄 Linter: Black"
+      run: make lint/black
+
+    - name: "🪄 Linter: Ruff"
+      if: success() || failure()
+      run: make lint/ruff
+
+    - name: "🪄 Linter: mypy"
+      if: success() || failure()
+      run: make lint/mypy
+
+    - name: "🧪 Tests"
+      if: success() || failure()
+      run: poetry run pytest tests --test-redis
+
+    - name: "📤 Codecov"
+      if: success() || failure()
+      uses: codecov/codecov-action@v3
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        env_vars: PYTHON
+        name: Python ${{ matrix.python-version }}
+        files: coverage.xml
+        fail_ci_if_error: true
+
+    - name: "📦 Build and publish package: dry run"
+      if: success() || failure()
+      run: poetry publish --build --dry-run --ansi

@@ -1,3 +1,1 @@
-"""
-Various helper classes and functions. Only for internal use.
-"""
+"""Various helper classes and functions. Only for internal use."""

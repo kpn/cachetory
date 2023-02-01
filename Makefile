@@ -1,70 +1,48 @@
-# This Makefile requires the following commands to be available:
-# * python3.7
+SRC:=cachetory tests
 
-SRC:=cachetory tests setup.py
-
-.PHONY: pyclean
-pyclean:
-	-find . -name "*.pyc" -delete
-	-rm -rf *.egg-info build
-	-rm -rf coverage*.xml .coverage
+.PHONY: all
+all: install lint test build
 
 .PHONY: clean
-clean: pyclean
-	-rm -rf venv
-	-rm -rf .tox
+clean:
+	find . -name "*.pyc" -delete
+	rm -rf *.egg-info build
+	rm -rf coverage*.xml .coverage
 
-venv: PYTHON?=python3.7
-venv:
-	$(PYTHON) -m venv venv
-	venv/bin/pip install -U "pip>=7.0" -q
-	venv/bin/pip install -U setuptools -q
-	venv/bin/pip install -r requirements.txt
+.PHONY: install
+install:
+	poetry install --all-extras --with dev
 
-## Code style
 .PHONY: lint
-lint: lint/black lint/flake8 lint/isort lint/mypy
+lint: lint/ruff lint/black lint/mypy
 
 .PHONY: lint/black
-lint/black: venv
-	venv/bin/black --diff --check $(SRC)
+lint/black:
+	poetry run black --diff --check $(SRC)
 
-.PHONY: lint/flake8
-lint/flake8: venv
-	venv/bin/flake8 $(SRC)
-
-.PHONY: lint/isort
-lint/isort: venv
-	venv/bin/isort --diff --check $(SRC)
+.PHONY: lint/ruff
+lint/ruff:
+	poetry run ruff $(SRC)
 
 .PHONY: lint/mypy
-lint/mypy: venv
-	venv/bin/mypy $(SRC)
+lint/mypy:
+	poetry run mypy $(SRC)
 
 .PHONY: format
-format: format/isort format/black
-
-.PHONY: format/isort
-format/isort: venv
-	venv/bin/isort $(SRC)
+format: format/ruff format/black
 
 .PHONY: format/black
-format/black: venv
-	venv/bin/black $(SRC)
+format/black:
+	poetry run black $(SRC)
 
-## Tests
-.PHONY: unittests
-unittests: TOX_ENV?=ALL
-unittests: TOX_EXTRA_PARAMS?=""
-unittests: venv
-	venv/bin/tox -e $(TOX_ENV) $(TOX_EXTRA_PARAMS)
+.PHONY: format/ruff
+format/ruff:
+	poetry run ruff --fix $(SRC)
 
 .PHONY: test
-test: pyclean venv unittests
+test:
+	poetry run pytest tests
 
-## Distribution
 .PHONY: build
-build: venv
-	-rm -rf dist build
-	venv/bin/python setup.py sdist bdist_wheel
-	venv/bin/twine check dist/*
+build:
+	poetry build

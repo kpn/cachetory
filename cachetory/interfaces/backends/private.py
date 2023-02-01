@@ -1,4 +1,6 @@
 """
+Private type variables used across the package.
+
 I could define these type variables in each protocol's module,
 but it's easier for a reader to come by a central place and find the additional comments.
 """

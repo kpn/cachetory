@@ -8,7 +8,7 @@ from cachetory.serializers.compressors import ZstdCompressor
 
 
 @mark.parametrize(
-    "url, expected_layers",
+    ("url", "expected_layers"),
     [
         ("pickle://", [PickleSerializer]),
         ("pickle+zstd://", [PickleSerializer, ZstdCompressor]),
@@ -26,10 +26,10 @@ def test_unsupported_scheme():
 def test_serialize():
     serializer: Serializer[str, bytes] = ChainedSerializer.from_url("pickle+zstd://")
     value = "Shields up! Red alert!"
-    assert serializer.serialize(value) == ZstdCompressor().serialize(PickleSerializer().serialize(value))
+    assert serializer.serialize(value) == ZstdCompressor().serialize(PickleSerializer[str]().serialize(value))
 
 
 def test_deserialize():
     value = "Energize!"
-    serialized_value = ZstdCompressor().serialize(PickleSerializer().serialize(value))
-    assert ChainedSerializer.from_url("pickle+zstd://").deserialize(serialized_value) == value
+    serialized_value = ZstdCompressor().serialize(PickleSerializer[str]().serialize(value))
+    assert ChainedSerializer[str, bytes].from_url("pickle+zstd://").deserialize(serialized_value) == value

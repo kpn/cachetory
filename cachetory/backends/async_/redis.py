@@ -10,9 +10,7 @@ from cachetory.interfaces.backends.async_ import AsyncBackend
 
 
 class RedisBackend(AsyncBackend[bytes]):
-    """
-    Asynchronous Redis backend.
-    """
+    """Asynchronous Redis backend."""
 
     __slots__ = ("_client",)
 
@@ -22,7 +20,7 @@ class RedisBackend(AsyncBackend[bytes]):
             url = url[6:]
         return RedisBackend(Redis.from_url(url))
 
-    def __init__(self, client: Redis):
+    def __init__(self, client: Redis) -> None:
         self._client = client
 
     async def get(self, key: str) -> bytes:
@@ -50,7 +48,7 @@ class RedisBackend(AsyncBackend[bytes]):
         else:
             await self._client.persist(key)
 
-    async def set(
+    async def set(  # noqa: A003
         self,
         key: str,
         value: bytes,

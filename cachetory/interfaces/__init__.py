@@ -1,3 +1,1 @@
-"""
-Contains the protocol definitions.
-"""
+"""Contains the protocol definitions."""

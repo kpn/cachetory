@@ -1,3 +1,1 @@
-"""
-Contains all the supported backends.
-"""
+"""Contains all the supported backends."""

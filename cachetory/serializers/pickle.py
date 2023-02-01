@@ -10,9 +10,7 @@ from cachetory.interfaces.serializers import Serializer, ValueT
 
 
 class PickleSerializer(Serializer[ValueT, bytes], Generic[ValueT]):
-    """
-    Uses the standard built-in `pickle` serialization.
-    """
+    """Uses the standard built-in `pickle` serialization."""
 
     __slots__ = ("protocol",)
 
@@ -21,7 +19,7 @@ class PickleSerializer(Serializer[ValueT, bytes], Generic[ValueT]):
         params = _UrlParams.parse_obj(dict(parse_qsl(urlparse(url).query)))
         return cls(pickle_protocol=params.pickle_protocol)
 
-    def __init__(self, pickle_protocol: int = pickle.HIGHEST_PROTOCOL):
+    def __init__(self, pickle_protocol: int = pickle.HIGHEST_PROTOCOL) -> None:
         self.protocol = pickle_protocol
 
     def serialize(self, value: ValueT) -> bytes:
@@ -32,4 +30,7 @@ class PickleSerializer(Serializer[ValueT, bytes], Generic[ValueT]):
 
 
 class _UrlParams(BaseModel):
-    pickle_protocol: conint(ge=0, le=pickle.HIGHEST_PROTOCOL) = Field(pickle.HIGHEST_PROTOCOL, alias="pickle-protocol")  # type: ignore
+    pickle_protocol: conint(ge=0, le=pickle.HIGHEST_PROTOCOL) = Field(  # type: ignore
+        pickle.HIGHEST_PROTOCOL,
+        alias="pickle-protocol",
+    )

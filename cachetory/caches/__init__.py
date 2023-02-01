@@ -1,3 +1,1 @@
-"""
-Contains the top-level cache interfaces.
-"""
+"""Contains the top-level cache interfaces."""

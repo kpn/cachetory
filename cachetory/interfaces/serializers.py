@@ -20,18 +20,14 @@ for A > B we could pass `Serialize[A]` in place of `Serialize[B]`.
 
 
 class Serialize(Protocol[ValueT_contra, WireT_co]):
-    """
-    Defines the `serialize` conversion.
-    """
+    """Defines the `serialize` conversion."""
 
     def serialize(self, value: ValueT_contra) -> WireT_co:  # pragma: no cover
         raise NotImplementedError
 
 
 class Deserialize(Protocol[ValueT_co, WireT_contra]):
-    """
-    Defines the `deserialize` conversion.
-    """
+    """Defines the `deserialize` conversion."""
 
     def deserialize(self, data: WireT_contra) -> ValueT_co:  # pragma: no cover
         raise NotImplementedError
@@ -44,9 +40,7 @@ Cached value type – this what user «sees» when getting or setting a value in
 
 
 class Serializer(Serialize[ValueT, WireT], Deserialize[ValueT, WireT], Protocol[ValueT, WireT]):
-    """
-    Combines `serialize` and `deserialize` in one protocol.
-    """
+    """Combines `serialize` and `deserialize` in one protocol."""
 
     @classmethod
     def from_url(cls, url: str) -> Serializer[ValueT, WireT]:  # pragma: no cover

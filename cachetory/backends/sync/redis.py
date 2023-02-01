@@ -10,9 +10,7 @@ from cachetory.interfaces.backends.sync import SyncBackend
 
 
 class RedisBackend(SyncBackend[bytes]):
-    """
-    Synchronous Redis backend.
-    """
+    """Synchronous Redis backend."""
 
     @classmethod
     def from_url(cls, url: str) -> RedisBackend:
@@ -20,7 +18,7 @@ class RedisBackend(SyncBackend[bytes]):
             url = url[6:]
         return cls(Redis.from_url(url))
 
-    def __init__(self, client: Redis):
+    def __init__(self, client: Redis) -> None:
         self._client = client
 
     def get(self, key: str) -> bytes:
@@ -48,7 +46,7 @@ class RedisBackend(SyncBackend[bytes]):
         else:
             self._client.persist(key)
 
-    def set(
+    def set(  # noqa: A003
         self,
         key: str,
         value: bytes,

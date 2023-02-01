@@ -8,9 +8,7 @@ from cachetory.interfaces.backends.private import WireT
 
 
 class DummyBackend(AsyncBackend[WireT], Generic[WireT]):
-    """
-    Dummy backend that stores nothing.
-    """
+    """Dummy backend that stores nothing."""
 
     @classmethod
     def from_url(cls, url: str) -> DummyBackend:
@@ -29,7 +27,7 @@ class DummyBackend(AsyncBackend[WireT], Generic[WireT]):
     async def expire_at(self, key: str, deadline: Optional[datetime]) -> None:  # pragma: no cover
         return None
 
-    async def set(
+    async def set(  # noqa: A003
         self,
         key: str,
         value: WireT,
