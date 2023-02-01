@@ -18,9 +18,7 @@ from cachetory.interfaces.backends.private import WireT, WireT_co, WireT_contra
 
 
 class AsyncBackendRead(Protocol[WireT_co]):
-    """
-    Describes the read operations of an asynchronous cache.
-    """
+    """Describes the read operations of an asynchronous cache."""
 
     async def get(self, key: str) -> WireT_co:  # pragma: no cover
         """
@@ -28,6 +26,7 @@ class AsyncBackendRead(Protocol[WireT_co]):
 
         Returns:
             Cached value, if it exists.
+
         Raises:
             KeyError: the key doesn't exist in the cache.
         """
@@ -50,24 +49,18 @@ class AsyncBackendRead(Protocol[WireT_co]):
 
 
 class AsyncBackendWrite(Protocol[WireT_contra]):
-    """
-    Describes the write operations of an asynchronous cache.
-    """
+    """Describes the write operations of an asynchronous cache."""
 
     async def expire_in(self, key: str, time_to_live: Optional[timedelta] = None) -> None:
-        """
-        Set the expiration time on the key.
-        """
+        """Set the expiration time on the key."""
         deadline = datetime.now(timezone.utc) + time_to_live if time_to_live is not None else None
         await self.expire_at(key, deadline)
 
     async def expire_at(self, key: str, deadline: Optional[datetime]) -> None:  # pragma: no cover
-        """
-        Set the expiration deadline on the key.
-        """
+        """Set the expiration deadline on the key."""
         raise NotImplementedError
 
-    async def set(
+    async def set(  # noqa: A003
         self,
         key: str,
         value: WireT_contra,
@@ -85,10 +78,8 @@ class AsyncBackendWrite(Protocol[WireT_contra]):
         raise NotImplementedError
 
     async def set_many(self, items: Iterable[Tuple[str, WireT_contra]]) -> None:
-        """
-        Put all the specified values to the cache.
-        """
-        for (key, value) in items:
+        """Put all the specified values to the cache."""
+        for key, value in items:
             await self.set(key, value)
 
     async def delete(self, key: str) -> bool:  # pragma: no cover
@@ -101,9 +92,7 @@ class AsyncBackendWrite(Protocol[WireT_contra]):
         raise NotImplementedError
 
     async def clear(self) -> None:  # pragma: no cover
-        """
-        Clears the backend storage.
-        """
+        """Clear the backend storage."""
         raise NotImplementedError
 
 
@@ -114,9 +103,7 @@ class AsyncBackend(
     Generic[WireT],
     metaclass=ABCMeta,
 ):
-    """
-    Generic asynchronous cache backend.
-    """
+    """Generic asynchronous cache backend."""
 
     @classmethod
     @abstractmethod

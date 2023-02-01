@@ -19,9 +19,7 @@ from cachetory.private.datetime import make_deadline
 
 
 class SyncBackendRead(Protocol[WireT_co]):
-    """
-    Describes the read operations of a synchronous cache.
-    """
+    """Describes the read operations of a synchronous cache."""
 
     def get(self, key: str) -> WireT_co:  # pragma: no cover
         """
@@ -29,6 +27,7 @@ class SyncBackendRead(Protocol[WireT_co]):
 
         Returns:
             Cached value, if it exists.
+
         Raises:
             KeyError: the key does not exist.
         """
@@ -51,23 +50,17 @@ class SyncBackendRead(Protocol[WireT_co]):
 
 
 class SyncBackendWrite(Protocol[WireT_contra]):
-    """
-    Describes the write operations of a synchronous cache.
-    """
+    """Describes the write operations of a synchronous cache."""
 
     def expire_in(self, key: str, time_to_live: Optional[timedelta] = None) -> None:
-        """
-        Set the expiration time on the key.
-        """
+        """Set the expiration time on the key."""
         self.expire_at(key, make_deadline(time_to_live))
 
     def expire_at(self, key: str, deadline: Optional[datetime]) -> None:  # pragma: no cover
-        """
-        Set the expiration deadline on the key.
-        """
+        """Set the expiration deadline on the key."""
         raise NotImplementedError
 
-    def set(
+    def set(  # noqa: A003
         self,
         key: str,
         value: WireT_contra,
@@ -85,10 +78,8 @@ class SyncBackendWrite(Protocol[WireT_contra]):
         raise NotImplementedError
 
     def set_many(self, items: Iterable[Tuple[str, WireT_contra]]) -> None:
-        """
-        Put all the specified values to the cache.
-        """
-        for (key, value) in items:
+        """Put all the specified values to the cache."""
+        for key, value in items:
             self.set(key, value)
 
     def delete(self, key: str) -> bool:  # pragma: no cover
@@ -101,9 +92,7 @@ class SyncBackendWrite(Protocol[WireT_contra]):
         raise NotImplementedError
 
     def clear(self) -> None:  # pragma: no cover
-        """
-        Clears the backend storage.
-        """
+        """Clear the backend storage."""
         raise NotImplementedError
 
 
@@ -114,9 +103,7 @@ class SyncBackend(
     Generic[WireT],
     metaclass=ABCMeta,
 ):
-    """
-    Generic synchronous cache backend.
-    """
+    """Generic synchronous cache backend."""
 
     @classmethod
     @abstractmethod

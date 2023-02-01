@@ -8,14 +8,12 @@ from cachetory.interfaces.backends.sync import SyncBackend
 from cachetory.interfaces.serializers import Serializer, ValueT
 
 
-class Cache(AbstractContextManager, Generic[ValueT]):
-    """
-    Synchronous cache.
-    """
+class Cache(AbstractContextManager, Generic[ValueT, WireT]):
+    """Synchronous cache."""
 
     __slots__ = ("_serializer", "_backend")
 
-    def __init__(self, *, serializer: Serializer[ValueT, WireT], backend: SyncBackend[WireT]):
+    def __init__(self, *, serializer: Serializer[ValueT, WireT], backend: SyncBackend[WireT]) -> None:
         self._serializer = serializer
         self._backend = backend
 
@@ -60,7 +58,7 @@ class Cache(AbstractContextManager, Generic[ValueT]):
     def __setitem__(self, key: str, value: ValueT) -> None:
         self._backend.set(key, self._serializer.serialize(value), time_to_live=None)
 
-    def set(
+    def set(  # noqa: A003
         self,
         key: str,
         value: ValueT,

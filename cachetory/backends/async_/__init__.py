@@ -16,7 +16,7 @@ else:
 
 def from_url(url: str) -> AsyncBackend:
     """
-    Creates an asynchronous backend from the given URL.
+    Create an asynchronous backend from the given URL.
 
     Examples:
         >>> from_url("redis://localhost:6379")
@@ -27,7 +27,7 @@ def from_url(url: str) -> AsyncBackend:
         return MemoryBackend.from_url(url)
     if scheme in ("redis", "rediss", "redis+unix"):
         if not _is_redis_available:
-            raise ValueError(f"`{scheme}://` requires `cachetory[redis-async]` extra")
+            raise ValueError(f"`{scheme}://` requires `cachetory[redis]` extra")  # pragma: no cover
         return RedisBackend.from_url(url)
     if scheme == "dummy":
         return DummyBackend.from_url(url)

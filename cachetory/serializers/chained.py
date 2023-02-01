@@ -19,10 +19,7 @@ else:
 
 
 class ChainedSerializer(Serializer[ValueT, WireT], Generic[ValueT, WireT]):
-    """
-    Sequentially applies the chain of serializers.
-    Allows defining multiple steps of serialization.
-    """
+    """Sequentially applies the chain of serializers. Allows defining multiple steps of serialization."""
 
     __slots__ = ("_layers",)
 
@@ -32,7 +29,7 @@ class ChainedSerializer(Serializer[ValueT, WireT], Generic[ValueT, WireT]):
         schemes = parsed_url.scheme.split("+")
         return cls(cls._make_layer(scheme, url) for scheme in schemes)
 
-    def __init__(self, layers: Iterable[Serializer]):
+    def __init__(self, layers: Iterable[Serializer]) -> None:
         self._layers = list(layers)
 
     def serialize(self, value: ValueT) -> WireT:

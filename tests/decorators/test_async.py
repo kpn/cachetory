@@ -9,17 +9,17 @@ from cachetory.serializers import NoopSerializer
 
 
 @fixture
-def cache() -> Cache[int]:
+def cache() -> Cache[int, int]:
     return Cache(serializer=NoopSerializer(), backend=MemoryBackend[int]())
 
 
 @fixture
-def cache_2() -> Cache[int]:
+def cache_2() -> Cache[int, int]:
     return Cache(serializer=NoopSerializer(), backend=MemoryBackend[int]())
 
 
 @mark.asyncio
-async def test_simple(cache: Cache[int]):
+async def test_simple(cache: Cache[int, int]):
     call_counter = 0
 
     @cached(cache)
@@ -37,10 +37,10 @@ async def test_simple(cache: Cache[int]):
 
 
 @mark.asyncio
-async def test_callable_cache(cache: Cache[int], cache_2: Cache[int]):
+async def test_callable_cache(cache: Cache[int, int], cache_2: Cache[int, int]):
     call_counter = 0
 
-    async def choose_cache(_wrapped_callable: Any, param: int) -> Cache[int]:
+    async def choose_cache(_wrapped_callable: Any, param: int) -> Cache[int, int]:
         return cache_2 if param == 2 else cache
 
     @cached(cache=choose_cache)

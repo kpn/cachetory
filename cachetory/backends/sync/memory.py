@@ -9,9 +9,7 @@ from cachetory.private.datetime import make_deadline
 
 
 class MemoryBackend(SyncBackend[WireT], Generic[WireT]):
-    """
-    Memory backend that stores everything in a local dictionary.
-    """
+    """Memory backend that stores everything in a local dictionary."""
 
     __slots__ = ("_entries",)
 
@@ -19,7 +17,7 @@ class MemoryBackend(SyncBackend[WireT], Generic[WireT]):
     def from_url(cls, _url: str) -> MemoryBackend:
         return MemoryBackend()
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._entries: Dict[str, _Entry[WireT]] = {}
 
     def get(self, key: str) -> WireT:
@@ -33,7 +31,7 @@ class MemoryBackend(SyncBackend[WireT], Generic[WireT]):
         else:
             entry.deadline = deadline
 
-    def set(
+    def set(  # noqa: A003
         self,
         key: str,
         value: WireT,
@@ -67,16 +65,14 @@ class MemoryBackend(SyncBackend[WireT], Generic[WireT]):
 
 
 class _Entry(Generic[WireT]):
-    """
-    `mypy` doesn't support generic named tuples, thus defining this little one.
-    """
+    """`mypy` doesn't support generic named tuples, thus defining this little one."""
 
     value: WireT
     deadline: Optional[datetime]
 
     __slots__ = ("value", "deadline")
 
-    def __init__(self, value: WireT, deadline: Optional[datetime]):
+    def __init__(self, value: WireT, deadline: Optional[datetime]) -> None:
         self.value = value
         self.deadline = deadline
 

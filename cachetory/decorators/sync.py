@@ -6,6 +6,7 @@ from typing_extensions import ParamSpec
 
 from cachetory.caches.sync import Cache
 from cachetory.decorators import shared
+from cachetory.interfaces.backends.private import WireT
 from cachetory.interfaces.serializers import ValueT
 
 P = ParamSpec("P")
@@ -15,13 +16,15 @@ Original wrapped function parameter specification.
 
 
 def cached(
-    cache: Union[Cache[ValueT], Callable[..., Cache[ValueT]]],  # no way to use `P` here
+    cache: Union[Cache[ValueT, WireT], Callable[..., Cache[ValueT, WireT]]],  # no way to use `P` here
     *,
     make_key: Callable[..., str] = shared.make_default_key,  # no way to use `P` here
     time_to_live: Optional[timedelta] = None,
     if_not_exists: bool = False,
 ) -> Callable[[Callable[P, ValueT]], Callable[P, ValueT]]:
     """
+    Apply memoization to the wrapped callable.
+
     Args:
         cache:
             `Cache` instance or a callable tha returns a `Cache` instance for each function call.

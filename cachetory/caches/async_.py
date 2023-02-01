@@ -13,10 +13,8 @@ from cachetory.private.typing import NotSet
 _NOT_SET = NotSet()
 
 
-class Cache(AbstractAsyncContextManager, Generic[ValueT]):
-    """
-    Asynchronous cache.
-    """
+class Cache(AbstractAsyncContextManager, Generic[ValueT, WireT]):
+    """Asynchronous cache."""
 
     __slots__ = ("_serializer", "_backend", "_serialize_executor")
 
@@ -26,8 +24,10 @@ class Cache(AbstractAsyncContextManager, Generic[ValueT]):
         serializer: Serializer[ValueT, WireT],
         backend: AsyncBackend[WireT],
         serialize_executor: Union[None, Executor, NotSet] = _NOT_SET,
-    ):
+    ) -> None:
         """
+        Instantiate a cache.
+
         Args:
             serialize_executor:
                 If specified, underlying serializing and deserializing will be performed
@@ -53,7 +53,7 @@ class Cache(AbstractAsyncContextManager, Generic[ValueT]):
     async def expire_in(self, key: str, time_to_live: Optional[timedelta] = None) -> None:
         return await self._backend.expire_in(key, time_to_live)
 
-    async def set(
+    async def set(  # noqa: A003
         self,
         key: str,
         value: ValueT,
@@ -89,5 +89,7 @@ class Cache(AbstractAsyncContextManager, Generic[ValueT]):
             return self._serializer.deserialize(data)
         else:
             return await get_running_loop().run_in_executor(
-                self._serialize_executor, self._serializer.deserialize, data
+                self._serialize_executor,
+                self._serializer.deserialize,
+                data,
             )

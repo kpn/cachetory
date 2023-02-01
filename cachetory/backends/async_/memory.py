@@ -10,9 +10,7 @@ from cachetory.private.asyncio import postpone
 
 
 class MemoryBackend(AsyncBackend[WireT], Generic[WireT]):
-    """
-    Memory backend that stores everything in a local dictionary.
-    """
+    """Memory backend that stores everything in a local dictionary."""
 
     __slots__ = ("_inner",)
 
@@ -20,9 +18,9 @@ class MemoryBackend(AsyncBackend[WireT], Generic[WireT]):
     def from_url(cls, _url: str) -> MemoryBackend:
         return MemoryBackend()
 
-    def __init__(self):
+    def __init__(self) -> None:
         # We'll simply delegate call to the wrapped backend.
-        self._inner = SyncMemoryBackend()
+        self._inner: SyncMemoryBackend = SyncMemoryBackend()
 
     def get(self, key: str) -> Coroutine[Any, Any, WireT]:
         return postpone(self._inner.get, key)
@@ -30,7 +28,7 @@ class MemoryBackend(AsyncBackend[WireT], Generic[WireT]):
     def expire_at(self, key: str, deadline: Optional[datetime]) -> Coroutine[Any, Any, None]:
         return postpone(self._inner.expire_at, key, deadline)
 
-    def set(
+    def set(  # noqa: A003
         self,
         key: str,
         value: WireT,
