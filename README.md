@@ -14,7 +14,7 @@ from cachetory.caches.async_ import Cache
 
 
 cache = Cache[int, bytes](
-    serializer=serializers.from_url("pickle+zstd://?pickle-protocol=4&compression-level=3"),
+    serializer=serializers.from_url("pickle://?pickle-protocol=4"),
     backend=async_backends.from_url("redis://localhost:6379"),
 )
 async with cache:
@@ -31,7 +31,7 @@ from cachetory.caches.sync import Cache
 
 
 cache = Cache[int, bytes](
-    serializer=serializers.from_url("pickle+zstd://"),
+    serializer=serializers.from_url("pickle://"),
     backend=sync_backends.from_url("redis://localhost:6379"),
 )
 with cache:
