@@ -9,7 +9,7 @@ env:
   FORCE_COLOR: 1
 
 jobs:
-  deploy:
+  publish:
     runs-on: ubuntu-latest
 
     steps:
@@ -32,8 +32,10 @@ jobs:
         release_name: ${{ github.ref_name }}
         body: ${{ steps.changelog.outputs.changelog }}
 
-    - name: "📥 Install Poetry"
-      run: pipx install poetry
+    - name: "✨ Install Poetry"
+      run: |
+        pipx install poetry
+        pipx inject poetry poetry-dynamic-versioning
 
     - name: 📦 Build package
       run: poetry build --ansi

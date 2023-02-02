@@ -44,8 +44,10 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: "📥 Install Poetry"
-      run: pipx install poetry
+    - name: "✨ Install Poetry"
+      run: |
+        pipx install poetry
+        pipx inject poetry poetry-dynamic-versioning
 
     - name: 🐍 Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
