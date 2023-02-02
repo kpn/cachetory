@@ -22,6 +22,17 @@ async with cache:
     assert await cache.get("foo") == 42
 ```
 
+ℹ️ **Note:** it's perfectly fine not to use the context manager if, for example, you need a cache instance to live through entire application lifetime:
+
+```python
+# caches.py:
+cache = Cache(...)
+
+# app.py:
+from caches import cache
+await cache.set("foo", 42)
+```
+
 ### Non-async
 
 ```python
