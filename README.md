@@ -1,4 +1,4 @@
-# `cachetory`
+# Cachetory
 
 [![PyPI](https://img.shields.io/pypi/v/cachetory?logo=python&logoColor=yellow)](https://pypi.org/project/cachetory/)
 [![Python versions](https://img.shields.io/pypi/pyversions/cachetory?logo=python&logoColor=yellow)](https://pypi.org/project/cachetory/)
