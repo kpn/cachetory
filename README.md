@@ -1,7 +1,8 @@
 # `cachetory`
 
-[![PyPI](https://img.shields.io/pypi/v/cachetory)](https://pypi.org/project/cachetory/)
-[![Checks](https://github.com/kpn/cachetory/actions/workflows/check.yml/badge.svg)](https://github.com/kpn/cachetory/actions/workflows/check.yml)
+[![PyPI](https://img.shields.io/pypi/v/cachetory?logo=python&logoColor=yellow)](https://pypi.org/project/cachetory/)
+[![Python versions](https://img.shields.io/pypi/pyversions/cachetory?logo=python&logoColor=yellow)](https://pypi.org/project/cachetory/)
+[![Checks](https://img.shields.io/github/actions/workflow/status/kpn/cachetory/check.yml?label=checks&logo=github)](https://github.com/kpn/cachetory/actions/workflows/check.yml)
 [![Coverage](https://codecov.io/gh/kpn/cachetory/branch/main/graph/badge.svg?token=UNYTTvxiWk)](https://codecov.io/gh/kpn/cachetory)
 [![Code style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/kpn/cachetory)
 
