@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 from cachetory.interfaces.backends.private import WireT
 from cachetory.interfaces.serializers import Serializer, ValueT
 from cachetory.serializers.compressors.zlib import ZlibCompressor
+from cachetory.serializers.json import JsonSerializer
 from cachetory.serializers.noop import NoopSerializer
 from cachetory.serializers.pickle import PickleSerializer
 
@@ -16,6 +17,14 @@ except ImportError:
     _is_zstd_available = False
 else:
     _is_zstd_available = True
+
+try:
+    # noinspection PyUnresolvedReferences
+    from cachetory.serializers.msgpack import MsgPackSerializer
+except ImportError:
+    _is_msgpack_available = False
+else:
+    _is_msgpack_available = True
 
 
 class ChainedSerializer(Serializer[ValueT, WireT], Generic[ValueT, WireT]):
@@ -46,6 +55,12 @@ class ChainedSerializer(Serializer[ValueT, WireT], Generic[ValueT, WireT]):
 
     @classmethod
     def _make_layer(cls, scheme: str, url: str) -> Serializer:
+        if scheme == "json":
+            return JsonSerializer.from_url(url)
+        if scheme == "msgpack":
+            if not _is_msgpack_available:
+                raise ValueError(f"`{scheme}://` requires `cachetory[msgpack]` extra")
+            return MsgPackSerializer.from_url(url)
         if scheme == "pickle":
             return PickleSerializer.from_url(url)
         if scheme in ("noop", "null"):
