@@ -213,6 +213,28 @@ Serializes using the standard [`pickle`](https://docs.python.org/3/library/pickl
 |:------------------|--------------------------------------------------------------------------------------------------|
 | `pickle-protocol` | Version of [`pickle` protocol](https://docs.python.org/3/library/pickle.html#data-stream-format) |
 
+### Json
+
+![scheme: json](https://img.shields.io/badge/scheme-json://-important)
+
+Serializes using the standard [`json`](https://docs.python.org/3/library/json.html) module.
+
+| Class                                  |
+|:---------------------------------------|
+| `cachetory.serializers.JsonSerializer` |
+
+### MessagePack
+
+![scheme: msgpack](https://img.shields.io/badge/scheme-msgpack://-important)
+
+Serializes using the non-standard [`msgpack`](https://github.com/aviramha/ormsgpack) module.
+
+| Class                                     |
+|:------------------------------------------|
+| `cachetory.serializers.MsgPackSerializer` |
+
+This serializer is not available on PyPy
+
 ### No-operation
 
 ![scheme: noop](https://img.shields.io/badge/scheme-noop://-important)

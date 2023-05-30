@@ -36,10 +36,12 @@ pydantic = "^1.10.4"
 typing-extensions = "^4.4.0"
 redis = {version = "^4.4.2", optional = true}
 zstd = {version = "^1.5.2.6", optional = true}
+ormsgpack = {version = "^1.2.6", optional = true, markers = "platform_python_implementation == 'CPython'"}
 
 [tool.poetry.extras]
 redis = ["redis"]
 zstd = ["zstd"]
+ormsgpack = ["ormsgpack"]
 
 [tool.poetry.group.dev]
 optional = true

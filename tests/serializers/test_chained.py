@@ -1,10 +1,19 @@
 from typing import List, Type
 
+import pytest
 from pytest import mark, raises
 
 from cachetory.interfaces.serializers import Serializer
 from cachetory.serializers import ChainedSerializer, PickleSerializer
 from cachetory.serializers.compressors import ZstdCompressor
+
+try:
+    # noinspection PyUnresolvedReferences
+    from cachetory.serializers.msgpack import MsgPackSerializer
+except ImportError:
+    _is_msgpack_available = False
+else:
+    _is_msgpack_available = True
 
 
 @mark.parametrize(
@@ -29,7 +38,21 @@ def test_serialize():
     assert serializer.serialize(value) == ZstdCompressor().serialize(PickleSerializer[str]().serialize(value))
 
 
+@pytest.mark.skipif(not _is_msgpack_available, reason="MessagePack is not available")
+def test_msgpack_serialize():
+    serializer: Serializer[str, bytes] = ChainedSerializer.from_url("msgpack+zstd://")
+    value = "Shields up! Red alert!"
+    assert serializer.serialize(value) == ZstdCompressor().serialize(MsgPackSerializer[str]().serialize(value))
+
+
 def test_deserialize():
     value = "Energize!"
     serialized_value = ZstdCompressor().serialize(PickleSerializer[str]().serialize(value))
     assert ChainedSerializer[str, bytes].from_url("pickle+zstd://").deserialize(serialized_value) == value
+
+
+@pytest.mark.skipif(not _is_msgpack_available, reason="MessagePack is not available")
+def test_msgpack_deserialize():
+    value = "Energize!"
+    serialized_value = ZstdCompressor().serialize(MsgPackSerializer[str]().serialize(value))
+    assert ChainedSerializer[str, bytes].from_url("msgpack+zstd://").deserialize(serialized_value) == value
