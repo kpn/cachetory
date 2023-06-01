@@ -89,7 +89,6 @@ jobs:
       if: success() || failure()
       uses: codecov/codecov-action@v3
       with:
-        token: ${{ secrets.CODECOV_TOKEN }}
         env_vars: PYTHON
         name: Python ${{ matrix.python-version }}
         files: coverage.xml
