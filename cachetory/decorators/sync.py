@@ -19,7 +19,7 @@ def cached(
     cache: Union[Cache[ValueT, WireT], Callable[..., Cache[ValueT, WireT]]],  # no way to use `P` here
     *,
     make_key: Callable[..., str] = shared.make_default_key,  # no way to use `P` here
-    time_to_live: Optional[timedelta] = None,
+    time_to_live: Optional[Union[timedelta, Callable[..., timedelta]]] = None,
     if_not_exists: bool = False,
 ) -> Callable[[Callable[P, ValueT]], Callable[P, ValueT]]:
     """
@@ -32,7 +32,10 @@ def cached(
             and the rest of the arguments next to it.
         make_key: callable to generate a custom cache key per each call.
         if_not_exists: controls concurrent sets: if `True` – avoids overwriting a cached value.
-        time_to_live: cached value expiration time.
+        time_to_live:
+            cached value expiration time or callable that returns the expiration time.
+            The callable needs to accept keyword arguments, and it is given the cache key to
+            compute the expiration time.
     """
 
     def wrap(callable_: Callable[P, ValueT]) -> Callable[P, ValueT]:
@@ -40,11 +43,12 @@ def cached(
         def cached_callable(*args: P.args, **kwargs: P.kwargs) -> ValueT:
             cache_ = cache(callable_, *args, **kwargs) if callable(cache) else cache
             key_ = make_key(callable_, *args, **kwargs)
+            time_to_live_ = time_to_live(key=key_) if callable(time_to_live) else time_to_live
             try:
                 value = cache_[key_]
             except KeyError:
                 value = callable_(*args, **kwargs)
-                cache_.set(key_, value, time_to_live=time_to_live, if_not_exists=if_not_exists)
+                cache_.set(key_, value, time_to_live=time_to_live_, if_not_exists=if_not_exists)
             return value
 
         return cached_callable
