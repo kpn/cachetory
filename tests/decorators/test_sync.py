@@ -1,3 +1,7 @@
+from datetime import timedelta
+from typing import Any
+from unittest import mock
+
 from pytest import fixture
 
 from cachetory.backends.sync import MemoryBackend
@@ -50,3 +54,38 @@ def test_callable_cache(cache: Cache[int, int], cache_2: Cache[int, int]):
 
     assert cache._backend.size == 1  # type: ignore
     assert cache_2._backend.size == 1  # type: ignore
+
+
+def test_time_to_live_accepts_callable(cache: Cache[int, int]):
+    expected_time_to_live = timedelta(seconds=42)
+
+    def ttl(*args: Any, **kwargs: Any) -> timedelta:
+        return expected_time_to_live
+
+    @cached(cache, time_to_live=ttl)
+    def expensive_function() -> int:
+        return 1
+
+    with mock.patch.object(cache, "set", wraps=cache.set) as m_set:
+        assert expensive_function() == 1
+
+    # time_to_live is correctly forwarded to cache
+    m_set.assert_called_with(mock.ANY, mock.ANY, time_to_live=expected_time_to_live, if_not_exists=mock.ANY)
+
+
+def test_time_to_live_callable_depending_on_key(cache: Cache[int, int]):
+    """time_to_live accepts the key as a keyword argument, allowing for different expirations."""
+
+    def ttl(key: str) -> timedelta:
+        if "a=a" in key:
+            return timedelta(seconds=42)
+        return timedelta(seconds=1)
+
+    @cached(cache, time_to_live=ttl)
+    def expensive_function(**kwargs: Any) -> int:
+        return 1
+
+    with mock.patch.object(cache, "set", wraps=cache.set) as m_set:
+        assert expensive_function(a="a") == 1
+
+    m_set.assert_called_with(mock.ANY, mock.ANY, time_to_live=timedelta(seconds=42), if_not_exists=mock.ANY)
