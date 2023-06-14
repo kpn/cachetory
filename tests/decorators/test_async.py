@@ -2,7 +2,7 @@ from datetime import timedelta
 from typing import Any
 from unittest import mock
 
-from pytest import fixture, mark
+import pytest
 
 from cachetory.backends.async_ import MemoryBackend
 from cachetory.caches.async_ import Cache
@@ -10,17 +10,16 @@ from cachetory.decorators.async_ import cached
 from cachetory.serializers import NoopSerializer
 
 
-@fixture
+@pytest.fixture
 def cache() -> Cache[int, int]:
     return Cache(serializer=NoopSerializer(), backend=MemoryBackend[int]())
 
 
-@fixture
+@pytest.fixture
 def cache_2() -> Cache[int, int]:
     return Cache(serializer=NoopSerializer(), backend=MemoryBackend[int]())
 
 
-@mark.asyncio
 async def test_simple(cache: Cache[int, int]):
     call_counter = 0
 
@@ -38,12 +37,25 @@ async def test_simple(cache: Cache[int, int]):
     assert call_counter == 1, "cache did not work"
 
 
-@mark.asyncio
-async def test_callable_cache(cache: Cache[int, int], cache_2: Cache[int, int]):
+@pytest.mark.parametrize(
+    "sync_callable",
+    [
+        True,
+        False,
+    ],
+)
+async def test_callable_cache(cache: Cache[int, int], cache_2: Cache[int, int], sync_callable):
     call_counter = 0
 
-    async def choose_cache(_wrapped_callable: Any, param: int) -> Cache[int, int]:
-        return cache_2 if param == 2 else cache
+    if sync_callable:
+
+        def choose_cache(_wrapped_callable: Any, param: int) -> Cache[int, int]:
+            return cache_2 if param == 2 else cache
+
+    else:
+
+        async def choose_cache(_wrapped_callable: Any, param: int) -> Cache[int, int]:  # type: ignore [misc]
+            return cache_2 if param == 2 else cache
 
     @cached(cache=choose_cache)
     async def expensive_function(_: int) -> int:
@@ -61,13 +73,25 @@ async def test_callable_cache(cache: Cache[int, int], cache_2: Cache[int, int]):
     assert cache_2._backend.size == 1  # type: ignore
 
 
-async def test_time_to_live_accepts_callable(cache: Cache[int, int]):
+def sync_ttl(*args: Any, **kwargs: Any) -> timedelta:
+    return timedelta(seconds=42)
+
+
+async def async_ttl(*args: Any, **kwargs: Any) -> timedelta:
+    return timedelta(seconds=42)
+
+
+@pytest.mark.parametrize(
+    "ttl_function",
+    [
+        pytest.param(sync_ttl, id="sync-callable"),
+        pytest.param(async_ttl, id="async-callable"),
+    ],
+)
+async def test_time_to_live_accepts_callable(cache: Cache[int, int], ttl_function):
     expected_time_to_live = timedelta(seconds=42)
 
-    async def ttl(*args: Any, **kwargs: Any) -> timedelta:
-        return expected_time_to_live
-
-    @cached(cache, time_to_live=ttl)
+    @cached(cache, time_to_live=ttl_function)
     async def expensive_function() -> int:
         return 1
 

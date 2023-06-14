@@ -47,7 +47,7 @@ ormsgpack = ["ormsgpack"]
 optional = true
 
 [tool.poetry.group.dev.dependencies]
-mypy = "^0.991"
+mypy = "^1.3.0"
 black = "^23.1.0"
 ruff = "^0.0.239"
 pytest = "^7.2.1"
