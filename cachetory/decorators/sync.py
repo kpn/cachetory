@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 from datetime import timedelta
 from functools import wraps
-from typing import Callable, Optional, Union
+from typing import Callable, Optional
 
 from typing_extensions import ParamSpec
 
@@ -8,18 +10,17 @@ from cachetory.caches.sync import Cache
 from cachetory.decorators import shared
 from cachetory.interfaces.backends.private import WireT
 from cachetory.interfaces.serializers import ValueT
+from cachetory.private.functools import maybe_callable
 
 P = ParamSpec("P")
-"""
-Original wrapped function parameter specification.
-"""
+"""Original wrapped function parameter specification."""
 
 
 def cached(
-    cache: Union[Cache[ValueT, WireT], Callable[..., Cache[ValueT, WireT]]],  # no way to use `P` here
+    cache: Cache[ValueT, WireT] | Callable[..., Cache[ValueT, WireT]],  # no way to use `P` here
     *,
     make_key: Callable[..., str] = shared.make_default_key,  # no way to use `P` here
-    time_to_live: Optional[Union[timedelta, Callable[..., timedelta]]] = None,
+    time_to_live: Optional[timedelta | Callable[..., timedelta]] = None,
     if_not_exists: bool = False,
 ) -> Callable[[Callable[P, ValueT]], Callable[P, ValueT]]:
     """
@@ -41,9 +42,10 @@ def cached(
     def wrap(callable_: Callable[P, ValueT]) -> Callable[P, ValueT]:
         @wraps(callable_)
         def cached_callable(*args: P.args, **kwargs: P.kwargs) -> ValueT:
-            cache_ = cache(callable_, *args, **kwargs) if callable(cache) else cache
+            cache_ = maybe_callable(cache, callable_, *args, **kwargs)
             key_ = make_key(callable_, *args, **kwargs)
-            time_to_live_ = time_to_live(key=key_) if callable(time_to_live) else time_to_live
+            time_to_live_ = maybe_callable(time_to_live, key=key_)
+
             try:
                 value = cache_[key_]
             except KeyError:
