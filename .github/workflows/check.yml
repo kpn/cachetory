@@ -3,10 +3,12 @@ name: Checks
 on:
   push:
     branches:
-    - main
+      - main
+    tags-ignore:
+      - '**'
   pull_request:
     branches:
-    - main
+      - main
 
 env:
   ANSICON: 1
