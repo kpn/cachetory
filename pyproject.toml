@@ -49,7 +49,7 @@ optional = true
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.3.0"
 black = "^23.1.0"
-ruff = "^0.0.239"
+ruff = "^0.0.275"
 pytest = "^7.2.1"
 pytest-asyncio = "^0.20.3"
 pytest-cov = "^4.0.0"
@@ -140,6 +140,7 @@ exclude_lines = [
     "raise NotImplementedError",
     "except ImportError",
     "if TYPE_CHECKING:",
+    "@overload",
 ]
 
 [tool.poetry-dynamic-versioning]
