@@ -74,11 +74,11 @@ Both sync and async `Cache`s requires at least these parameters to work:
 - `backend`: functions as a storage
 - `serializer`: is responsible for converting actual values from and to something that a backend would be able to store
 
-`Cache` may be annotated with a value type, like this: `Cache[ValueT]`, which provides type hints for the cache methods.
+`Cache` may be annotated with a value type like this `Cache[ValueT, WireT]`, which provides type hints for the cache methods.
 
 ### Instantiating a backend
 
-There is a few ways to instantiate a backend:
+There are a few ways to instantiate a backend:
 
 - By **directly instantiating** a backend class via its `__init__`
 - By instantiating a specific backend class **via its `from_url` class method**. In that case the URL is forwarded to underlying client (if any)
@@ -128,8 +128,8 @@ from cachetory.caches.sync import Cache
 from cachetory.decorators.shared import make_default_key
 from cachetory.decorators.sync import cached
 
-cache = Cache[int](backend=..., serializer=...)
-another_cache = Cache[int](backend=..., serializer=...)
+cache = Cache[int, ...](backend=..., serializer=...)
+another_cache = Cache[int, ...](backend=..., serializer=...)
 
 
 @cached(
