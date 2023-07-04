@@ -118,3 +118,19 @@ async def test_time_to_live_callable_depending_on_key(cache: Cache[int, int]):
         assert await expensive_function(a="a") == 1
 
     m_set.assert_called_with(mock.ANY, mock.ANY, time_to_live=timedelta(seconds=42), if_not_exists=mock.ANY)
+
+
+async def test_exclude(cache: Cache[int, int]):
+    @cached(
+        cache,
+        make_key=lambda _, arg: str(arg),
+        exclude=lambda key_, value_: int(key_) + value_ < 40,
+    )
+    async def power_function(arg: int) -> int:
+        return arg**2
+
+    assert await power_function(5) == 25
+    assert await power_function(6) == 36
+
+    assert await cache.get("5") is None
+    assert await cache.get("6") == 36
