@@ -28,6 +28,7 @@ def cached(
     make_key: Callable[..., str] = shared.make_default_key,  # no way to use `P` here
     time_to_live: Optional[timedelta | Callable[..., timedelta] | Callable[..., Awaitable[timedelta]]] = None,
     if_not_exists: bool = False,
+    exclude: None | Callable[[str, ValueT], bool] | Callable[[str, ValueT], Awaitable[bool]] = None,
 ) -> Callable[[Callable[P, Awaitable[ValueT]]], Callable[P, Awaitable[ValueT]]]:
     """
     Apply memoization to the wrapped callable.
@@ -38,11 +39,12 @@ def cached(
             In the latter case the specific callable gets called with a wrapped function as the first argument,
             and the rest of the arguments next to it.
         make_key: callable to generate a custom cache key per each call.
-        if_not_exists: controls concurrent sets: if `True` – avoids overwriting a cached value.
         time_to_live:
             cached value expiration time or a callable (sync or async) that returns the expiration time.
             The callable needs to accept keyword arguments, and it is given the cache key to
             compute the expiration time.
+        if_not_exists: controls concurrent sets: if `True` – avoids overwriting a cached value.
+        exclude: Optional callable to prevent a key-value pair from being cached if the callable returns true.
     """
 
     def wrap(callable_: Callable[P, Awaitable[ValueT]]) -> Callable[P, Awaitable[ValueT]]:
@@ -55,7 +57,8 @@ def cached(
             value = await cache_.get(key_)
             if value is None:
                 value = await callable_(*args, **kwargs)
-                await cache_.set(key_, value, time_to_live=time_to_live_, if_not_exists=if_not_exists)
+                if exclude is None or not await maybe_awaitable(exclude(key_, value)):
+                    await cache_.set(key_, value, time_to_live=time_to_live_, if_not_exists=if_not_exists)
             return value
 
         return cached_callable
