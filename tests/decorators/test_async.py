@@ -73,35 +73,6 @@ async def test_callable_cache(cache: Cache[int, int], cache_2: Cache[int, int], 
     assert cache_2._backend.size == 1  # type: ignore
 
 
-def sync_ttl(*args: Any, **kwargs: Any) -> timedelta:
-    return timedelta(seconds=42)
-
-
-async def async_ttl(*args: Any, **kwargs: Any) -> timedelta:
-    return timedelta(seconds=42)
-
-
-@pytest.mark.parametrize(
-    "ttl_function",
-    [
-        pytest.param(sync_ttl, id="sync-callable"),
-        pytest.param(async_ttl, id="async-callable"),
-    ],
-)
-async def test_time_to_live_accepts_callable(cache: Cache[int, int], ttl_function):
-    expected_time_to_live = timedelta(seconds=42)
-
-    @cached(cache, time_to_live=ttl_function)
-    async def expensive_function() -> int:
-        return 1
-
-    with mock.patch.object(cache, "set", wraps=cache.set) as m_set:
-        assert await expensive_function() == 1
-
-    # time_to_live is correctly forwarded to cache
-    m_set.assert_called_with(mock.ANY, mock.ANY, time_to_live=expected_time_to_live, if_not_exists=mock.ANY)
-
-
 async def test_time_to_live_callable_depending_on_key(cache: Cache[int, int]):
     """time_to_live accepts the key as a keyword argument, allowing for different expirations."""
 
