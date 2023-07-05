@@ -1,28 +1,39 @@
 from __future__ import annotations
 
-from inspect import isawaitable
-from typing import Any, Awaitable, Callable, TypeVar
-
-from typing_extensions import overload
+from functools import wraps
+from inspect import iscoroutinefunction
+from typing import Any, Awaitable, Callable, TypeVar, cast
 
 T = TypeVar("T")
 
 
-@overload
-def maybe_callable(__value: Callable[..., T], *args: Any, **kwargs: Any) -> T:
-    ...
+def into_callable(value: Callable[..., T] | T) -> Callable[..., T]:
+    if not callable(value):
+
+        def callable_(*args: Any, **kwargs: Any) -> T:
+            return value
+
+        return callable_
+
+    else:
+        return value
 
 
-@overload
-def maybe_callable(__value: T, *args: Any, **kwargs: Any) -> T:
-    ...
+def into_async_callable(value: Callable[..., Awaitable[T]] | Callable[..., T] | T) -> Callable[..., Awaitable[T]]:
+    if not callable(value):
 
+        async def callable_(*args: Any, **kwargs: Any) -> T:
+            return value
 
-def maybe_callable(__value, *args, **kwargs):
-    if callable(__value):
-        return __value(*args, **kwargs)
-    return __value
+        return callable_
 
+    if not iscoroutinefunction(value):
 
-async def maybe_awaitable(__value: T | Awaitable[T]) -> T:
-    return await __value if isawaitable(__value) else __value
+        @wraps(value)
+        async def callable_(*args: Any, **kwargs: Any) -> T:
+            return cast(T, value(*args, **kwargs))
+
+        return callable_
+
+    else:
+        return value

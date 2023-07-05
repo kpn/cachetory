@@ -10,7 +10,7 @@ from cachetory.caches.sync import Cache
 from cachetory.decorators import shared
 from cachetory.interfaces.backends.private import WireT
 from cachetory.interfaces.serializers import ValueT
-from cachetory.private.functools import maybe_callable
+from cachetory.private.functools import into_callable
 
 P = ParamSpec("P")
 """Original wrapped function parameter specification."""
@@ -22,7 +22,7 @@ def cached(
     make_key: Callable[..., str] = shared.make_default_key,  # no way to use `P` here
     time_to_live: Optional[timedelta | Callable[..., timedelta]] = None,
     if_not_exists: bool = False,
-    exclude: None | Callable[[str, ValueT], bool] = None,
+    exclude: Callable[[str, ValueT], bool] | None = None,
 ) -> Callable[[Callable[P, ValueT]], Callable[P, ValueT]]:
     """
     Apply memoization to the wrapped callable.
@@ -42,11 +42,14 @@ def cached(
     """
 
     def wrap(callable_: Callable[P, ValueT]) -> Callable[P, ValueT]:
+        get_cache = into_callable(cache)
+        get_time_to_live = into_callable(time_to_live)
+
         @wraps(callable_)
         def cached_callable(*args: P.args, **kwargs: P.kwargs) -> ValueT:
-            cache_ = maybe_callable(cache, callable_, *args, **kwargs)
+            cache_ = get_cache(callable_, *args, **kwargs)
             key_ = make_key(callable_, *args, **kwargs)
-            time_to_live_ = maybe_callable(time_to_live, key=key_)
+            time_to_live_ = get_time_to_live(key=key_)
 
             try:
                 value = cache_[key_]

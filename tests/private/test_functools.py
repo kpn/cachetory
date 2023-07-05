@@ -4,18 +4,18 @@ from typing import Awaitable, Callable
 
 import pytest
 
-from cachetory.private.functools import maybe_awaitable, maybe_callable
+from cachetory.private.functools import into_async_callable, into_callable
 
 
 async def _async_callable() -> int:
     return 42
 
 
-@pytest.mark.parametrize("argument", [42, lambda: 42])
-def test_maybe_callable(argument: int | Callable[[], int]) -> None:
-    assert maybe_callable(argument) == 42
+@pytest.mark.parametrize("value", [42, lambda: 42])
+def test_into_callable(value: int | Callable[[], int]) -> None:
+    assert into_callable(value)() == 42
 
 
-@pytest.mark.parametrize("callable_", [lambda: 42, _async_callable])
-async def test_maybe_awaitable(callable_: Callable[[], int] | Callable[[], Awaitable[int]]) -> None:
-    assert await maybe_awaitable(callable_())
+@pytest.mark.parametrize("value", [42, lambda: 42, _async_callable])
+async def test_into_async_callable(value: int | Callable[[], int] | Callable[[], Awaitable[int]]) -> None:
+    assert await into_async_callable(value)() == 42
