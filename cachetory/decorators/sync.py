@@ -2,14 +2,14 @@ from __future__ import annotations
 
 from datetime import timedelta
 from functools import wraps
-from typing import Callable, Optional
+from typing import Callable
 
-from typing_extensions import ParamSpec
+from typing_extensions import ParamSpec, Protocol
 
 from cachetory.caches.sync import Cache
 from cachetory.decorators import shared
 from cachetory.interfaces.backends.private import WireT
-from cachetory.interfaces.serializers import ValueT
+from cachetory.interfaces.serializers import ValueT, ValueT_co
 from cachetory.private.functools import into_callable
 
 P = ParamSpec("P")
@@ -20,10 +20,10 @@ def cached(
     cache: Cache[ValueT, WireT] | Callable[..., Cache[ValueT, WireT]],  # no way to use `P` here
     *,
     make_key: Callable[..., str] = shared.make_default_key,  # no way to use `P` here
-    time_to_live: Optional[timedelta | Callable[..., timedelta]] = None,
+    time_to_live: timedelta | Callable[..., timedelta] | None = None,
     if_not_exists: bool = False,
     exclude: Callable[[str, ValueT], bool] | None = None,
-) -> Callable[[Callable[P, ValueT]], Callable[P, ValueT]]:
+) -> Callable[[Callable[P, ValueT]], _CachedCallable[P, ValueT]]:
     """
     Apply memoization to the wrapped callable.
 
@@ -41,7 +41,7 @@ def cached(
         exclude: Optional callable to prevent a key-value pair from being cached if the callable returns true.
     """
 
-    def wrap(callable_: Callable[P, ValueT]) -> Callable[P, ValueT]:
+    def wrap(callable_: Callable[P, ValueT]) -> _CachedCallable[P, ValueT]:
         get_cache = into_callable(cache)
         get_time_to_live = into_callable(time_to_live)
 
@@ -59,6 +59,26 @@ def cached(
                     cache_.set(key_, value, time_to_live=time_to_live_, if_not_exists=if_not_exists)
             return value
 
-        return cached_callable
+        def purge(*args: P.args, **kwargs: P.kwargs) -> bool:
+            key = make_key(callable_, *args, **kwargs)
+            return get_cache(callable_, *args, **kwargs).delete(key)
+
+        cached_callable.purge = purge  # type: ignore[attr-defined]
+        return cached_callable  # type: ignore[return-value]
 
     return wrap
+
+
+class _CachedCallable(Protocol[P, ValueT_co]):
+    """Protocol of the wrapped callable."""
+
+    def __call__(self, *args: P.args, **kwargs: P.kwargs) -> ValueT_co:
+        ...
+
+    def purge(self, *args: P.args, **kwargs: P.kwargs) -> bool:
+        """
+        Delete the value that was cached using the same call arguments.
+
+        Returns:
+            whether a cached value existed
+        """

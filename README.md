@@ -141,14 +141,25 @@ another_cache = Cache[int, ...](backend=..., serializer=...)
     time_to_live=None,  # forwarded to `Cache.set`
     if_not_exists=False,  # forwarded to `Cache.set`
 )
-def expensive_function() -> int:
-    return 42
+def expensive_function(x: int) -> int:
+    return 42 * x
 ```
 
-There's a few `make_key` functions provided by default:
+##### Key functions
+
+There are a few `make_key` functions provided by default:
 
 - `cachetory.decorators.shared.make_default_key` builds a human-readable cache key out of decorated function fully-qualified name and stringified arguments. The length of the key depends on the argument values.
 - `cachetory.decorators.shared.make_default_hashed_key` calls `make_default_key` under the hood but hashes the key and returns a hash hex digest – making it a fixed-length key and not human-readable.
+
+##### Purge cache
+
+Specific cached value can be deleted using the added `purge()` function, which accepts the same arguments as the original wrapped callable:
+
+```python
+expensive_function(100500)
+expensive_function.purge(100500)  # purge cached value for this argument
+```
 
 ## Supported backends
 

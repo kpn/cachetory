@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import itertools
 from datetime import datetime, timedelta
-from typing import Iterable, Optional, Tuple
+from typing import Iterable
 
 from redis import Redis
 
@@ -27,12 +27,12 @@ class RedisBackend(SyncBackend[bytes]):
             return data
         raise KeyError(key)
 
-    def get_many(self, *keys: str) -> Iterable[Tuple[str, bytes]]:
+    def get_many(self, *keys: str) -> Iterable[tuple[str, bytes]]:
         for key, value in zip(keys, self._client.mget(*keys)):
             if value is not None:
                 yield key, value
 
-    def expire_at(self, key: str, deadline: Optional[datetime]) -> None:
+    def expire_at(self, key: str, deadline: datetime | None) -> None:
         if deadline:
             # One can pass `datetime` directly to `pexpireat`, but the latter
             # incorrectly converts datetime into timestamp.
@@ -40,7 +40,7 @@ class RedisBackend(SyncBackend[bytes]):
         else:
             self._client.persist(key)
 
-    def expire_in(self, key: str, time_to_live: Optional[timedelta] = None) -> None:
+    def expire_in(self, key: str, time_to_live: timedelta | None = None) -> None:
         if time_to_live:
             self._client.pexpire(key, time_to_live)
         else:
@@ -51,12 +51,12 @@ class RedisBackend(SyncBackend[bytes]):
         key: str,
         value: bytes,
         *,
-        time_to_live: Optional[timedelta] = None,
+        time_to_live: timedelta | None = None,
         if_not_exists: bool = False,
     ) -> bool:
         return bool(self._client.set(key, value, px=time_to_live, nx=if_not_exists))
 
-    def set_many(self, items: Iterable[Tuple[str, bytes]]) -> None:
+    def set_many(self, items: Iterable[tuple[str, bytes]]) -> None:
         self._client.execute_command("MSET", *itertools.chain.from_iterable(items))
 
     def delete(self, key: str) -> bool:

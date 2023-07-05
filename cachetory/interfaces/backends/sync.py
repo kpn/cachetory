@@ -10,7 +10,7 @@ from __future__ import annotations
 from abc import ABCMeta, abstractmethod
 from contextlib import AbstractContextManager
 from datetime import datetime, timedelta
-from typing import Generic, Iterable, Optional, Tuple
+from typing import Generic, Iterable
 
 from typing_extensions import Protocol
 
@@ -33,7 +33,7 @@ class SyncBackendRead(Protocol[WireT_co]):
         """
         raise NotImplementedError
 
-    def get_many(self, *keys: str) -> Iterable[Tuple[str, WireT_co]]:
+    def get_many(self, *keys: str) -> Iterable[tuple[str, WireT_co]]:
         """
         Get all the values corresponding to the specified keys.
 
@@ -52,11 +52,11 @@ class SyncBackendRead(Protocol[WireT_co]):
 class SyncBackendWrite(Protocol[WireT_contra]):
     """Describes the write operations of a synchronous cache."""
 
-    def expire_in(self, key: str, time_to_live: Optional[timedelta] = None) -> None:
+    def expire_in(self, key: str, time_to_live: timedelta | None = None) -> None:
         """Set the expiration time on the key."""
         self.expire_at(key, make_deadline(time_to_live))
 
-    def expire_at(self, key: str, deadline: Optional[datetime]) -> None:  # pragma: no cover
+    def expire_at(self, key: str, deadline: datetime | None) -> None:  # pragma: no cover
         """Set the expiration deadline on the key."""
         raise NotImplementedError
 
@@ -65,7 +65,7 @@ class SyncBackendWrite(Protocol[WireT_contra]):
         key: str,
         value: WireT_contra,
         *,
-        time_to_live: Optional[timedelta] = None,
+        time_to_live: timedelta | None = None,
         if_not_exists: bool = False,
     ) -> bool:  # pragma: no cover
         """
@@ -77,7 +77,7 @@ class SyncBackendWrite(Protocol[WireT_contra]):
         """
         raise NotImplementedError
 
-    def set_many(self, items: Iterable[Tuple[str, WireT_contra]]) -> None:
+    def set_many(self, items: Iterable[tuple[str, WireT_contra]]) -> None:
         """Put all the specified values to the cache."""
         for key, value in items:
             self.set(key, value)
