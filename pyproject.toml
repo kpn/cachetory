@@ -1,3 +1,6 @@
+[project]
+requires-python = ">=3.8"
+
 [tool.poetry]
 authors = [
     "Pavel Perestoronin <pavel.perestoronin@kpn.com>",
@@ -17,7 +20,6 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -31,7 +33,7 @@ requires = ["poetry-core", "poetry-dynamic-versioning"]
 build-backend = "poetry_dynamic_versioning.backend"
 
 [tool.poetry.dependencies]
-python = "^3.7.0"
+python = "^3.8.0"
 pydantic = "^1.10.4"
 typing-extensions = "^4.4.0"
 redis = {version = "^4.4.2", optional = true}
@@ -108,9 +110,6 @@ ignore = [
     "PT013",
     "RET505",
     "TRY003",
-    "UP006",  # 3.9
-    "UP007",  # 3.10
-    "UP033",  # 3.9
 ]
 unfixable = ["B"]
 

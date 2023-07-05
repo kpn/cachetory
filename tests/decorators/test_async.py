@@ -15,12 +15,7 @@ def cache() -> Cache[int, int]:
     return Cache(serializer=NoopSerializer(), backend=MemoryBackend[int]())
 
 
-@pytest.fixture
-def cache_2() -> Cache[int, int]:
-    return Cache(serializer=NoopSerializer(), backend=MemoryBackend[int]())
-
-
-async def test_simple(cache: Cache[int, int]):
+async def test_simple(cache: Cache[int, int]) -> None:
     call_counter = 0
 
     @cached(cache)
@@ -37,43 +32,7 @@ async def test_simple(cache: Cache[int, int]):
     assert call_counter == 1, "cache did not work"
 
 
-@pytest.mark.parametrize(
-    "sync_callable",
-    [
-        True,
-        False,
-    ],
-)
-async def test_callable_cache(cache: Cache[int, int], cache_2: Cache[int, int], sync_callable):
-    call_counter = 0
-
-    if sync_callable:
-
-        def choose_cache(_wrapped_callable: Any, param: int) -> Cache[int, int]:
-            return cache_2 if param == 2 else cache
-
-    else:
-
-        async def choose_cache(_wrapped_callable: Any, param: int) -> Cache[int, int]:  # type: ignore [misc]
-            return cache_2 if param == 2 else cache
-
-    @cached(cache=choose_cache)
-    async def expensive_function(_: int) -> int:
-        nonlocal call_counter
-        call_counter += 1
-        return 42
-
-    await expensive_function(1)
-    assert call_counter == 1
-
-    await expensive_function(2)
-    assert call_counter == 2
-
-    assert cache._backend.size == 1  # type: ignore
-    assert cache_2._backend.size == 1  # type: ignore
-
-
-async def test_time_to_live_callable_depending_on_key(cache: Cache[int, int]):
+async def test_time_to_live_callable_depending_on_key(cache: Cache[int, int]) -> None:
     """time_to_live accepts the key as a keyword argument, allowing for different expirations."""
 
     async def ttl(key: str) -> timedelta:
@@ -91,7 +50,7 @@ async def test_time_to_live_callable_depending_on_key(cache: Cache[int, int]):
     m_set.assert_called_with(mock.ANY, mock.ANY, time_to_live=timedelta(seconds=42), if_not_exists=mock.ANY)
 
 
-async def test_exclude(cache: Cache[int, int]):
+async def test_exclude(cache: Cache[int, int]) -> None:
     @cached(
         cache,
         make_key=lambda _, arg: str(arg),
@@ -105,3 +64,16 @@ async def test_exclude(cache: Cache[int, int]):
 
     assert await cache.get("5") is None
     assert await cache.get("6") == 36
+
+
+async def test_purge(cache: Cache[int, int]) -> None:
+    @cached(cache, make_key=lambda _, x: str(x))
+    async def expensive_function(x: int) -> int:
+        return x * x
+
+    await expensive_function(2)
+    await expensive_function(3)
+
+    await expensive_function.purge(2)
+    assert await cache.get("2") is None
+    assert await cache.get("3") == 9

@@ -2,34 +2,28 @@ from __future__ import annotations
 
 from datetime import timedelta
 from functools import wraps
-from typing import Awaitable, Callable, Optional, Union
+from typing import Awaitable, Callable, Protocol
 
 from typing_extensions import ParamSpec
 
 from cachetory.caches.async_ import Cache
 from cachetory.decorators import shared
 from cachetory.interfaces.backends.private import WireT
-from cachetory.interfaces.serializers import ValueT
+from cachetory.interfaces.serializers import ValueT, ValueT_co
 from cachetory.private.functools import into_async_callable
 
 P = ParamSpec("P")
-"""
-Original wrapped function parameter specification.
-"""
+"""Original wrapped function parameter specification."""
 
 
 def cached(
-    cache: Union[
-        Cache[ValueT, WireT],
-        Callable[..., Cache[ValueT, WireT]],
-        Callable[..., Awaitable[Cache[ValueT, WireT]]],
-    ],  # no way to use `P` here
+    cache: Cache[ValueT, WireT] | Callable[..., Cache[ValueT, WireT]] | Callable[..., Awaitable[Cache[ValueT, WireT]]],
     *,
     make_key: Callable[..., str] = shared.make_default_key,  # no way to use `P` here
-    time_to_live: Optional[timedelta | Callable[..., timedelta] | Callable[..., Awaitable[timedelta]]] = None,
+    time_to_live: timedelta | Callable[..., timedelta] | Callable[..., Awaitable[timedelta]] | None = None,
     if_not_exists: bool = False,
     exclude: Callable[[str, ValueT], bool] | Callable[[str, ValueT], Awaitable[bool]] | None = None,
-) -> Callable[[Callable[P, Awaitable[ValueT]]], Callable[P, Awaitable[ValueT]]]:
+) -> Callable[[Callable[P, Awaitable[ValueT]]], _CachedCallable[P, Awaitable[ValueT]]]:
     """
     Apply memoization to the wrapped callable.
 
@@ -47,7 +41,7 @@ def cached(
         exclude: Optional callable to prevent a key-value pair from being cached if the callable returns true.
     """
 
-    def wrap(callable_: Callable[P, Awaitable[ValueT]]) -> Callable[P, Awaitable[ValueT]]:
+    def wrap(callable_: Callable[P, Awaitable[ValueT]]) -> _CachedCallable[P, Awaitable[ValueT]]:
         get_cache = into_async_callable(cache)
         get_time_to_live = into_async_callable(time_to_live)
         exclude_ = into_async_callable(exclude)  # type: ignore[arg-type]
@@ -65,6 +59,32 @@ def cached(
                     await cache_.set(key_, value, time_to_live=time_to_live_, if_not_exists=if_not_exists)
             return value
 
-        return cached_callable
+        async def purge(*args: P.args, **kwargs: P.kwargs) -> bool:
+            """
+            Delete the value that was cached using the same call arguments.
+
+            Returns:
+                whether a cached value existed
+            """
+            key = make_key(callable_, *args, **kwargs)
+            return await (await get_cache(callable_, *args, **kwargs)).delete(key)
+
+        cached_callable.purge = purge  # type: ignore[attr-defined]
+        return cached_callable  # type: ignore[return-value]
 
     return wrap
+
+
+class _CachedCallable(Protocol[P, ValueT_co]):
+    """Protocol of the wrapped callable."""
+
+    def __call__(self, *args: P.args, **kwargs: P.kwargs) -> ValueT_co:
+        ...
+
+    async def purge(self, *args: P.args, **kwargs: P.kwargs) -> bool:
+        """
+        Delete the value that was cached using the same call arguments.
+
+        Returns:
+            whether a cached value existed
+        """

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
-from typing import Dict, Generic, Optional
+from typing import Generic
 
 from cachetory.interfaces.backends.private import WireT
 from cachetory.interfaces.backends.sync import SyncBackend
@@ -18,12 +18,12 @@ class MemoryBackend(SyncBackend[WireT], Generic[WireT]):
         return MemoryBackend()
 
     def __init__(self) -> None:
-        self._entries: Dict[str, _Entry[WireT]] = {}
+        self._entries: dict[str, _Entry[WireT]] = {}
 
     def get(self, key: str) -> WireT:
         return self._get_entry(key).value
 
-    def expire_at(self, key: str, deadline: Optional[datetime]) -> None:
+    def expire_at(self, key: str, deadline: datetime | None) -> None:
         try:
             entry = self._get_entry(key)
         except KeyError:
@@ -36,7 +36,7 @@ class MemoryBackend(SyncBackend[WireT], Generic[WireT]):
         key: str,
         value: WireT,
         *,
-        time_to_live: Optional[timedelta] = None,
+        time_to_live: timedelta | None = None,
         if_not_exists: bool = False,
     ) -> bool:
         entry = _Entry[WireT](value, make_deadline(time_to_live))
@@ -68,11 +68,11 @@ class _Entry(Generic[WireT]):
     """`mypy` doesn't support generic named tuples, thus defining this little one."""
 
     value: WireT
-    deadline: Optional[datetime]
+    deadline: datetime | None
 
     __slots__ = ("value", "deadline")
 
-    def __init__(self, value: WireT, deadline: Optional[datetime]) -> None:
+    def __init__(self, value: WireT, deadline: datetime | None) -> None:
         self.value = value
         self.deadline = deadline
 

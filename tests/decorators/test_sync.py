@@ -15,12 +15,7 @@ def cache() -> Cache[int, int]:
     return Cache(serializer=NoopSerializer(), backend=MemoryBackend[int]())
 
 
-@fixture
-def cache_2() -> Cache[int, int]:
-    return Cache(serializer=NoopSerializer(), backend=MemoryBackend[int]())
-
-
-def test_simple(cache: Cache[int, int]):
+def test_simple(cache: Cache[int, int]) -> None:
     call_counter = 0
 
     @cached(cache)
@@ -37,7 +32,7 @@ def test_simple(cache: Cache[int, int]):
     assert call_counter == 1, "cache did not work"
 
 
-def test_time_to_live_callable_depending_on_key(cache: Cache[int, int]):
+def test_time_to_live_callable_depending_on_key(cache: Cache[int, int]) -> None:
     """time_to_live accepts the key as a keyword argument, allowing for different expirations."""
 
     def ttl(key: str) -> timedelta:
@@ -55,7 +50,7 @@ def test_time_to_live_callable_depending_on_key(cache: Cache[int, int]):
     m_set.assert_called_with(mock.ANY, mock.ANY, time_to_live=timedelta(seconds=42), if_not_exists=mock.ANY)
 
 
-def test_exclude(cache: Cache[int, int]):
+def test_exclude(cache: Cache[int, int]) -> None:
     @cached(
         cache,
         make_key=lambda _, arg: str(arg),
@@ -70,3 +65,16 @@ def test_exclude(cache: Cache[int, int]):
 
     assert cache.get("5") is None
     assert cache.get("6") == 36
+
+
+def test_purge(cache: Cache[int, int]) -> None:
+    @cached(cache, make_key=lambda _, x: str(x))
+    def expensive_function(x: int) -> int:
+        return x * x
+
+    expensive_function(2)
+    expensive_function(3)
+
+    expensive_function.purge(2)
+    assert cache.get("2") is None
+    assert cache.get("3") == 9
