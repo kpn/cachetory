@@ -8,11 +8,11 @@ but implementors SHOULD override them for the sake of performance.
 from __future__ import annotations
 
 from abc import ABCMeta, abstractmethod
-from contextlib import AbstractAsyncContextManager
+from contextlib import AbstractAsyncContextManager, AbstractContextManager
 from datetime import datetime, timedelta, timezone
 from typing import AsyncIterable, Generic, Iterable
 
-from typing_extensions import Protocol
+from typing_extensions import Never, Protocol
 
 from cachetory.interfaces.backends.private import WireT, WireT_co, WireT_contra
 
@@ -75,6 +75,8 @@ class AsyncBackendWrite(Protocol[WireT_contra]):
             `True` if the value has been successfully set, `False` when `if_not_exists` is true
             and the key is already existing.
         """
+
+        # TODO: just return `None`.
         raise NotImplementedError
 
     async def set_many(self, items: Iterable[tuple[str, WireT_contra]]) -> None:
@@ -97,6 +99,7 @@ class AsyncBackendWrite(Protocol[WireT_contra]):
 
 
 class AsyncBackend(
+    AbstractContextManager,
     AbstractAsyncContextManager,
     AsyncBackendRead[WireT],
     AsyncBackendWrite[WireT],
@@ -115,6 +118,12 @@ class AsyncBackend(
             An instance of the specific backend class.
         """
         raise NotImplementedError
+
+    def __enter__(self) -> Never:
+        raise RuntimeError("use async context manager protocol instead")
+
+    def __exit__(self, _exc_type, _exc_val, _exc_tb) -> Never:
+        raise RuntimeError("use async context manager protocol instead")
 
     async def __aexit__(self, exc_type, exc_value, traceback) -> None:
         return None

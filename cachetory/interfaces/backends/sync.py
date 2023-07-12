@@ -75,6 +75,8 @@ class SyncBackendWrite(Protocol[WireT_contra]):
             `True` if the value has been successfully set, `False` when `if_not_exists` is true
             and the key is already existing.
         """
+
+        # TODO: just return `None`.
         raise NotImplementedError
 
     def set_many(self, items: Iterable[tuple[str, WireT_contra]]) -> None:

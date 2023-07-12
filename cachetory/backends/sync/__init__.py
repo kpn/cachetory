@@ -6,12 +6,14 @@ from .dummy import DummyBackend
 from .memory import MemoryBackend
 
 try:
-    # noinspection PyUnresolvedReferences
     from .redis import RedisBackend
 except ImportError:
-    _is_redis_available = False
-else:
-    _is_redis_available = True
+    RedisBackend = None  # type: ignore[assignment, misc]
+
+try:
+    from .django import DjangoBackend
+except ImportError:
+    DjangoBackend = None  # type: ignore[assignment, misc]
 
 
 def from_url(url: str) -> SyncBackend:
@@ -26,9 +28,13 @@ def from_url(url: str) -> SyncBackend:
     if scheme == "memory":
         return MemoryBackend.from_url(url)
     if scheme in ("redis", "rediss", "redis+unix"):
-        if not _is_redis_available:
+        if RedisBackend is None:
             raise ValueError(f"`{scheme}://` requires `cachetory[redis]` extra")  # pragma: no cover
         return RedisBackend.from_url(url)
     if scheme == "dummy":
         return DummyBackend.from_url(url)
+    if scheme == "django":
+        if DjangoBackend is None:
+            raise ValueError(f"`{scheme}://` requires `cachetory[django]` extra")  # pragma: no cover
+        return DjangoBackend.from_url(url)
     raise ValueError(f"`{scheme}://` is not supported")

@@ -12,6 +12,8 @@ from cachetory.interfaces.backends.sync import SyncBackend
 class RedisBackend(SyncBackend[bytes]):
     """Synchronous Redis backend."""
 
+    __slots__ = ("_client",)
+
     @classmethod
     def from_url(cls, url: str) -> RedisBackend:
         if url.startswith("redis+"):
