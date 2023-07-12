@@ -208,6 +208,16 @@ Note the following **caveats**:
 Dummy backend that always succeeds but never stores anything. Any values get forgotten immediately,
 and operations behave as if the cache always is empty.
 
+### Django
+
+![scheme: django](https://img.shields.io/badge/scheme-django://-important)
+
+| Sync                                    | Async                                     |
+|:----------------------------------------|:------------------------------------------|
+| `cachetory.backends.sync.DjangoBackend` | `cachetory.backends.async_.DjangoBackend` |
+
+Adapter for the Django cache framework: allows using a pre-configured Django cache for Cachetory's `Cache`.
+
 ## Supported serializers
 
 ### Pickle

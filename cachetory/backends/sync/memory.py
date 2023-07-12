@@ -14,7 +14,7 @@ class MemoryBackend(SyncBackend[WireT], Generic[WireT]):
     __slots__ = ("_entries",)
 
     @classmethod
-    def from_url(cls, _url: str) -> MemoryBackend:
+    def from_url(cls, _url: str) -> MemoryBackend[WireT]:
         return MemoryBackend()
 
     def __init__(self) -> None:

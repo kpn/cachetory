@@ -1,4 +1,5 @@
-SRC:=cachetory tests
+SRC := cachetory tests
+DJANGO_SETTINGS_MODULE := tests.backends.django.settings
 
 .PHONY: all
 all: install lint test build
@@ -8,6 +9,7 @@ clean:
 	find . -name "*.pyc" -delete
 	rm -rf *.egg-info build
 	rm -rf coverage*.xml .coverage
+	poetry env remove --all
 
 .PHONY: install
 install:
