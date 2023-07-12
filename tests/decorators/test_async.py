@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import timedelta
 from typing import Any
 from unittest import mock
@@ -77,3 +79,14 @@ async def test_purge(cache: Cache[int, int]) -> None:
     await expensive_function.purge(2)
     assert await cache.get("2") is None
     assert await cache.get("3") == 9
+
+
+async def test_none_cache() -> None:
+    async def get_cache(_) -> Cache[int, int] | None:
+        return None
+
+    @cached(get_cache)
+    async def expensive_function() -> int:
+        return 42
+
+    await expensive_function()
