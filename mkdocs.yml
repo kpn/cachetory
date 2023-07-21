@@ -8,6 +8,11 @@ nav:
   - getting-started.md
   - caches.md
   - decorators.md
+  - Backends:
+      - backends/dummy.md
+      - backends/memory.md
+      - backends/redis.md
+      - backends/django.md
 
 theme:
   icon:

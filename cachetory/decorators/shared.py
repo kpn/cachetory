@@ -3,7 +3,11 @@ from typing import Any, Callable
 
 
 def make_default_key(callable_: Callable[..., Any], *args: Any, **kwargs: Any) -> str:
-    """Generate cache key given the callable and the arguments it's being called with."""
+    """
+    Generate a human-readable cache key out of decorated function fully-qualified name and stringified arguments.
+
+    The length of the key depends on the arguments.
+    """
 
     # noinspection PyUnresolvedReferences
     parts = (
@@ -18,7 +22,7 @@ def make_default_key(callable_: Callable[..., Any], *args: Any, **kwargs: Any) -
 
 def make_default_hashed_key(callable_: Callable[..., Any], *args: Any, **kwargs: Any) -> str:
     """
-    Generate a hashed cache key given the callable and the arguments it's being called with.
+    Generate a hashed fixed-length cache key given the callable and the arguments it's being called with.
 
     Uses `blake2s` as the fastest algorithm from `hashlib`.
     """

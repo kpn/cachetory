@@ -18,8 +18,13 @@ def expensive_function(x: int) -> int:
 
 There are a few `make_key` functions provided by default:
 
-- `#!python cachetory.decorators.shared.make_default_key()` builds a human-readable cache key out of decorated function fully-qualified name and stringified arguments. The length of the key depends on the argument values.
-- `#!python cachetory.decorators.shared.make_default_hashed_key()` calls `make_default_key()` under the hood but hashes the key and returns a hash hex digest – making it a fixed-length key and not human-readable.
+::: cachetory.decorators.shared.make_default_key
+    options:
+      heading_level: 3
+
+::: cachetory.decorators.shared.make_default_hashed_key
+    options:
+      heading_level: 3
 
 ## Purging cache
 
