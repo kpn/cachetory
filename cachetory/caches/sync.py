@@ -14,6 +14,7 @@ class Cache(AbstractContextManager, Generic[ValueT, WireT]):
     __slots__ = ("_serializer", "_backend")
 
     def __init__(self, *, serializer: Serializer[ValueT, WireT], backend: SyncBackend[WireT]) -> None:
+        """Instantiate a cache."""
         self._serializer = serializer
         self._backend = backend
 
@@ -23,6 +24,14 @@ class Cache(AbstractContextManager, Generic[ValueT, WireT]):
 
         Raises:
             KeyError: the key is not found in the cache
+
+        Examples:
+            >>> cache["key"] = 42
+            >>>
+            >>> assert cache["key"] == 42
+            >>>
+            >>> with pytest.raises(KeyError):
+            >>>     _ = cache["missing"]
         """
         return self._serializer.deserialize(self._backend.get(key))
 
@@ -36,6 +45,11 @@ class Cache(AbstractContextManager, Generic[ValueT, WireT]):
 
         Returns:
             Retrieved value if present, or `default` otherwise.
+
+        Examples:
+            >>> cache["key"] = 42
+            >>> assert cache.get("key") == 42
+            >>> assert cache.get("missing") is None
         """
         try:
             return self[key]
@@ -47,15 +61,26 @@ class Cache(AbstractContextManager, Generic[ValueT, WireT]):
         Retrieve many values from the cache.
 
         Returns:
-            Dictionary of existing values indexed by their respective keys.
-            Missing keys are omitted.
+            Dictionary of existing values indexed by their respective keys. Missing keys are omitted.
+
+        Examples:
+            >>> cache["key"] = 42
+            >>> assert cache.get_many("key", "missing") == {"key": 42}
         """
         return {key: self._serializer.deserialize(data) for key, data in self._backend.get_many(*keys)}
 
     def expire_in(self, key: str, time_to_live: Optional[timedelta] = None) -> None:
+        """
+        Set the expiration time for the key.
+
+        Args:
+            key: cache key
+            time_to_live: time to live, or `None` to make it eternal
+        """
         return self._backend.expire_in(key, time_to_live)
 
     def __setitem__(self, key: str, value: ValueT) -> None:
+        """Set the cache item. To customize the behavior, use `set()`."""
         self._backend.set(key, self._serializer.serialize(value), time_to_live=None)
 
     def set(  # noqa: A003
@@ -65,6 +90,15 @@ class Cache(AbstractContextManager, Generic[ValueT, WireT]):
         time_to_live: Optional[timedelta] = None,
         if_not_exists: bool = False,
     ) -> None:
+        """
+        Set the cache item.
+
+        Args:
+            key: cache key
+            value: cached value
+            time_to_live: time to live, or `None` for eternal caching
+            if_not_exists: only set the item if it does not already exist
+        """
         self._backend.set(
             key,
             self._serializer.serialize(value),

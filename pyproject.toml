@@ -60,6 +60,18 @@ pytest-cov = "^4.0.0"
 ruff = "^0.0.275"
 types-redis = "^4.4.0.4"
 
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.docs.dependencies]
+mkdocs-material = "^9.0.12"
+pillow = "^9.4.0"
+cairosvg = "^2.6.0"
+mkdocs-git-revision-date-localized-plugin = "^1.1.0"
+mkdocstrings = { version = "^0.20.0", extras = ["python"] }
+mkdocs-autorefs = "^0.4.1"
+black = "^23.1.0"
+
 [tool.black]
 line-length = 120
 target_version = ["py37", "py38", "py39", "py310", "py311"]

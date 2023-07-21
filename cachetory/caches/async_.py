@@ -31,7 +31,7 @@ class Cache(AbstractAsyncContextManager, Generic[ValueT, WireT]):
         Args:
             serialize_executor:
                 If specified, underlying serializing and deserializing will be performed
-                using the executor (for example, ``concurrent.futures.ProcessPoolExecutor``).
+                using the executor (for example, `ProcessPoolExecutor`).
                 This may be useful to better utilize CPU when caching large blobs.
                 If not specified, (de)serialization is performed in the current thread.
         """
