@@ -15,6 +15,7 @@ theme:
     logo: "material/food-takeout-box"
   name: material
   features:
+    - content.action.view
     - content.action.edit
     - content.code.annotate
     - content.code.copy
