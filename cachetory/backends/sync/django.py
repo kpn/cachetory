@@ -15,7 +15,7 @@ _SENTINEL = object()
 
 
 class DjangoBackend(SyncBackend[WireT], Generic[WireT]):
-    """Django cache adapter."""
+    """Synchronous Django cache adapter."""
 
     __slots__ = ("_cache",)
 

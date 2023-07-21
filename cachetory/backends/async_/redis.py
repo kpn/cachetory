@@ -16,11 +16,13 @@ class RedisBackend(AsyncBackend[bytes]):
 
     @classmethod
     def from_url(cls, url: str) -> RedisBackend:
+        """Instantiate a backend from the URL."""
         if url.startswith("redis+"):
             url = url[6:]
         return RedisBackend(Redis.from_url(url))
 
     def __init__(self, client: Redis) -> None:
+        """Instantiate a backend using the Redis client."""
         self._client = client
 
     async def get(self, key: str) -> bytes:
