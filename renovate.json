@@ -14,7 +14,7 @@
     },
     {
       "matchDepTypes": [
-        "devDependencies"
+        "dev"
       ],
       "rangeStrategy": "pin"
     }
