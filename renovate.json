@@ -4,6 +4,6 @@
   "commitMessageSuffix": "⬆️",
   "extends": [
     "group:allNonMajor",
-    "pinOnlyDevDependencies"
+    ":pinOnlyDevDependencies"
   ]
 }
