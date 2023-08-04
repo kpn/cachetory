@@ -3,7 +3,7 @@
   "commitMessagePrefix": "OPT:",
   "commitMessageSuffix": "⬆️",
   "extends": [
-    "group:allNonMajor"
-  ],
-  "rangeStrategy": "widen"
+    "group:allNonMajor",
+    "pinOnlyDevDependencies"
+  ]
 }
