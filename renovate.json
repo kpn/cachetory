@@ -3,7 +3,20 @@
   "commitMessagePrefix": "OPT:",
   "commitMessageSuffix": "⬆️",
   "extends": [
-    "group:allNonMajor",
-    ":pinOnlyDevDependencies"
+    "group:allNonMajor"
+  ],
+  "packageRules": [
+    {
+      "matchPackagePatterns": [
+        "*"
+      ],
+      "rangeStrategy": "widen"
+    },
+    {
+      "matchDepTypes": [
+        "devDependencies"
+      ],
+      "rangeStrategy": "pin"
+    }
   ]
 }
