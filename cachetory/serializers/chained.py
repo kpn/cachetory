@@ -28,17 +28,35 @@ else:
 
 
 class ChainedSerializer(Serializer[ValueT, WireT], Generic[ValueT, WireT]):
-    """Sequentially applies the chain of serializers. Allows defining multiple steps of serialization."""
+    """Sequentially applies the chain of serializers. It allows defining multiple steps of serialization."""
 
     __slots__ = ("_layers",)
 
     @classmethod
     def from_url(cls, url: str) -> ChainedSerializer[ValueT, WireT]:
+        """
+        Construct serializer from the URL.
+
+        This method parses the URL and constructs serializer layers based on the schema's
+        and query parameters.
+
+        Examples:
+            >>> serializer = ChainedSerializer.from_url(
+            >>>     # Serialize with Pickle and then compress with Zstandard:
+            >>>     "pickle+zstd://?pickle-protocol=4&compression-level=3",
+            >>> )
+        """
         parsed_url = urlparse(url)
         schemes = parsed_url.scheme.split("+")
         return cls(cls._make_layer(scheme, url) for scheme in schemes)
 
     def __init__(self, layers: Iterable[Serializer]) -> None:
+        """
+        Initialize the chained serializer.
+
+        Args:
+            layers: iterable of other serializers which are then applied sequentially
+        """
         self._layers = list(layers)
 
     def serialize(self, value: ValueT) -> WireT:
