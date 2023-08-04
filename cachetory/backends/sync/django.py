@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from typing import Generic, Iterable
 from urllib.parse import urlparse
 
-from django.core.cache import BaseCache, caches  # type: ignore[import]
+from django.core.cache import BaseCache, cache, caches  # type: ignore[import]
 from django.core.cache.backends.base import DEFAULT_TIMEOUT  # type: ignore[import]
 
 from cachetory.interfaces.backends.private import WireT
@@ -23,7 +23,7 @@ class DjangoBackend(SyncBackend[WireT], Generic[WireT]):
     def from_url(cls, url: str) -> DjangoBackend[WireT]:
         return DjangoBackend(caches[urlparse(url).hostname])
 
-    def __init__(self, cache: BaseCache) -> None:
+    def __init__(self, cache: BaseCache = cache) -> None:
         """Initialize backend with the Django cache instance."""
         self._cache = cache
 
