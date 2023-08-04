@@ -41,7 +41,7 @@ jobs:
         run: poetry run mkdocs build --site-dir _site
 
       - name: "📤 Upload"
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v2
 
   deploy:
     name: "Deploy"
