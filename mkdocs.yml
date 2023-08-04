@@ -13,6 +13,16 @@ nav:
       - backends/memory.md
       - backends/redis.md
       - backends/django.md
+  - Serializers:
+      - serializers/noop.md
+      - serializers/pickle.md
+      - serializers/json.md
+      - serializers/msgpack.md
+      - serializers/chained.md
+      - Compressors:
+          - serializers/compressors/index.md
+          - serializers/compressors/zlib.md
+          - serializers/compressors/zstandard.md
 
 theme:
   icon:
@@ -66,7 +76,7 @@ plugins:
             show_root_heading: true
             show_root_toc_entry: false
             show_signature_annotations: true
-            show_source: false
+            show_source: true
   - search:
       lang: en
   - social

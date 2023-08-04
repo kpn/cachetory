@@ -32,9 +32,11 @@ backend = cachetory.backends.async_.from_url("redis://localhost:6379/1")
 
 ## Instantiating a serializer
 
-Instantiating of a serializer is very much similar to that of a backend. To instantiate it by a URL use `#!python cachetory.serializers.from_url()` – unlike the back-end case there are no separate sync and async versions.
+Instantiating of a serializer is very much similar to that of a backend. To instantiate it by a URL use [`cachetory.serializers.from_url()`][cachetory.serializers.from_url] – unlike the back-end case there are no separate sync and async versions.
 
-`#!python cachetory.serializers.from_url()` supports scheme joining with `+`, as in `pickle+zlib://`. In that case multiple serializers are instantiated and applied sequentially (in the example a value would be serialized by `pickle` and the serialized value is then compressed by `zlib`). Deserialization order is, of course, the opposite.
+!!! tip "Scheme joining"
+
+    `#!python cachetory.serializers.from_url()` supports scheme joining with `+`, as in `pickle+zlib://`. In that case multiple serializers are instantiated and applied sequentially (in the example a value would be serialized by `pickle` and the serialized value is then compressed by `zlib`). Deserialization order is, of course, the opposite.
 
 ### Examples
 
@@ -53,3 +55,7 @@ serializer = cachetory.serializers.PickleSerializer(
     pickle_protocol=pickle.DEFAULT_PROTOCOL,
 )
 ```
+
+::: cachetory.serializers.from_url
+    options:
+      heading_level: 3

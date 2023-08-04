@@ -9,12 +9,25 @@ from cachetory.interfaces.serializers import Serializer
 
 
 class ZlibCompressor(Serializer[bytes, bytes]):
-    """Uses the built-in zlib compression."""
+    """Uses the built-in [zlib](https://docs.python.org/3/library/zlib.html) compression."""
 
     __slots__ = ("_level",)
 
     @classmethod
     def from_url(cls, url: str) -> ZlibCompressor:
+        """
+        Construct serializer from the URL.
+
+        # Supported schema's
+
+        - `zlib://`
+
+        # URL parameters
+
+        | Parameter           |                                                                 |
+        |---------------------|-----------------------------------------------------------------|
+        | `compression-level` | From `0` (no compression) to `9` (slowest and best compression) |
+        """
         params = _UrlParams.parse_obj(dict(parse_qsl(urlparse(url).query)))
         return cls(compression_level=params.compression_level)
 

@@ -24,6 +24,7 @@ class DjangoBackend(AsyncBackend[WireT], Generic[WireT]):
         return DjangoBackend(caches[urlparse(url).hostname])
 
     def __init__(self, cache: BaseCache) -> None:
+        """Initialize backend with the Django cache instance."""
         self._cache = cache
 
     async def get(self, key: str) -> WireT:

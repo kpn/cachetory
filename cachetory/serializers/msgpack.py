@@ -8,10 +8,22 @@ from cachetory.interfaces.serializers import Serializer, ValueT
 
 
 class MsgPackSerializer(Serializer[ValueT, bytes], Generic[ValueT]):
-    """Uses the non-standard built-in `msgpack` serialization."""
+    """
+    Uses [MessagePack](https://msgpack.org/) serialization.
+
+    Warning:
+        This serializer requires [`ormsgpack`](https://github.com/aviramha/ormsgpack) extra.
+    """
 
     @classmethod
     def from_url(cls, url: str) -> MsgPackSerializer[ValueT]:
+        """
+        Construct serializer from the URL.
+
+        # Supported schema's
+
+        - `msgpack://`
+        """
         return MsgPackSerializer[ValueT]()
 
     def serialize(self, value: ValueT) -> bytes:

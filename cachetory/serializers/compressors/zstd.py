@@ -9,12 +9,32 @@ from cachetory.interfaces.serializers import Serializer
 
 
 class ZstdCompressor(Serializer[bytes, bytes]):
-    """Uses external `zstd` package for Zstandard compression."""
+    """
+    Uses [Zstandard](https://facebook.github.io/zstd/) compression.
+
+    Warning:
+        This compressor requires [`zstd`](https://github.com/sergey-dryabzhinsky/python-zstd) extra.
+    """
 
     __slots__ = ("_level", "_threads")
 
     @classmethod
     def from_url(cls, url: str) -> ZstdCompressor:
+        """
+        Construct serializer from the URL.
+
+        # Supported schema's
+
+        - `zstd://`
+        - `zstandard://`
+
+        # URL parameters
+
+        | Parameter             |                                                                             |
+        |-----------------------|-----------------------------------------------------------------------------|
+        | `compression-level`   | [Compression level](https://github.com/sergey-dryabzhinsky/python-zstd#api) |
+        | `compression-threads` | [Number of threads](https://github.com/sergey-dryabzhinsky/python-zstd#api) |
+        """
         params = _UrlParams.parse_obj(dict(parse_qsl(urlparse(url).query)))
         return cls(compression_level=params.compression_level, compression_threads=params.compression_threads)
 
