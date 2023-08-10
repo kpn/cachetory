@@ -3,7 +3,8 @@
   "commitMessagePrefix": "OPT:",
   "commitMessageSuffix": "⬆️",
   "extends": [
-    "group:allNonMajor"
+    "group:allNonMajor",
+    "schedule:earlyMondays"
   ],
   "packageRules": [
     {
