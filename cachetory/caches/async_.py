@@ -16,7 +16,7 @@ _NOT_SET = NotSet()
 class Cache(AbstractAsyncContextManager, Generic[ValueT, WireT]):
     """Asynchronous cache."""
 
-    __slots__ = ("_serializer", "_backend", "_serialize_executor")
+    __slots__ = ("_serializer", "_backend", "_serialize_executor", "_prefix")
 
     def __init__(
         self,
@@ -24,6 +24,7 @@ class Cache(AbstractAsyncContextManager, Generic[ValueT, WireT]):
         serializer: Serializer[ValueT, WireT],
         backend: AsyncBackend[WireT],
         serialize_executor: Union[None, Executor, NotSet] = _NOT_SET,
+        prefix: str = "",
     ) -> None:
         """
         Instantiate a cache.
@@ -34,24 +35,28 @@ class Cache(AbstractAsyncContextManager, Generic[ValueT, WireT]):
                 using the executor (for example, `ProcessPoolExecutor`).
                 This may be useful to better utilize CPU when caching large blobs.
                 If not specified, (de)serialization is performed in the current thread.
+            prefix: backend key prefix
         """
         self._serializer = serializer
         self._backend = backend
         self._serialize_executor = serialize_executor
+        self._prefix = prefix
 
     async def get(self, key: str, default: DefaultT = None) -> Union[ValueT, DefaultT]:  # type: ignore
         try:
-            data = await self._backend.get(key)
+            data = await self._backend.get(f"{self._prefix}{key}")
         except KeyError:
             return default
         else:
             return await self._deserialize(data)
 
     async def get_many(self, *keys: str) -> Dict[str, ValueT]:
-        return {key: await self._deserialize(data) async for key, data in self._backend.get_many(*keys)}
+        return {
+            f"{self._prefix}{key}": await self._deserialize(data) async for key, data in self._backend.get_many(*keys)
+        }
 
     async def expire_in(self, key: str, time_to_live: Optional[timedelta] = None) -> None:
-        return await self._backend.expire_in(key, time_to_live)
+        return await self._backend.expire_in(f"{self._prefix}{key}", time_to_live)
 
     async def set(  # noqa: A003
         self,
@@ -61,7 +66,7 @@ class Cache(AbstractAsyncContextManager, Generic[ValueT, WireT]):
         if_not_exists: bool = False,
     ) -> None:
         await self._backend.set(
-            key,
+            f"{self._prefix}{key}",
             await self._serialize(value),
             time_to_live=time_to_live,
             if_not_exists=if_not_exists,
@@ -70,10 +75,10 @@ class Cache(AbstractAsyncContextManager, Generic[ValueT, WireT]):
     async def set_many(self, items: Union[Iterable[Tuple[str, ValueT]], Mapping[str, ValueT]]) -> None:
         if isinstance(items, Mapping):
             items = items.items()
-        await self._backend.set_many([(key, await self._serialize(value)) for key, value in items])
+        await self._backend.set_many([(f"{self._prefix}{key}", await self._serialize(value)) for key, value in items])
 
     async def delete(self, key: str) -> bool:
-        return await self._backend.delete(key)
+        return await self._backend.delete(f"{self._prefix}{key}")
 
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
         return await self._backend.__aexit__(exc_type, exc_val, exc_tb)
