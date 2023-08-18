@@ -11,12 +11,18 @@ from cachetory.interfaces.serializers import Serializer, ValueT
 class Cache(AbstractContextManager, Generic[ValueT, WireT]):
     """Synchronous cache."""
 
-    __slots__ = ("_serializer", "_backend")
+    __slots__ = ("_serializer", "_backend", "_prefix")
 
-    def __init__(self, *, serializer: Serializer[ValueT, WireT], backend: SyncBackend[WireT]) -> None:
-        """Instantiate a cache."""
+    def __init__(self, *, serializer: Serializer[ValueT, WireT], backend: SyncBackend[WireT], prefix: str = "") -> None:
+        """
+        Instantiate a cache.
+
+        Args:
+            prefix: backend key prefix
+        """
         self._serializer = serializer
         self._backend = backend
+        self._prefix = prefix
 
     def __getitem__(self, key: str) -> ValueT:
         """
@@ -33,7 +39,7 @@ class Cache(AbstractContextManager, Generic[ValueT, WireT]):
             >>> with pytest.raises(KeyError):
             >>>     _ = cache["missing"]
         """
-        return self._serializer.deserialize(self._backend.get(key))
+        return self._serializer.deserialize(self._backend.get(f"{self._prefix}{key}"))
 
     def get(self, key: str, default: DefaultT = None) -> Union[ValueT, DefaultT]:  # type: ignore
         """
@@ -67,7 +73,9 @@ class Cache(AbstractContextManager, Generic[ValueT, WireT]):
             >>> cache["key"] = 42
             >>> assert cache.get_many("key", "missing") == {"key": 42}
         """
-        return {key: self._serializer.deserialize(data) for key, data in self._backend.get_many(*keys)}
+        return {
+            f"{self._prefix}{key}": self._serializer.deserialize(data) for key, data in self._backend.get_many(*keys)
+        }
 
     def expire_in(self, key: str, time_to_live: Optional[timedelta] = None) -> None:
         """
@@ -77,11 +85,11 @@ class Cache(AbstractContextManager, Generic[ValueT, WireT]):
             key: cache key
             time_to_live: time to live, or `None` to make it eternal
         """
-        return self._backend.expire_in(key, time_to_live)
+        return self._backend.expire_in(f"{self._prefix}{key}", time_to_live)
 
     def __setitem__(self, key: str, value: ValueT) -> None:
         """Set the cache item. To customize the behavior, use `set()`."""
-        self._backend.set(key, self._serializer.serialize(value), time_to_live=None)
+        self._backend.set(f"{self._prefix}{key}", self._serializer.serialize(value), time_to_live=None)
 
     def set(  # noqa: A003
         self,
@@ -100,7 +108,7 @@ class Cache(AbstractContextManager, Generic[ValueT, WireT]):
             if_not_exists: only set the item if it does not already exist
         """
         self._backend.set(
-            key,
+            f"{self._prefix}{key}",
             self._serializer.serialize(value),
             time_to_live=time_to_live,
             if_not_exists=if_not_exists,
@@ -109,13 +117,13 @@ class Cache(AbstractContextManager, Generic[ValueT, WireT]):
     def set_many(self, items: Union[Iterable[Tuple[str, ValueT]], Mapping[str, ValueT]]) -> None:
         if isinstance(items, Mapping):
             items = items.items()
-        self._backend.set_many((key, self._serializer.serialize(value)) for key, value in items)
+        self._backend.set_many((f"{self._prefix}{key}", self._serializer.serialize(value)) for key, value in items)
 
     def delete(self, key: str) -> bool:
-        return self._backend.delete(key)
+        return self._backend.delete(f"{self._prefix}{key}")
 
     def __delitem__(self, key: str) -> None:
-        self._backend.delete(key)
+        self.delete(key)
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         return self._backend.__exit__(exc_type, exc_val, exc_tb)
