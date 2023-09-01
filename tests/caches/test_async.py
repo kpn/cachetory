@@ -15,31 +15,31 @@ async def memory_cache() -> Cache[int, bytes]:
 
 
 @mark.asyncio
-async def test_get_set_in_memory(memory_cache: Cache[int, bytes]):
+async def test_get_set_in_memory(memory_cache: Cache[int, bytes]) -> None:
     await memory_cache.set("foo", 42)
     assert await memory_cache.get("foo") == 42
 
 
 @mark.asyncio
-async def test_get_default(memory_cache: Cache[int, bytes]):
+async def test_get_default(memory_cache: Cache[int, bytes]) -> None:
     assert await memory_cache.get("missing", 100500) == 100500
 
 
 @mark.asyncio
-async def test_get_many(memory_cache: Cache[int, bytes]):
+async def test_get_many(memory_cache: Cache[int, bytes]) -> None:
     await memory_cache.set("foo", 42)
     assert await memory_cache.get_many("foo", "bar") == {"foo": 42}
 
 
 @mark.asyncio
-async def test_set_many(memory_cache: Cache[int, bytes]):
+async def test_set_many(memory_cache: Cache[int, bytes]) -> None:
     await memory_cache.set_many({"foo": 42, "bar": 100500})
     assert await memory_cache.get("foo") == 42
     assert await memory_cache.get("bar") == 100500
 
 
 @mark.asyncio
-async def test_delete(memory_cache: Cache[int, bytes]):
+async def test_delete(memory_cache: Cache[int, bytes]) -> None:
     await memory_cache.set("foo", 42)
     assert await memory_cache.delete("foo")
     assert not await memory_cache.delete("foo")
@@ -47,7 +47,7 @@ async def test_delete(memory_cache: Cache[int, bytes]):
 
 
 @mark.asyncio
-async def test_serialize_executor():
+async def test_serialize_executor() -> None:
     cache = Cache[int, bytes](
         serializer=serializers.from_url("pickle://"),
         backend=async_backends.from_url("memory://"),
@@ -59,7 +59,7 @@ async def test_serialize_executor():
 
 @if_redis_enabled
 @mark.asyncio
-async def test_get_set_in_redis():
+async def test_get_set_in_redis() -> None:
     cache = Cache[int, bytes](
         serializer=serializers.from_url("pickle+zlib://"),
         backend=async_backends.from_url("redis://localhost:6379"),
