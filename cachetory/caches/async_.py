@@ -43,6 +43,21 @@ class Cache(AbstractAsyncContextManager, Generic[ValueT, WireT]):
         self._prefix = prefix
 
     async def get(self, key: str, default: DefaultT = None) -> Union[ValueT, DefaultT]:  # type: ignore
+        """
+        Retrieve a single value from the cache.
+
+        Args:
+            key: cache key
+            default: default value – if the key is not found
+
+        Returns:
+            Retrieved value if present, or `default` otherwise.
+
+        Examples:
+            >>> await cache.set("key", 42)
+            >>> assert await cache.get("key") == 42
+            >>> assert await cache.get("missing") is None
+        """
         try:
             data = await self._backend.get(f"{self._prefix}{key}")
         except KeyError:
@@ -51,11 +66,28 @@ class Cache(AbstractAsyncContextManager, Generic[ValueT, WireT]):
             return await self._deserialize(data)
 
     async def get_many(self, *keys: str) -> Dict[str, ValueT]:
+        """
+        Retrieve many values from the cache.
+
+        Returns:
+            Dictionary of existing values indexed by their respective keys. Missing keys are omitted.
+
+        Examples:
+            >>> await memory_cache.set("foo", 42)
+            >>> assert await memory_cache.get_many("foo", "bar") == {"foo": 42}
+        """
         return {
             f"{self._prefix}{key}": await self._deserialize(data) async for key, data in self._backend.get_many(*keys)
         }
 
     async def expire_in(self, key: str, time_to_live: Optional[timedelta] = None) -> None:
+        """
+        Set the expiration time for the key.
+
+        Args:
+            key: cache key
+            time_to_live: time to live, or `None` to make it eternal
+        """
         return await self._backend.expire_in(f"{self._prefix}{key}", time_to_live)
 
     async def set(  # noqa: A003
@@ -65,6 +97,15 @@ class Cache(AbstractAsyncContextManager, Generic[ValueT, WireT]):
         time_to_live: Optional[timedelta] = None,
         if_not_exists: bool = False,
     ) -> None:
+        """
+        Set the cache item.
+
+        Args:
+            key: cache key
+            value: cached value
+            time_to_live: time to live, or `None` for eternal caching
+            if_not_exists: only set the item if it does not already exist
+        """
         await self._backend.set(
             f"{self._prefix}{key}",
             await self._serialize(value),
@@ -73,11 +114,23 @@ class Cache(AbstractAsyncContextManager, Generic[ValueT, WireT]):
         )
 
     async def set_many(self, items: Union[Iterable[Tuple[str, ValueT]], Mapping[str, ValueT]]) -> None:
+        """
+        Set many cache items at once.
+
+        Examples:
+            >>> await cache.set_many({"foo": 42, "bar": 100500})
+        """
         if isinstance(items, Mapping):
             items = items.items()
         await self._backend.set_many([(f"{self._prefix}{key}", await self._serialize(value)) for key, value in items])
 
     async def delete(self, key: str) -> bool:
+        """
+        Delete the cache item.
+
+        Returns:
+            `True` if the key has existed, `False` otherwise
+        """
         return await self._backend.delete(f"{self._prefix}{key}")
 
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:

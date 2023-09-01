@@ -115,14 +115,34 @@ class Cache(AbstractContextManager, Generic[ValueT, WireT]):
         )
 
     def set_many(self, items: Union[Iterable[Tuple[str, ValueT]], Mapping[str, ValueT]]) -> None:
+        """
+        Set many cache items at once.
+
+        Examples:
+            >>> cache.set_many({"foo": 42, "bar": 100500})
+        """
         if isinstance(items, Mapping):
             items = items.items()
         self._backend.set_many((f"{self._prefix}{key}", self._serializer.serialize(value)) for key, value in items)
 
     def delete(self, key: str) -> bool:
+        """
+        Delete the cache item.
+
+        Returns:
+            `True` if the key has existed, `False` otherwise
+        """
         return self._backend.delete(f"{self._prefix}{key}")
 
     def __delitem__(self, key: str) -> None:
+        """
+        Delete the cache item.
+
+        Warning:
+            This method **does not** currently adhere to the `object.__delitem__()` interface
+            in regard to the raised exceptions: `KeyError` **is not** raised when the key is missing.
+            See also [kpn/cachetory#67](https://github.com/kpn/cachetory/issues/67).
+        """
         self.delete(key)
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
