@@ -8,6 +8,7 @@ nav:
   - getting-started.md
   - caches.md
   - decorators.md
+  - shortcuts.md
   - Backends:
       - backends/dummy.md
       - backends/memory.md
