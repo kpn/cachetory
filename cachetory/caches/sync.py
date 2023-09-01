@@ -138,12 +138,11 @@ class Cache(AbstractContextManager, Generic[ValueT, WireT]):
         """
         Delete the cache item.
 
-        Warning:
-            This method **does not** currently adhere to the `object.__delitem__()` interface
-            in regard to the raised exceptions: `KeyError` **is not** raised when the key is missing.
-            See also [kpn/cachetory#67](https://github.com/kpn/cachetory/issues/67).
+        Raises:
+            KeyError: the key didn't exist
         """
-        self.delete(key)
+        if not self.delete(key):
+            raise KeyError(key)
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         return self._backend.__exit__(exc_type, exc_val, exc_tb)
