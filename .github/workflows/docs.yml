@@ -38,7 +38,7 @@ jobs:
         run: poetry install --no-root --with=docs
 
       - name: "📦 Build"
-        run: poetry run mkdocs build --site-dir _site
+        run: make docs
 
       - name: "📤 Upload"
         uses: actions/upload-pages-artifact@v2
