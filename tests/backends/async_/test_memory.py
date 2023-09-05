@@ -14,19 +14,19 @@ async def backend() -> AsyncIterable[MemoryBackend[int]]:
 
 
 @mark.asyncio
-async def test_get_existing(backend: MemoryBackend[int]):
+async def test_get_existing(backend: MemoryBackend[int]) -> None:
     await backend.set("foo", 42)
     assert await backend.get("foo") == 42
 
 
 @mark.asyncio
-async def test_get_missing(backend: MemoryBackend[int]):
+async def test_get_missing(backend: MemoryBackend[int]) -> None:
     with raises(KeyError):
         assert await backend.get("foo")
 
 
 @mark.asyncio
-async def test_set_default(backend: MemoryBackend[int]):
+async def test_set_default(backend: MemoryBackend[int]) -> None:
     assert await backend.set("foo", 42, if_not_exists=True)
     assert not await backend.set("foo", 43, if_not_exists=True)
     assert await backend.get("foo") == 42
@@ -34,7 +34,7 @@ async def test_set_default(backend: MemoryBackend[int]):
 
 
 @mark.asyncio
-async def test_delete_existing(backend: MemoryBackend[int]):
+async def test_delete_existing(backend: MemoryBackend[int]) -> None:
     await backend.set("foo", 42)
     assert await backend.delete("foo")
     with raises(KeyError):
@@ -42,19 +42,19 @@ async def test_delete_existing(backend: MemoryBackend[int]):
 
 
 @mark.asyncio
-async def test_delete_missing(backend: MemoryBackend[int]):
+async def test_delete_missing(backend: MemoryBackend[int]) -> None:
     assert not await backend.delete("foo")
 
 
 @mark.asyncio
-async def test_set_get_many(backend: MemoryBackend[int]):
+async def test_set_get_many(backend: MemoryBackend[int]) -> None:
     await backend.set_many([("foo", 42), ("bar", 100500)])
     assert backend.size == 2
     assert [entry async for entry in backend.get_many("foo", "bar")] == [("foo", 42), ("bar", 100500)]
 
 
 @mark.asyncio
-async def test_set_with_ttl(backend: MemoryBackend[int]):
+async def test_set_with_ttl(backend: MemoryBackend[int]) -> None:
     with freeze_time("2022-06-11 21:33:00"):
         await backend.set("foo", 42, time_to_live=timedelta(seconds=59))
     with freeze_time("2022-06-11 21:33:58"):
@@ -65,7 +65,7 @@ async def test_set_with_ttl(backend: MemoryBackend[int]):
 
 
 @mark.asyncio
-async def test_expire_at(backend: MemoryBackend[int]):
+async def test_expire_at(backend: MemoryBackend[int]) -> None:
     await backend.set("foo", 42)
     await backend.expire_at("foo", datetime(2022, 6, 10, 21, 50, 00, tzinfo=timezone.utc))
 
@@ -77,7 +77,7 @@ async def test_expire_at(backend: MemoryBackend[int]):
 
 
 @mark.asyncio
-async def test_expire_in(backend: MemoryBackend[int]):
+async def test_expire_in(backend: MemoryBackend[int]) -> None:
     with freeze_time("2022-06-10 21:49:00"):
         await backend.set("foo", 42)
         await backend.expire_in("foo", timedelta(seconds=59))
@@ -89,7 +89,7 @@ async def test_expire_in(backend: MemoryBackend[int]):
 
 
 @mark.asyncio
-async def test_clear(backend: MemoryBackend[int]):
+async def test_clear(backend: MemoryBackend[int]) -> None:
     await backend.set("foo", 42)
     await backend.clear()
     assert backend.size == 0

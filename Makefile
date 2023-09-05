@@ -16,11 +16,7 @@ install:
 	poetry install --all-extras --with=dev --with=docs
 
 .PHONY: lint
-lint: lint/ruff lint/black lint/mypy
-
-.PHONY: lint/black
-lint/black:
-	poetry run black --diff --check $(SRC)
+lint: lint/ruff lint/mypy
 
 .PHONY: lint/ruff
 lint/ruff:
@@ -31,11 +27,7 @@ lint/mypy:
 	poetry run mypy $(SRC)
 
 .PHONY: format
-format: format/ruff format/black
-
-.PHONY: format/black
-format/black:
-	poetry run black $(SRC)
+format: format/ruff
 
 .PHONY: format/ruff
 format/ruff:

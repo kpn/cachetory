@@ -1,4 +1,4 @@
-def pytest_addoption(parser):  # noqa: ANN001
+def pytest_addoption(parser) -> None:  # noqa: ANN001
     parser.addoption(
         "--test-redis",
         action="store_true",

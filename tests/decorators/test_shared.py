@@ -35,11 +35,11 @@ def test_make_default_key(
     args: Tuple[Any, ...],
     kwargs: Dict[str, Any],
     expected_key: str,
-):
+) -> None:
     assert make_default_key(callable_, *args, **kwargs) == expected_key
 
 
-def test_make_default_hashed_key():
+def test_make_default_hashed_key() -> None:
     """``make_default_hashed_key`` calls ``make_default_key`` under the hood, thus one smoke test is enough."""
     assert (
         make_default_hashed_key(_callable, "a:b", foo="bar")

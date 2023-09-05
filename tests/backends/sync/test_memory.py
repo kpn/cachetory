@@ -13,41 +13,41 @@ def backend() -> Iterable[MemoryBackend[int]]:
         yield backend
 
 
-def test_get_existing(backend: MemoryBackend[int]):
+def test_get_existing(backend: MemoryBackend[int]) -> None:
     backend.set("foo", 42)
     assert backend.get("foo") == 42
 
 
-def test_get_missing(backend: MemoryBackend[int]):
+def test_get_missing(backend: MemoryBackend[int]) -> None:
     with raises(KeyError):
         backend.get("foo")
 
 
-def test_set_default(backend: MemoryBackend[int]):
+def test_set_default(backend: MemoryBackend[int]) -> None:
     assert backend.set("foo", 42, if_not_exists=True)
     assert not backend.set("foo", 43, if_not_exists=True)
     assert backend.get("foo") == 42
     assert backend.size == 1
 
 
-def test_delete_existing(backend: MemoryBackend[int]):
+def test_delete_existing(backend: MemoryBackend[int]) -> None:
     backend.set("foo", 42)
     assert backend.delete("foo")
     with raises(KeyError):
         backend.get("foo")
 
 
-def test_delete_missing(backend: MemoryBackend[int]):
+def test_delete_missing(backend: MemoryBackend[int]) -> None:
     assert not backend.delete("foo")
 
 
-def test_set_get_many(backend: MemoryBackend[int]):
+def test_set_get_many(backend: MemoryBackend[int]) -> None:
     backend.set_many([("foo", 42), ("bar", 100500)])
     assert backend.size == 2
     assert list(backend.get_many("foo", "bar")) == [("foo", 42), ("bar", 100500)]
 
 
-def test_set_with_ttl(backend: MemoryBackend[int]):
+def test_set_with_ttl(backend: MemoryBackend[int]) -> None:
     with freeze_time("2022-06-11 21:33:00"):
         backend.set("foo", 42, time_to_live=timedelta(seconds=59))
     with freeze_time("2022-06-11 21:33:58"):
@@ -57,7 +57,7 @@ def test_set_with_ttl(backend: MemoryBackend[int]):
     assert backend.size == 0
 
 
-def test_expire_at(backend: MemoryBackend[int]):
+def test_expire_at(backend: MemoryBackend[int]) -> None:
     backend.set("foo", 42)
     backend.expire_at("foo", datetime(2022, 6, 10, 21, 50, 00, tzinfo=timezone.utc))
 
@@ -68,7 +68,7 @@ def test_expire_at(backend: MemoryBackend[int]):
     assert backend.size == 0
 
 
-def test_expire_in(backend: MemoryBackend[int]):
+def test_expire_in(backend: MemoryBackend[int]) -> None:
     with freeze_time("2022-06-10 21:49:00"):
         backend.set("foo", 42)
         backend.expire_in("foo", timedelta(seconds=59))
@@ -77,7 +77,7 @@ def test_expire_in(backend: MemoryBackend[int]):
     assert backend.size == 0
 
 
-def test_clear(backend: MemoryBackend[int]):
+def test_clear(backend: MemoryBackend[int]) -> None:
     backend.set("foo", 42)
     backend.clear()
     assert backend.size == 0

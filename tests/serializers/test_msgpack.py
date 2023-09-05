@@ -10,7 +10,7 @@ else:
 
 
 @pytest.mark.skipif(not _is_msgpack_available, reason="MessagePack is not available")
-def test_serialize_deserialize():
+def test_serialize_deserialize() -> None:
     serializer = MsgPackSerializer[bytes]()
     value = b"hello, world!"
     assert serializer.deserialize(serializer.serialize(value)) == value

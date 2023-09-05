@@ -51,7 +51,6 @@ zstd = ["zstd"]
 optional = true
 
 [tool.poetry.group.dev.dependencies]
-black = "23.7.0"
 freezegun = "1.2.2"
 mypy = "1.5.1"
 pytest = "7.4.1"
@@ -105,16 +104,15 @@ ignore = [
     "ANN001",  # TODO: fix and enable
     "ANN101",
     "ANN102",
-    "ANN201",  # TODO: fix and enable
     "ANN401",
-    "D100",
+    "D100",  # TODO: fix and enable
     "D102",  # TODO: fix and enable
-    "D103",
-    "D104",
+    "D103",  # TODO: fix and enable
+    "D104",  # TODO: fix and enable
     "D105",  # TODO: fix and enable
     "D107",  # TODO: fix and enable
     "D202",
-    "D203",
+    "D203",  # alternative of D211
     "D212",  # alternative of D213
     "D406",
     "D407",
@@ -125,7 +123,6 @@ ignore = [
     "RET505",
     "TRY003",
 ]
-unfixable = ["B"]
 
 [tool.ruff.per-file-ignores]
 "tests/*" = ["D101", "D102", "D106"]
