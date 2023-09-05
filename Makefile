@@ -20,7 +20,7 @@ lint: lint/ruff lint/mypy
 
 .PHONY: lint/ruff
 lint/ruff:
-	poetry run ruff $(SRC)
+	poetry run ruff check $(SRC)
 
 .PHONY: lint/mypy
 lint/mypy:
@@ -31,7 +31,8 @@ format: format/ruff
 
 .PHONY: format/ruff
 format/ruff:
-	poetry run ruff --fix $(SRC)
+	poetry run ruff check --fix $(SRC)
+	poetry run ruff format $(SRC)
 
 .PHONY: test
 test:
