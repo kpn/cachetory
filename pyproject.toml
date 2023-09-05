@@ -71,10 +71,6 @@ mkdocstrings = { version = "0.23.0", extras = ["python"] }
 mkdocs-autorefs = "0.5.0"
 black = "23.7.0"
 
-[tool.black]
-line-length = 120
-target_version = ["py37", "py38", "py39", "py310", "py311"]
-
 [tool.ruff]
 line-length = 120
 target-version = "py37"
