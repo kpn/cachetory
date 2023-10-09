@@ -56,14 +56,14 @@ mypy = "1.5.1"
 pytest = "7.4.2"
 pytest-asyncio = "0.21.1"
 pytest-cov = "4.1.0"
-ruff = "0.0.291"
+ruff = "0.0.292"
 types-redis = "^4.4.0.4"
 
 [tool.poetry.group.docs]
 optional = true
 
 [tool.poetry.group.docs.dependencies]
-mkdocs-material = "9.4.2"
+mkdocs-material = "9.4.4"
 pillow = "10.0.1"
 cairosvg = "2.7.1"
 mkdocs-git-revision-date-localized-plugin = "1.2.0"
