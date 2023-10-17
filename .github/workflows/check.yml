@@ -74,7 +74,8 @@ jobs:
       if: success() || failure()
       run: make lint/ruff
       env:
-        RUFF_FORMAT: "github"
+        RUFF_OUTPUT_FORMAT: "github"
+        RUFF_FORMAT: "github" # ignored in 0.1+
 
     - name: "🪄 Linter: mypy"
       if: success() || failure()
