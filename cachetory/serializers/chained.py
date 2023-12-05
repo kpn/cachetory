@@ -50,7 +50,7 @@ class ChainedSerializer(Serializer[ValueT, WireT], Generic[ValueT, WireT]):
         schemes = parsed_url.scheme.split("+")
         return cls(cls._make_layer(scheme, url) for scheme in schemes)
 
-    def __init__(self, layers: Iterable[Serializer]) -> None:
+    def __init__(self, layers: Iterable[Serializer[ValueT, WireT]]) -> None:
         """
         Initialize the chained serializer.
 
@@ -60,19 +60,19 @@ class ChainedSerializer(Serializer[ValueT, WireT], Generic[ValueT, WireT]):
         self._layers = list(layers)
 
     def serialize(self, value: ValueT) -> WireT:
-        value = cast(Any, value)
+        value_: Any = value
         for layer in self._layers:
-            value = layer.serialize(value)
-        return cast(WireT, value)
+            value_ = layer.serialize(value_)
+        return cast(WireT, value_)
 
     def deserialize(self, data: WireT) -> ValueT:
-        value = cast(Any, data)
+        value: Any = data
         for layer in self._layers[::-1]:
             value = layer.deserialize(value)
         return cast(ValueT, value)
 
     @classmethod
-    def _make_layer(cls, scheme: str, url: str) -> Serializer:
+    def _make_layer(cls, scheme: str, url: str) -> Serializer[Any, Any]:
         if scheme == "json":
             return JsonSerializer.from_url(url)
         if scheme == "msgpack":

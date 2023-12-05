@@ -10,7 +10,8 @@ from __future__ import annotations
 from abc import ABCMeta, abstractmethod
 from contextlib import AbstractAsyncContextManager, AbstractContextManager
 from datetime import datetime, timedelta, timezone
-from typing import AsyncIterable, Generic, Iterable
+from types import TracebackType
+from typing import Any, AsyncIterable, Generic, Iterable
 
 from typing_extensions import Never, Protocol
 
@@ -99,8 +100,8 @@ class AsyncBackendWrite(Protocol[WireT_contra]):
 
 
 class AsyncBackend(
-    AbstractContextManager,
-    AbstractAsyncContextManager,
+    AbstractContextManager,  # type: ignore[type-arg]
+    AbstractAsyncContextManager,  # type: ignore[type-arg]
     AsyncBackendRead[WireT],
     AsyncBackendWrite[WireT],
     Generic[WireT],
@@ -110,7 +111,7 @@ class AsyncBackend(
 
     @classmethod
     @abstractmethod
-    def from_url(cls, url: str) -> AsyncBackend:  # pragma: no cover
+    def from_url(cls, url: str) -> AsyncBackend[Any]:  # pragma: no cover
         """
         Create an asynchronous cache backend from the specified URL.
 
@@ -122,8 +123,18 @@ class AsyncBackend(
     def __enter__(self) -> Never:
         raise RuntimeError("use async context manager protocol instead")
 
-    def __exit__(self, _exc_type, _exc_val, _exc_tb) -> Never:
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: TracebackType | None,
+    ) -> Never:
         raise RuntimeError("use async context manager protocol instead")
 
-    async def __aexit__(self, exc_type, exc_value, traceback) -> None:
+    async def __aexit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: TracebackType | None,
+    ) -> None:
         return None

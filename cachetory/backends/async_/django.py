@@ -4,8 +4,8 @@ from datetime import datetime, timedelta
 from typing import AsyncIterable, Generic, Iterable
 from urllib.parse import urlparse
 
-from django.core.cache import BaseCache, cache, caches  # type: ignore[import]
-from django.core.cache.backends.base import DEFAULT_TIMEOUT  # type: ignore[import]
+from django.core.cache import BaseCache, cache, caches  # type: ignore[import-untyped]
+from django.core.cache.backends.base import DEFAULT_TIMEOUT  # type: ignore[import-untyped]
 
 from cachetory.interfaces.backends.async_ import AsyncBackend
 from cachetory.interfaces.backends.private import WireT
@@ -29,7 +29,7 @@ class DjangoBackend(AsyncBackend[WireT], Generic[WireT]):
 
     async def get(self, key: str) -> WireT:
         if (value := await self._cache.aget(key, _SENTINEL)) is not _SENTINEL:
-            return value
+            return value  # type: ignore[no-any-return]
         raise KeyError(key)
 
     async def get_many(self, *keys: str) -> AsyncIterable[tuple[str, WireT]]:
@@ -55,7 +55,7 @@ class DjangoBackend(AsyncBackend[WireT], Generic[WireT]):
         await self._cache.aset_many(dict(items))
 
     async def delete(self, key: str) -> bool:
-        return await self._cache.adelete(key)
+        return await self._cache.adelete(key)  # type: ignore[no-any-return]
 
     async def clear(self) -> None:
         await self._cache.aclear()
@@ -67,5 +67,5 @@ class DjangoBackend(AsyncBackend[WireT], Generic[WireT]):
         await self.expire_in(key, make_time_to_live(deadline))
 
     @staticmethod
-    def _to_timeout(time_to_live: timedelta | None) -> float:
+    def _to_timeout(time_to_live: timedelta | None) -> object:
         return time_to_live.total_seconds() if time_to_live is not None else DEFAULT_TIMEOUT

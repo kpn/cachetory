@@ -48,12 +48,12 @@ class ZstdCompressor(Serializer[bytes, bytes]):
         self._threads = compression_threads
 
     def serialize(self, value: bytes) -> bytes:
-        return zstd.compress(value, self._level, self._threads)
+        return zstd.compress(value, self._level, self._threads)  # type: ignore[no-any-return]
 
     def deserialize(self, data: bytes) -> bytes:
-        return zstd.decompress(data)
+        return zstd.decompress(data)  # type: ignore[no-any-return]
 
 
 class _UrlParams(BaseModel):
-    compression_level: int = Field(3, alias="compression-level")  # type: ignore
+    compression_level: int = Field(3, alias="compression-level")
     compression_threads: conint(ge=0) = Field(0, alias="compression-threads")  # type: ignore

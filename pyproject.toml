@@ -132,9 +132,11 @@ ignore = [
 docstring-quotes = "double"
 
 [tool.mypy]
+disallow_untyped_calls = false
 no_implicit_optional = true
+no_implicit_reexport = false
 pretty = true
-check_untyped_defs = true
+strict = true
 
 [tool.pytest.ini_options]
 addopts = "--cov=./ --cov-report=xml"

@@ -1,6 +1,7 @@
 from contextlib import AbstractContextManager
 from datetime import timedelta
-from typing import Dict, Generic, Iterable, Mapping, Optional, Tuple, Union
+from types import TracebackType
+from typing import Dict, Generic, Iterable, Mapping, Optional, Tuple, Type, Union
 
 from cachetory.caches.private import DefaultT
 from cachetory.interfaces.backends.private import WireT
@@ -8,7 +9,10 @@ from cachetory.interfaces.backends.sync import SyncBackend
 from cachetory.interfaces.serializers import Serializer, ValueT
 
 
-class Cache(AbstractContextManager, Generic[ValueT, WireT]):
+class Cache(
+    AbstractContextManager,  # type: ignore[type-arg]
+    Generic[ValueT, WireT],
+):
     """Synchronous cache."""
 
     __slots__ = ("_serializer", "_backend", "_prefix")
@@ -144,5 +148,10 @@ class Cache(AbstractContextManager, Generic[ValueT, WireT]):
         if not self.delete(key):
             raise KeyError(key)
 
-    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_val: Optional[BaseException],
+        exc_tb: Optional[TracebackType],
+    ) -> None:
         return self._backend.__exit__(exc_type, exc_val, exc_tb)

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import itertools
 from datetime import datetime, timedelta
+from types import TracebackType
 from typing import Iterable
 
 from redis import Redis
@@ -21,12 +22,12 @@ class RedisBackend(SyncBackend[bytes]):
             url = url[6:]
         return cls(Redis.from_url(url))
 
-    def __init__(self, client: Redis) -> None:
+    def __init__(self, client: Redis) -> None:  # type: ignore[type-arg]
         """Instantiate a backend using the Redis client."""
         self._client = client
 
     def get(self, key: str) -> bytes:
-        data = self._client.get(key)
+        data: bytes | None = self._client.get(key)
         if data is not None:
             return data
         raise KeyError(key)
@@ -69,5 +70,10 @@ class RedisBackend(SyncBackend[bytes]):
     def clear(self) -> None:
         self._client.flushdb()
 
-    def __exit__(self, exc_type, exc_value, traceback) -> None:
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: TracebackType | None,
+    ) -> None:
         return self._client.__exit__(exc_type, exc_value, traceback)

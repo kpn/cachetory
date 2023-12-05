@@ -10,6 +10,7 @@ from __future__ import annotations
 from abc import ABCMeta, abstractmethod
 from contextlib import AbstractContextManager
 from datetime import datetime, timedelta
+from types import TracebackType
 from typing import Generic, Iterable
 
 from typing_extensions import Protocol
@@ -99,7 +100,7 @@ class SyncBackendWrite(Protocol[WireT_contra]):
 
 
 class SyncBackend(
-    AbstractContextManager,
+    AbstractContextManager,  # type: ignore[type-arg]
     SyncBackendRead[WireT],
     SyncBackendWrite[WireT],
     Generic[WireT],
@@ -109,7 +110,7 @@ class SyncBackend(
 
     @classmethod
     @abstractmethod
-    def from_url(cls, url: str) -> SyncBackend:  # pragma: no cover
+    def from_url(cls, url: str) -> SyncBackend[WireT]:  # pragma: no cover
         """
         Create a synchronous cache backend from the specified URL.
 
@@ -118,5 +119,10 @@ class SyncBackend(
         """
         raise NotImplementedError
 
-    def __exit__(self, exc_type, exc_value, traceback) -> None:
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: TracebackType | None,
+    ) -> None:
         return None

@@ -48,7 +48,7 @@ def cached(
     def wrap(callable_: Callable[P, Awaitable[ValueT]]) -> _CachedCallable[P, Awaitable[ValueT]]:
         get_cache = into_async_callable(cache)
         get_time_to_live = into_async_callable(time_to_live)
-        exclude_: None | Callable[[str, ValueT], Awaitable[bool]] = (
+        exclude_: Callable[[str, ValueT], Awaitable[bool]] | None = (
             into_async_callable(exclude) if exclude is not None else None
         )
 
@@ -95,7 +95,7 @@ class _CachedCallable(Protocol[P, ValueT_co]):
     def __call__(self, *args: P.args, **kwargs: P.kwargs) -> ValueT_co:
         ...
 
-    async def purge(self, *args: P.args, **kwargs: P.kwargs) -> bool:
+    async def purge(*args: P.args, **kwargs: P.kwargs) -> bool:
         """
         Delete the value that was cached using the same call arguments.
 

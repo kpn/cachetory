@@ -1,4 +1,4 @@
-from typing import List, Type
+from typing import Any, Iterable, List, Type, cast
 
 import pytest
 from pytest import mark, raises
@@ -23,8 +23,10 @@ else:
         ("pickle+zstd://", [PickleSerializer, ZstdCompressor]),
     ],
 )
-def test_layers(url: str, expected_layers: List[Type[Serializer]]) -> None:
-    assert [type(layer) for layer in ChainedSerializer.from_url(url)._layers] == expected_layers
+def test_layers(url: str, expected_layers: List[Type[Serializer[Any, Any]]]) -> None:
+    assert [
+        type(layer) for layer in cast(Iterable[Serializer[Any, Any]], ChainedSerializer.from_url(url)._layers)
+    ] == expected_layers
 
 
 def test_unsupported_scheme() -> None:

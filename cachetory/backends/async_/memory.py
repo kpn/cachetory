@@ -20,7 +20,7 @@ class MemoryBackend(AsyncBackend[WireT], Generic[WireT]):
 
     def __init__(self) -> None:
         # We'll simply delegate call to the wrapped backend.
-        self._inner: SyncMemoryBackend = SyncMemoryBackend()
+        self._inner: SyncMemoryBackend[WireT] = SyncMemoryBackend()
 
     def get(self, key: str) -> Coroutine[Any, Any, WireT]:
         return postpone(self._inner.get, key)
