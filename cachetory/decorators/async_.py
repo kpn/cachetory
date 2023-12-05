@@ -45,7 +45,7 @@ def cached(
         exclude: Optional callable to prevent a key-value pair from being cached if the callable returns true.
     """
 
-    def wrap(callable_: Callable[P, Awaitable[ValueT]]) -> _CachedCallable[P, Awaitable[ValueT]]:
+    def wrap(callable_: Callable[P, Awaitable[ValueT]], /) -> _CachedCallable[P, Awaitable[ValueT]]:
         get_cache = into_async_callable(cache)
         get_time_to_live = into_async_callable(time_to_live)
         exclude_: Callable[[str, ValueT], Awaitable[bool]] | None = (
@@ -92,7 +92,7 @@ def cached(
 class _CachedCallable(Protocol[P, ValueT_co]):
     """Protocol of the wrapped callable."""
 
-    def __call__(self, *args: P.args, **kwargs: P.kwargs) -> ValueT_co:
+    def __call__(*args: P.args, **kwargs: P.kwargs) -> ValueT_co:
         ...
 
     async def purge(*args: P.args, **kwargs: P.kwargs) -> bool:
