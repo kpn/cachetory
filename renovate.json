@@ -5,7 +5,7 @@
   "labels": ["dependencies"],
   "extends": [
     "group:allNonMajor",
-    "schedule:earlyMondays"
+    "schedule:monthly"
   ],
   "packageRules": [
     {
