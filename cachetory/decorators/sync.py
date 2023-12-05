@@ -82,7 +82,7 @@ class _CachedCallable(Protocol[P, ValueT_co]):
     def __call__(self, *args: P.args, **kwargs: P.kwargs) -> ValueT_co:
         ...
 
-    def purge(self, *args: P.args, **kwargs: P.kwargs) -> bool:
+    def purge(*args: P.args, **kwargs: P.kwargs) -> bool:
         """
         Delete the value that was cached using the same call arguments.
 

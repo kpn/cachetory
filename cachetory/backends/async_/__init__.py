@@ -1,3 +1,4 @@
+from typing import Any
 from urllib.parse import urlparse
 
 from cachetory.interfaces.backends.async_ import AsyncBackend
@@ -16,7 +17,7 @@ except ImportError:
     DjangoBackend = None  # type: ignore[assignment, misc]
 
 
-def from_url(url: str) -> AsyncBackend:
+def from_url(url: str) -> AsyncBackend[Any]:
     """
     Create an asynchronous backend from the given URL.
 

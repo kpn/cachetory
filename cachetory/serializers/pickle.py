@@ -49,7 +49,7 @@ class PickleSerializer(Serializer[ValueT, bytes], Generic[ValueT]):
         return pickle.dumps(value, self.protocol)
 
     def deserialize(self, data: bytes) -> ValueT:
-        return pickle.loads(data)
+        return pickle.loads(data)  # type: ignore[no-any-return]
 
 
 class _UrlParams(BaseModel):

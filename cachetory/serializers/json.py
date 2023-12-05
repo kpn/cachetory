@@ -28,4 +28,4 @@ class JsonSerializer(Serializer[ValueT, str], Generic[ValueT]):
         return json.dumps(value)
 
     def deserialize(self, data: str) -> ValueT:
-        return json.loads(data)
+        return json.loads(data)  # type: ignore[no-any-return]

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import itertools
 from datetime import datetime, timedelta
+from types import TracebackType
 from typing import AsyncIterable, Iterable
 
 from redis.asyncio import Redis
@@ -21,12 +22,12 @@ class RedisBackend(AsyncBackend[bytes]):
             url = url[6:]
         return RedisBackend(Redis.from_url(url))
 
-    def __init__(self, client: Redis) -> None:
+    def __init__(self, client: Redis) -> None:  # type: ignore[type-arg]
         """Instantiate a backend using the Redis client."""
         self._client = client
 
     async def get(self, key: str) -> bytes:
-        data = await self._client.get(key)
+        data: bytes | None = await self._client.get(key)
         if data is not None:
             return data
         raise KeyError(key)
@@ -69,6 +70,11 @@ class RedisBackend(AsyncBackend[bytes]):
     async def clear(self) -> None:
         await self._client.flushdb()
 
-    async def __aexit__(self, exc_type, exc_value, traceback) -> None:
+    async def __aexit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: TracebackType | None,
+    ) -> None:
         await self._client.connection_pool.disconnect()  # https://github.com/aio-libs/aioredis-py/issues/1103
         return await self._client.__aexit__(exc_type, exc_value, traceback)

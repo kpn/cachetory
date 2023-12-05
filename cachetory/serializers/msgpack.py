@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Generic
 
-import ormsgpack  # type: ignore[import]
+import ormsgpack  # type: ignore[import-not-found, unused-ignore]
 
 from cachetory.interfaces.serializers import Serializer, ValueT
 
@@ -27,7 +27,7 @@ class MsgPackSerializer(Serializer[ValueT, bytes], Generic[ValueT]):
         return MsgPackSerializer[ValueT]()
 
     def serialize(self, value: ValueT) -> bytes:
-        return ormsgpack.packb(value)
+        return ormsgpack.packb(value)  # type: ignore[no-any-return, unused-ignore]
 
     def deserialize(self, data: bytes) -> ValueT:
-        return ormsgpack.unpackb(data)
+        return ormsgpack.unpackb(data)  # type: ignore[no-any-return]

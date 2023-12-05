@@ -1,8 +1,11 @@
+from __future__ import annotations
+
 from asyncio import get_running_loop
 from concurrent.futures import Executor
 from contextlib import AbstractAsyncContextManager
 from datetime import timedelta
-from typing import Dict, Generic, Iterable, Mapping, Optional, Tuple, Union
+from types import TracebackType
+from typing import Generic, Iterable, Mapping
 
 from cachetory.caches.private import DefaultT
 from cachetory.interfaces.backends.async_ import AsyncBackend
@@ -13,7 +16,10 @@ from cachetory.private.typing import NotSet
 _NOT_SET = NotSet()
 
 
-class Cache(AbstractAsyncContextManager, Generic[ValueT, WireT]):
+class Cache(
+    AbstractAsyncContextManager,  # type: ignore[type-arg]
+    Generic[ValueT, WireT],
+):
     """Asynchronous cache."""
 
     __slots__ = ("_serializer", "_backend", "_serialize_executor", "_prefix")
@@ -23,7 +29,7 @@ class Cache(AbstractAsyncContextManager, Generic[ValueT, WireT]):
         *,
         serializer: Serializer[ValueT, WireT],
         backend: AsyncBackend[WireT],
-        serialize_executor: Union[None, Executor, NotSet] = _NOT_SET,
+        serialize_executor: Executor | NotSet | None = _NOT_SET,
         prefix: str = "",
     ) -> None:
         """
@@ -42,7 +48,7 @@ class Cache(AbstractAsyncContextManager, Generic[ValueT, WireT]):
         self._serialize_executor = serialize_executor
         self._prefix = prefix
 
-    async def get(self, key: str, default: DefaultT = None) -> Union[ValueT, DefaultT]:  # type: ignore
+    async def get(self, key: str, default: DefaultT = None) -> ValueT | DefaultT:  # type: ignore
         """
         Retrieve a single value from the cache.
 
@@ -65,7 +71,7 @@ class Cache(AbstractAsyncContextManager, Generic[ValueT, WireT]):
         else:
             return await self._deserialize(data)
 
-    async def get_many(self, *keys: str) -> Dict[str, ValueT]:
+    async def get_many(self, *keys: str) -> dict[str, ValueT]:
         """
         Retrieve many values from the cache.
 
@@ -80,7 +86,7 @@ class Cache(AbstractAsyncContextManager, Generic[ValueT, WireT]):
             f"{self._prefix}{key}": await self._deserialize(data) async for key, data in self._backend.get_many(*keys)
         }
 
-    async def expire_in(self, key: str, time_to_live: Optional[timedelta] = None) -> None:
+    async def expire_in(self, key: str, time_to_live: timedelta | None = None) -> None:
         """
         Set the expiration time for the key.
 
@@ -94,7 +100,7 @@ class Cache(AbstractAsyncContextManager, Generic[ValueT, WireT]):
         self,
         key: str,
         value: ValueT,
-        time_to_live: Optional[timedelta] = None,
+        time_to_live: timedelta | None = None,
         if_not_exists: bool = False,
     ) -> None:
         """
@@ -113,7 +119,7 @@ class Cache(AbstractAsyncContextManager, Generic[ValueT, WireT]):
             if_not_exists=if_not_exists,
         )
 
-    async def set_many(self, items: Union[Iterable[Tuple[str, ValueT]], Mapping[str, ValueT]]) -> None:
+    async def set_many(self, items: Iterable[tuple[str, ValueT]] | Mapping[str, ValueT]) -> None:
         """
         Set many cache items at once.
 
@@ -133,8 +139,13 @@ class Cache(AbstractAsyncContextManager, Generic[ValueT, WireT]):
         """
         return await self._backend.delete(f"{self._prefix}{key}")
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
-        return await self._backend.__aexit__(exc_type, exc_val, exc_tb)
+    async def __aexit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: TracebackType | None,
+    ) -> None:
+        return await self._backend.__aexit__(exc_type, exc_value, traceback)
 
     async def _serialize(self, value: ValueT) -> WireT:
         if self._serialize_executor is _NOT_SET:

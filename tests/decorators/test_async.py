@@ -82,7 +82,7 @@ async def test_purge(cache: Cache[int, int]) -> None:
 
 
 async def test_none_cache() -> None:
-    async def get_cache(_) -> Cache[int, int] | None:
+    async def get_cache(*args: Any, **kwargs: Any) -> Cache[int, int] | None:
         return None
 
     @cached(get_cache)
