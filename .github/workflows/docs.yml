@@ -19,6 +19,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: "🗃 Cache"
+        if: success() || failure()
+        uses: actions/cache@v3
+        with:
+          path: .cache
+
       - uses: actions/checkout@v4
         name: "📥 Checkout"
         with:
