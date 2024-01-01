@@ -67,7 +67,7 @@ optional = true
 black = "23.11.0"
 cairosvg = "2.7.1"
 mkdocs-autorefs = "0.5.0"
-mkdocs-git-committers-plugin-2 = "^2.2.2"
+mkdocs-git-committers-plugin-2 = "2.2.2"
 mkdocs-git-revision-date-localized-plugin = "1.2.1"
 mkdocs-material = "9.5.0"
 mkdocstrings = { version = "0.24.0", extras = ["python"] }
