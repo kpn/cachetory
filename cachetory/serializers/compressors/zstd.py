@@ -57,4 +57,4 @@ class ZstdCompressor(Serializer[bytes, bytes]):
 
 class _UrlParams(BaseModel):
     compression_level: int = Field(3, alias="compression-level")
-    compression_threads: Annotated[int, Field(ge=0)] = Field(0, alias="compression-threads")  # type: ignore
+    compression_threads: Annotated[int, Field(ge=0)] = Field(0, alias="compression-threads")

@@ -54,7 +54,7 @@ class PickleSerializer(Serializer[ValueT, bytes], Generic[ValueT]):
 
 
 class _UrlParams(BaseModel):
-    pickle_protocol: Annotated[int, Field(ge=0, le=pickle.HIGHEST_PROTOCOL)] = Field(  # type: ignore
+    pickle_protocol: Annotated[int, Field(ge=0, le=pickle.HIGHEST_PROTOCOL)] = Field(
         pickle.HIGHEST_PROTOCOL,
         alias="pickle-protocol",
     )

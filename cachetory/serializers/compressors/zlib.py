@@ -43,7 +43,7 @@ class ZlibCompressor(Serializer[bytes, bytes]):
 
 
 class _UrlParams(BaseModel):
-    compression_level: Annotated[int, Field(ge=-1, le=9)] = Field(  # type: ignore
+    compression_level: Annotated[int, Field(ge=-1, le=9)] = Field(
         zlib.Z_DEFAULT_COMPRESSION,
         alias="compression-level",
     )
