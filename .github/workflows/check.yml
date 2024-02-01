@@ -89,7 +89,7 @@ jobs:
 
     - name: "📤 Codecov"
       if: success() || failure()
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       with:
         env_vars: PYTHON
         name: Python ${{ matrix.python-version }}
