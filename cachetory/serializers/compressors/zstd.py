@@ -3,7 +3,8 @@ from __future__ import annotations
 from urllib.parse import parse_qsl, urlparse
 
 import zstd  # type: ignore
-from pydantic import BaseModel, Field, conint
+from pydantic import BaseModel, Field
+from typing_extensions import Annotated
 
 from cachetory.interfaces.serializers import Serializer
 
@@ -35,7 +36,7 @@ class ZstdCompressor(Serializer[bytes, bytes]):
         | `compression-level`   | [Compression level](https://github.com/sergey-dryabzhinsky/python-zstd#api) |
         | `compression-threads` | [Number of threads](https://github.com/sergey-dryabzhinsky/python-zstd#api) |
         """
-        params = _UrlParams.parse_obj(dict(parse_qsl(urlparse(url).query)))
+        params = _UrlParams.model_validate(dict(parse_qsl(urlparse(url).query)))
         return cls(compression_level=params.compression_level, compression_threads=params.compression_threads)
 
     def __init__(
@@ -56,4 +57,4 @@ class ZstdCompressor(Serializer[bytes, bytes]):
 
 class _UrlParams(BaseModel):
     compression_level: int = Field(3, alias="compression-level")
-    compression_threads: conint(ge=0) = Field(0, alias="compression-threads")  # type: ignore
+    compression_threads: Annotated[int, Field(ge=0)] = Field(0, alias="compression-threads")

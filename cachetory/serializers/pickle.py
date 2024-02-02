@@ -4,7 +4,8 @@ import pickle
 from typing import Generic
 from urllib.parse import parse_qsl, urlparse
 
-from pydantic import BaseModel, Field, conint
+from pydantic import BaseModel, Field
+from typing_extensions import Annotated
 
 from cachetory.interfaces.serializers import Serializer, ValueT
 
@@ -33,7 +34,7 @@ class PickleSerializer(Serializer[ValueT, bytes], Generic[ValueT]):
         |-------------------|---------------------------|
         | `pickle-protocol` | `pickle` protocol version |
         """
-        params = _UrlParams.parse_obj(dict(parse_qsl(urlparse(url).query)))
+        params = _UrlParams.model_validate(dict(parse_qsl(urlparse(url).query)))
         return cls(pickle_protocol=params.pickle_protocol)
 
     def __init__(self, pickle_protocol: int = pickle.HIGHEST_PROTOCOL) -> None:
@@ -53,7 +54,7 @@ class PickleSerializer(Serializer[ValueT, bytes], Generic[ValueT]):
 
 
 class _UrlParams(BaseModel):
-    pickle_protocol: conint(ge=0, le=pickle.HIGHEST_PROTOCOL) = Field(  # type: ignore
+    pickle_protocol: Annotated[int, Field(ge=0, le=pickle.HIGHEST_PROTOCOL)] = Field(
         pickle.HIGHEST_PROTOCOL,
         alias="pickle-protocol",
     )
