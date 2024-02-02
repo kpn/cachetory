@@ -55,21 +55,21 @@ optional = true
 freezegun = "1.4.0"
 mypy = "1.8.0"
 pytest = "7.4.4"
-pytest-asyncio = "0.23.3"
+pytest-asyncio = "0.23.4"
 pytest-cov = "4.1.0"
-ruff = "0.1.11"
+ruff = "0.2.0"
 types-redis = "^4.4.0.4"
 
 [tool.poetry.group.docs]
 optional = true
 
 [tool.poetry.group.docs.dependencies]
-black = "23.12.1"
+black = "24.1.1"
 cairosvg = "2.7.1"
 mkdocs-autorefs = "0.5.0"
 mkdocs-git-committers-plugin-2 = "2.2.3"
 mkdocs-git-revision-date-localized-plugin = "1.2.2"
-mkdocs-material = "9.5.3"
+mkdocs-material = "9.5.6"
 mkdocstrings = { version = "0.24.0", extras = ["python"] }
 pillow = "10.2.0"
 
@@ -80,6 +80,8 @@ target_version = ["py38", "py39", "py310", "py311"]
 [tool.ruff]
 line-length = 120
 target-version = "py38"
+
+[tool.ruff.lint]
 select = [
     "A",
     "ANN",
@@ -118,6 +120,7 @@ ignore = [
     "D212",  # alternative of D213
     "D406",
     "D407",
+    "D413",
     "D417",  # TODO: fix and enable
     "PT001",
     "PT011",
@@ -126,10 +129,10 @@ ignore = [
     "TRY003",
 ]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "tests/*" = ["D101", "D102", "D106"]
 
-[tool.ruff.flake8-quotes]
+[tool.ruff.lint.flake8-quotes]
 docstring-quotes = "double"
 
 [tool.mypy]
