@@ -79,8 +79,7 @@ def cached(
 class _CachedCallable(Protocol[P, ValueT_co]):
     """Protocol of the wrapped callable."""
 
-    def __call__(*args: P.args, **kwargs: P.kwargs) -> ValueT_co:
-        ...
+    def __call__(*args: P.args, **kwargs: P.kwargs) -> ValueT_co: ...
 
     def purge(*args: P.args, **kwargs: P.kwargs) -> bool:
         """
