@@ -24,6 +24,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .cache
+          key: docs
 
       - uses: actions/checkout@v4
         name: "📥 Checkout"
