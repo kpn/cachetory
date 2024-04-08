@@ -2011,4 +2011,4 @@ zstd = ["zstd"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.0"
-content-hash = "6db37411a772b326f1b458bffa4f4c9ad5c48709c758c75e16d731b8a38d72b1"
+content-hash = "c0a9c17ddb7c68a384d443089a37e8f4222a983838d65e675a8e0b432173b04c"
