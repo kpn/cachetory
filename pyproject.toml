@@ -71,7 +71,7 @@ mkdocs-git-committers-plugin-2 = "2.3.0"
 mkdocs-git-revision-date-localized-plugin = "1.2.4"
 mkdocs-material = "9.5.17"
 mkdocstrings = { version = "0.24.3", extras = ["python"] }
-pillow = "10.2.0"
+pillow = "10.3.0"
 
 [tool.black]
 line-length = 120
