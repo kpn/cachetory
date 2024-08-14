@@ -47,6 +47,17 @@ async def test_delete(memory_cache: Cache[int, bytes]) -> None:
 
 
 @mark.asyncio
+async def test_clear(memory_cache: Cache[int, bytes]) -> None:
+    await memory_cache.set("foo", 42)
+    await memory_cache.set("bar", 42)
+
+    await memory_cache.clear()
+
+    assert await memory_cache.get("foo") is None
+    assert await memory_cache.get("bar") is None
+
+
+@mark.asyncio
 async def test_serialize_executor() -> None:
     cache = Cache[int, bytes](
         serializer=serializers.from_url("pickle://"),
