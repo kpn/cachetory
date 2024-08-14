@@ -139,6 +139,10 @@ class Cache(
         """
         return await self._backend.delete(f"{self._prefix}{key}")
 
+    async def clear(self) -> None:
+        """Delete all cache items."""
+        return await self._backend.clear()
+
     async def __aexit__(
         self,
         exc_type: type[BaseException] | None,

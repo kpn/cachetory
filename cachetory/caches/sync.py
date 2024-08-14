@@ -138,6 +138,10 @@ class Cache(
         """
         return self._backend.delete(f"{self._prefix}{key}")
 
+    def clear(self) -> None:
+        """Delete all cache items."""
+        return self._backend.clear()
+
     def __delitem__(self, key: str) -> None:
         """
         Delete the cache item.

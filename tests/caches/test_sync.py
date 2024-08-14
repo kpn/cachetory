@@ -46,6 +46,16 @@ def test_delete(memory_cache: Cache[int, bytes]) -> None:
     assert memory_cache.get("foo") is None
 
 
+def test_clear_cache(memory_cache: Cache[int, bytes]) -> None:
+    memory_cache.set("foo", 42)
+    memory_cache.set("bar", 42)
+
+    memory_cache.clear()
+
+    assert memory_cache.get("foo") is None
+    assert memory_cache.get("bar") is None
+
+
 def test_del_item(memory_cache: Cache[int, bytes]) -> None:
     memory_cache.set("foo", 42)
     del memory_cache["foo"]
