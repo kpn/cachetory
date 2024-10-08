@@ -8,10 +8,11 @@ but implementors SHOULD override them for the sake of performance.
 from __future__ import annotations
 
 from abc import ABCMeta, abstractmethod
+from collections.abc import AsyncIterable, Iterable
 from contextlib import AbstractAsyncContextManager, AbstractContextManager
 from datetime import datetime, timedelta, timezone
 from types import TracebackType
-from typing import Any, AsyncIterable, Generic, Iterable
+from typing import Any, Generic
 
 from typing_extensions import Never, Protocol
 

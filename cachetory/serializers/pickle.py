@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 import pickle
-from typing import Generic
+from typing import Annotated, Generic
 from urllib.parse import parse_qsl, urlparse
 
 from pydantic import BaseModel, Field
-from typing_extensions import Annotated
 
 from cachetory.interfaces.serializers import Serializer, ValueT
 

@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, Tuple
+from typing import Any, Callable
 
 from pytest import mark
 
@@ -32,8 +32,8 @@ def _callable() -> None:
 )
 def test_make_default_key(
     callable_: Callable[..., Any],
-    args: Tuple[Any, ...],
-    kwargs: Dict[str, Any],
+    args: tuple[Any, ...],
+    kwargs: dict[str, Any],
     expected_key: str,
 ) -> None:
     assert make_default_key(callable_, *args, **kwargs) == expected_key

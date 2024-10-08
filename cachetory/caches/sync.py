@@ -1,7 +1,8 @@
+from collections.abc import Iterable, Mapping
 from contextlib import AbstractContextManager
 from datetime import timedelta
 from types import TracebackType
-from typing import Dict, Generic, Iterable, Mapping, Optional, Tuple, Type, Union
+from typing import Generic, Optional, Union
 
 from cachetory.caches.private import DefaultT
 from cachetory.interfaces.backends.private import WireT
@@ -66,7 +67,7 @@ class Cache(
         except KeyError:
             return default
 
-    def get_many(self, *keys: str) -> Dict[str, ValueT]:
+    def get_many(self, *keys: str) -> dict[str, ValueT]:
         """
         Retrieve many values from the cache.
 
@@ -118,7 +119,7 @@ class Cache(
             if_not_exists=if_not_exists,
         )
 
-    def set_many(self, items: Union[Iterable[Tuple[str, ValueT]], Mapping[str, ValueT]]) -> None:
+    def set_many(self, items: Union[Iterable[tuple[str, ValueT]], Mapping[str, ValueT]]) -> None:
         """
         Set many cache items at once.
 
@@ -154,7 +155,7 @@ class Cache(
 
     def __exit__(
         self,
-        exc_type: Optional[Type[BaseException]],
+        exc_type: Optional[type[BaseException]],
         exc_val: Optional[BaseException],
         exc_tb: Optional[TracebackType],
     ) -> None:
