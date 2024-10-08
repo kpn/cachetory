@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import AsyncIterable, Iterable
 from datetime import datetime, timedelta
-from typing import AsyncIterable, Generic, Iterable
+from typing import Generic
 
 from cachetory.interfaces.backends.async_ import AsyncBackend
 from cachetory.interfaces.backends.private import WireT

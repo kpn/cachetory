@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import Coroutine
 from datetime import datetime, timedelta
-from typing import Any, Coroutine, Generic
+from typing import Any, Generic
 
 from cachetory.backends.sync.memory import MemoryBackend as SyncMemoryBackend
 from cachetory.interfaces.backends.async_ import AsyncBackend

@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 from asyncio import get_running_loop
+from collections.abc import Iterable, Mapping
 from concurrent.futures import Executor
 from contextlib import AbstractAsyncContextManager
 from datetime import timedelta
 from types import TracebackType
-from typing import Generic, Iterable, Mapping
+from typing import Generic
 
 from cachetory.caches.private import DefaultT
 from cachetory.interfaces.backends.async_ import AsyncBackend

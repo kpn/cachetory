@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import Iterable
 from datetime import datetime, timedelta
-from typing import Generic, Iterable
+from typing import Generic
 from urllib.parse import urlparse
 
 from django.core.cache import BaseCache, cache, caches  # type: ignore[import-untyped]

@@ -1,6 +1,6 @@
+from collections.abc import Iterable
 from datetime import timedelta
 from time import sleep
-from typing import Iterable
 
 from pytest import fixture, raises
 

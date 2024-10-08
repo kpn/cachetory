@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from collections.abc import Awaitable
 from functools import wraps
 from inspect import iscoroutinefunction
-from typing import Any, Awaitable, Callable, TypeVar, cast
+from typing import Any, Callable, TypeVar, cast
 
 T = TypeVar("T")
 

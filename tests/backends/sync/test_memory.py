@@ -1,5 +1,5 @@
+from collections.abc import Iterable
 from datetime import datetime, timedelta, timezone
-from typing import Iterable
 
 from freezegun import freeze_time
 from pytest import fixture, raises

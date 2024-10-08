@@ -1,4 +1,5 @@
-from typing import Any, Iterable, List, Type, cast
+from collections.abc import Iterable
+from typing import Any, cast
 
 import pytest
 from pytest import mark, raises
@@ -23,7 +24,7 @@ else:
         ("pickle+zstd://", [PickleSerializer, ZstdCompressor]),
     ],
 )
-def test_layers(url: str, expected_layers: List[Type[Serializer[Any, Any]]]) -> None:
+def test_layers(url: str, expected_layers: list[type[Serializer[Any, Any]]]) -> None:
     assert [
         type(layer) for layer in cast(Iterable[Serializer[Any, Any]], ChainedSerializer.from_url(url)._layers)
     ] == expected_layers

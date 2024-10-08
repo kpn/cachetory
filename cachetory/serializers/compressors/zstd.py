@@ -1,10 +1,10 @@
 from __future__ import annotations
 
+from typing import Annotated
 from urllib.parse import parse_qsl, urlparse
 
 import zstd  # type: ignore
 from pydantic import BaseModel, Field
-from typing_extensions import Annotated
 
 from cachetory.interfaces.serializers import Serializer
 

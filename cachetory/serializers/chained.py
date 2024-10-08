@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Generic, Iterable, cast
+from collections.abc import Iterable
+from typing import Any, Generic, cast
 from urllib.parse import urlparse
 
 from cachetory.interfaces.backends.private import WireT

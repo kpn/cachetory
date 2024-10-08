@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import itertools
+from collections.abc import AsyncIterable, Iterable
 from datetime import datetime, timedelta
 from types import TracebackType
-from typing import AsyncIterable, Iterable
 
 from redis.asyncio import Redis
 

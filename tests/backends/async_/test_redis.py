@@ -1,6 +1,6 @@
 from asyncio import sleep
+from collections.abc import AsyncIterable
 from datetime import timedelta
-from typing import AsyncIterable
 
 from pytest import fixture, mark, raises
 
