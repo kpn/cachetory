@@ -1,5 +1,4 @@
-SRC := cachetory tests
-DJANGO_SETTINGS_MODULE := tests.backends.django.settings
+SRC = cachetory tests
 
 .PHONY: all
 all: install lint test build docs
@@ -37,7 +36,7 @@ format/ruff:
 
 .PHONY: test
 test:
-	poetry run pytest tests
+	DJANGO_SETTINGS_MODULE=tests.backends.django.settings poetry run pytest tests
 
 .PHONY: build
 build:

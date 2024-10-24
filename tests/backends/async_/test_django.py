@@ -8,7 +8,7 @@ from cachetory.backends.async_ import DjangoBackend
 @pytest.fixture
 async def backend() -> AsyncIterable[DjangoBackend[int]]:
     async with DjangoBackend[int].from_url("django://default") as backend:
-        backend.clear()
+        await backend.clear()
         try:
             yield backend
         finally:
