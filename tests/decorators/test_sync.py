@@ -46,24 +46,23 @@ def test_time_to_live_callable_depending_on_key(cache: Cache[int, int]) -> None:
     def expensive_function(**kwargs: Any) -> int:
         return 1
 
-    with mock.patch.object(cache, "set", wraps=cache.set) as m_set:
+    with mock.patch.object(Cache, "set", wraps=cache.set) as set_mock:
         assert expensive_function(a="a") == 1
 
-    m_set.assert_called_with(mock.ANY, mock.ANY, time_to_live=timedelta(seconds=42), if_not_exists=mock.ANY)
+    set_mock.assert_called_with(mock.ANY, mock.ANY, time_to_live=timedelta(seconds=42), if_not_exists=mock.ANY)
 
 
 def test_exclude(cache: Cache[int, int]) -> None:
     @cached(
         cache,
         make_key=lambda _, arg: str(arg),
-        exclude=lambda key_, value_: int(key_) + value_ < 40,
+        exclude=lambda key, _: key == "5",
     )
     def power_function(arg: int) -> int:
         return arg**2
 
-    with mock.patch.object(cache, "set", wraps=cache.set):
-        assert power_function(5) == 25
-        assert power_function(6) == 36
+    assert power_function(5) == 25
+    assert power_function(6) == 36
 
     assert cache.get("5") is None
     assert cache.get("6") == 36

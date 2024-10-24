@@ -24,6 +24,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Internet :: WWW/HTTP",
     "Typing :: Typed",
 ]
@@ -35,7 +36,7 @@ build-backend = "poetry_dynamic_versioning.backend"
 [tool.poetry.dependencies]
 django = {version = "^4.0.0 || ^5.0.0", optional = true}
 ormsgpack = {version = "^1.4.0", optional = true, markers = "platform_python_implementation == 'CPython'"}
-pydantic = ">2.0.0.0, <3.0.0.0"
+pydantic = "^2.0.0"
 python = "^3.9.0"
 redis = {version = "^4.4.2 || ^5.0.0", optional = true}
 typing-extensions = "^4.4.0"
@@ -144,6 +145,7 @@ strict = true
 [tool.pytest.ini_options]
 addopts = "--cov=./ --cov-report=xml"
 asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
 
 [tool.coverage.run]
 source = ["cachetory"]

@@ -4,3 +4,4 @@ CACHES = {
         "LOCATION": "unique-snowflake",
     },
 }
+USE_TZ = True
