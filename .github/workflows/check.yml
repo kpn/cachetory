@@ -47,7 +47,7 @@ jobs:
 
     - name: "✨ Install Poetry"
       run: |
-        pipx install poetry
+        pipx install "poetry<2.0.0"
         pipx inject poetry poetry-dynamic-versioning
 
     - name: 🐍 Set up Python ${{ matrix.python-version }}
