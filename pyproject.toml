@@ -105,6 +105,7 @@ select = [
     "YTT",
 ]
 ignore = [
+    "A005",
     "ANN001",  # TODO: fix and enable
     "ANN101",
     "ANN102",
