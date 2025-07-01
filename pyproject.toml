@@ -53,7 +53,7 @@ optional = true
 
 [tool.poetry.group.dev.dependencies]
 freezegun = "1.5.1"
-mypy = "1.14.1"
+mypy = "1.16.1"
 pytest = "8.3.4"
 pytest-asyncio = "1.0.0"
 pytest-cov = "5.0.0"
@@ -107,8 +107,6 @@ select = [
 ignore = [
     "A005",
     "ANN001",  # TODO: fix and enable
-    "ANN101",
-    "ANN102",
     "ANN401",
     "D100",  # TODO: fix and enable
     "D102",  # TODO: fix and enable

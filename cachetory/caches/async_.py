@@ -14,8 +14,6 @@ from cachetory.interfaces.backends.private import WireT
 from cachetory.interfaces.serializers import Serializer, ValueT
 from cachetory.private.typing import NotSet
 
-_NOT_SET = NotSet()
-
 
 class Cache(
     AbstractAsyncContextManager,  # type: ignore[type-arg]
@@ -30,7 +28,7 @@ class Cache(
         *,
         serializer: Serializer[ValueT, WireT],
         backend: AsyncBackend[WireT],
-        serialize_executor: Executor | NotSet | None = _NOT_SET,
+        serialize_executor: Executor | NotSet | None = NotSet(),  # noqa: B008
         prefix: str = "",
     ) -> None:
         """
@@ -157,13 +155,13 @@ class Cache(
         return await self._backend.__aexit__(exc_type, exc_value, traceback)
 
     async def _serialize(self, value: ValueT) -> WireT:
-        if self._serialize_executor is _NOT_SET:
+        if isinstance(self._serialize_executor, NotSet):
             return self._serializer.serialize(value)
         else:
             return await get_running_loop().run_in_executor(self._serialize_executor, self._serializer.serialize, value)
 
     async def _deserialize(self, data: WireT) -> ValueT:
-        if self._serialize_executor is _NOT_SET:
+        if isinstance(self._serialize_executor, NotSet):
             return self._serializer.deserialize(data)
         else:
             return await get_running_loop().run_in_executor(
