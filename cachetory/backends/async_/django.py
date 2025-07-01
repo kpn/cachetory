@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterable, Iterable
 from datetime import datetime, timedelta
-from typing import Generic
+from typing import Generic, cast
 from urllib.parse import urlparse
 
 from django.core.cache import BaseCache, cache, caches  # type: ignore[import-untyped]
@@ -47,10 +47,10 @@ class DjangoBackend(AsyncBackend[WireT], Generic[WireT]):
     ) -> bool:
         timeout = self._to_timeout(time_to_live)
         if if_not_exists:
-            await self._cache.aget_or_set(key, value, timeout)
+            return cast(bool, await self._cache.aadd(key, value, timeout))
         else:
             await self._cache.aset(key, value, timeout)
-        return True
+            return True
 
     async def set_many(self, items: Iterable[tuple[str, WireT]]) -> None:
         await self._cache.aset_many(dict(items))

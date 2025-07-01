@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from datetime import datetime, timedelta
-from typing import Generic
+from typing import Generic, cast
 from urllib.parse import urlparse
 
 from django.core.cache import BaseCache, cache, caches  # type: ignore[import-untyped]
@@ -46,10 +46,10 @@ class DjangoBackend(SyncBackend[WireT], Generic[WireT]):
     ) -> bool:
         timeout = self._to_timeout(time_to_live)
         if if_not_exists:
-            self._cache.get_or_set(key, value, timeout)
+            return cast(bool, self._cache.add(key, value, timeout))
         else:
             self._cache.set(key, value, timeout)
-        return True
+            return True
 
     def set_many(self, items: Iterable[tuple[str, WireT]]) -> None:
         self._cache.set_many(dict(items))

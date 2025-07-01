@@ -82,7 +82,7 @@ jobs:
 
     - name: "🧪 Tests"
       if: success() || failure()
-      run: poetry run pytest tests --test-redis
+      run: poetry run pytest tests -v --test-redis
       env:
         DJANGO_SETTINGS_MODULE: "tests.backends.django.settings"
 
