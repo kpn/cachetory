@@ -67,6 +67,9 @@ class RedisBackend(AsyncBackend[bytes]):
     async def delete(self, key: str) -> bool:
         return bool(await self._client.delete(key))
 
+    async def delete_many(self, *keys: str) -> None:
+        await self._client.delete(*keys)
+
     async def clear(self) -> None:
         await self._client.flushdb()
 

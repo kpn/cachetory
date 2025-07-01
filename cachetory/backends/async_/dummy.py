@@ -44,5 +44,8 @@ class DummyBackend(AsyncBackend[WireT], Generic[WireT]):
     async def delete(self, key: str) -> bool:  # pragma: no cover
         return False  # has never been there
 
+    async def delete_many(self, *keys: str) -> None:  # pragma: no cover
+        pass
+
     async def clear(self) -> None:  # pragma: no cover
         return None  # already perfectly clean

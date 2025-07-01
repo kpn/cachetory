@@ -39,6 +39,12 @@ def test_set_many(memory_cache: Cache[int, bytes]) -> None:
     assert memory_cache.get("bar") == 100500
 
 
+def delete_many(memory_cache: Cache[int, bytes]) -> None:
+    memory_cache.set_many({"1": 1, "2": 2, "3": 3})
+    memory_cache.delete_many("1", "2")
+    assert memory_cache.get_many("1", "2", "3") == {"3": 3}
+
+
 def test_delete(memory_cache: Cache[int, bytes]) -> None:
     memory_cache.set("foo", 42)
     assert memory_cache.delete("foo")
