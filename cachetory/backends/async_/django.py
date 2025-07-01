@@ -58,6 +58,9 @@ class DjangoBackend(AsyncBackend[WireT], Generic[WireT]):
     async def delete(self, key: str) -> bool:
         return await self._cache.adelete(key)  # type: ignore[no-any-return]
 
+    async def delete_many(self, *keys: str) -> None:
+        await self._cache.adelete_many(keys)
+
     async def clear(self) -> None:
         await self._cache.aclear()
 

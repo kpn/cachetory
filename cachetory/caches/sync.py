@@ -139,6 +139,10 @@ class Cache(
         """
         return self._backend.delete(f"{self._prefix}{key}")
 
+    def delete_many(self, *keys: str) -> None:
+        """Delete many items at once."""
+        self._backend.delete_many(*(f"{self._prefix}{key}" for key in keys))
+
     def clear(self) -> None:
         """Delete all cache items."""
         return self._backend.clear()

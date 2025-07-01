@@ -43,5 +43,8 @@ class DummyBackend(SyncBackend[WireT], Generic[WireT]):
     def delete(self, key: str) -> bool:  # pragma: no cover
         return False  # has never been there
 
+    def delete_many(self, *keys: str) -> None:  # pragma: no cover
+        pass
+
     def clear(self) -> None:  # pragma: no cover
         return None  # already perfectly clean

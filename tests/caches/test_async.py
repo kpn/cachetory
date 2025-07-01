@@ -1,4 +1,4 @@
-from pytest import fixture, mark
+from pytest import fixture
 
 from cachetory import serializers
 from cachetory.backends import async_ as async_backends
@@ -14,31 +14,26 @@ async def memory_cache() -> Cache[int, bytes]:
     )
 
 
-@mark.asyncio
 async def test_get_set_in_memory(memory_cache: Cache[int, bytes]) -> None:
     await memory_cache.set("foo", 42)
     assert await memory_cache.get("foo") == 42
 
 
-@mark.asyncio
 async def test_get_default(memory_cache: Cache[int, bytes]) -> None:
     assert await memory_cache.get("missing", 100500) == 100500
 
 
-@mark.asyncio
 async def test_get_many(memory_cache: Cache[int, bytes]) -> None:
     await memory_cache.set("foo", 42)
     assert await memory_cache.get_many("foo", "bar") == {"foo": 42}
 
 
-@mark.asyncio
 async def test_set_many(memory_cache: Cache[int, bytes]) -> None:
     await memory_cache.set_many({"foo": 42, "bar": 100500})
     assert await memory_cache.get("foo") == 42
     assert await memory_cache.get("bar") == 100500
 
 
-@mark.asyncio
 async def test_delete(memory_cache: Cache[int, bytes]) -> None:
     await memory_cache.set("foo", 42)
     assert await memory_cache.delete("foo")
@@ -46,7 +41,12 @@ async def test_delete(memory_cache: Cache[int, bytes]) -> None:
     assert await memory_cache.get("foo") is None
 
 
-@mark.asyncio
+async def delete_many(memory_cache: Cache[int, bytes]) -> None:
+    await memory_cache.set_many({"1": 1, "2": 2, "3": 3})
+    await memory_cache.delete_many("1", "2")
+    assert await memory_cache.get_many("1", "2", "3") == {"3": 3}
+
+
 async def test_clear(memory_cache: Cache[int, bytes]) -> None:
     await memory_cache.set("foo", 42)
     await memory_cache.set("bar", 42)
@@ -57,7 +57,6 @@ async def test_clear(memory_cache: Cache[int, bytes]) -> None:
     assert await memory_cache.get("bar") is None
 
 
-@mark.asyncio
 async def test_serialize_executor() -> None:
     cache = Cache[int, bytes](
         serializer=serializers.from_url("pickle://"),
@@ -69,7 +68,6 @@ async def test_serialize_executor() -> None:
 
 
 @if_redis_enabled
-@mark.asyncio
 async def test_get_set_in_redis() -> None:
     cache = Cache[int, bytes](
         serializer=serializers.from_url("pickle+zlib://"),

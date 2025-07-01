@@ -48,6 +48,9 @@ class MemoryBackend(AsyncBackend[WireT], Generic[WireT]):
     def delete(self, key: str) -> Coroutine[Any, Any, bool]:
         return postpone(self._inner.delete, key)
 
+    def delete_many(self, *keys: str) -> Coroutine[Any, Any, None]:
+        return postpone(self._inner.delete_many, *keys)
+
     def clear(self) -> Coroutine[Any, Any, None]:
         return postpone(self._inner.clear)
 

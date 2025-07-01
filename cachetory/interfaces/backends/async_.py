@@ -95,6 +95,9 @@ class AsyncBackendWrite(Protocol[WireT_contra]):
         """
         raise NotImplementedError
 
+    async def delete_many(self, *keys: str) -> None:
+        """Delete many keys at once."""
+
     async def clear(self) -> None:  # pragma: no cover
         """Clear the backend storage."""
         raise NotImplementedError
