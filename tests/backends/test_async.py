@@ -76,6 +76,21 @@ async def test_delete_missing(backend: AsyncBackend[bytes]) -> None:
     assert not await backend.delete("foo")
 
 
+async def test_delete_many(backend: AsyncBackend[bytes]) -> None:
+    await backend.set("foo", b"foo")
+    await backend.set("qux", b"qux")
+    await backend.delete_many("foo", "bar")
+
+    with pytest.raises(KeyError):
+        await backend.get("foo")
+    assert await backend.get("qux") == b"qux"
+
+
+async def test_delete_many_without_arguments(backend: AsyncBackend[bytes]) -> None:
+    """Verify that it does not raise an error."""
+    await backend.delete_many()
+
+
 async def test_set_get_many(backend: AsyncBackend[bytes]) -> None:
     await backend.set_many([("non-empty", b"foo"), ("empty", b"")])
     assert [entry async for entry in backend.get_many("non-empty", "missing", "empty")] == [

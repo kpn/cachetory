@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from collections.abc import Set
 from datetime import datetime, timedelta, timezone
 from typing import Generic
 
@@ -51,10 +50,8 @@ class MemoryBackend(SyncBackend[WireT], Generic[WireT]):
         return self._entries.pop(key, _SENTINEL) is not _SENTINEL
 
     def delete_many(self, *keys: str) -> None:
-        keys: Set[str] = set(keys)  # type: ignore[no-redef]
-
-        # Replace the entire dictionary to make the operation atomic:
-        self._entries = {key: value for key, value in self._entries.items() if key not in keys}
+        for key in keys:
+            self._entries.pop(key, None)
 
     def clear(self) -> None:
         self._entries.clear()

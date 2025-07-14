@@ -58,7 +58,7 @@ class DjangoBackend(SyncBackend[WireT], Generic[WireT]):
         return self._cache.delete(key)  # type: ignore[no-any-return]
 
     def delete_many(self, *keys: str) -> None:
-        self._cache.delete_many(*keys)
+        self._cache.delete_many(keys)
 
     def clear(self) -> None:
         self._cache.clear()
