@@ -75,6 +75,21 @@ def test_delete_missing(backend: SyncBackend[bytes]) -> None:
     assert not backend.delete("foo")
 
 
+def test_delete_many(backend: SyncBackend[bytes]) -> None:
+    backend.set("foo", b"foo")
+    backend.set("qux", b"qux")
+    backend.delete_many("foo", "bar")
+
+    with pytest.raises(KeyError):
+        backend.get("foo")
+    assert backend.get("qux") == b"qux"
+
+
+def test_delete_many_without_arguments(backend: SyncBackend[bytes]) -> None:
+    """Verify that it does not raise an error."""
+    backend.delete_many()
+
+
 def test_set_get_many(backend: SyncBackend[bytes]) -> None:
     backend.set_many([("non-empty", b"foo"), ("empty", b"")])
     assert list(backend.get_many("non-empty", "missing", "empty")) == [("non-empty", b"foo"), ("empty", b"")]

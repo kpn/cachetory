@@ -68,7 +68,8 @@ class RedisBackend(SyncBackend[bytes]):
         return bool(self._client.delete(key))
 
     def delete_many(self, *keys: str) -> None:
-        self._client.delete(*keys)
+        if keys:
+            self._client.delete(*keys)
 
     def clear(self) -> None:
         self._client.flushdb()
