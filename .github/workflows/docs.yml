@@ -34,7 +34,7 @@ jobs:
       - name: "✨ Install Poetry"
         run: pipx install "poetry<2.0.0"
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         name: "✨ Set up Python"
         id: "setup-python"
         with:
