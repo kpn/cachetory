@@ -64,7 +64,7 @@ types-redis = "^4.4.0.4"
 optional = true
 
 [tool.poetry.group.docs.dependencies]
-black = "25.1.0"
+black = "26.5.1"
 cairosvg = "2.8.2"
 mkdocs-autorefs = "1.4.2"
 mkdocs-git-committers-plugin-2 = "2.5.0"
